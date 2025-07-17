@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14 # Latest macOS runner for latest APIs
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Select Xcode
+      run: sudo xcode-select -s /Applications/Xcode.app
+      
+    - name: Build
+      run: |
+        xcodebuild build -project PhantomGate.xcodeproj -scheme PhantomGate -destination 'platform=macOS'
+        
+    - name: Test
+      run: |
+        xcodebuild test -project PhantomGate.xcodeproj -scheme PhantomGate -destination 'platform=macOS' 
