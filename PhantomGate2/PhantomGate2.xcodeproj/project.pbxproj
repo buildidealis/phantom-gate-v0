@@ -1,0 +1,528 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		285BE19F2E29C7C4004B88CA /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 285BE19E2E29C7C4004B88CA /* AVFoundation.framework */; };
+		285BE1A12E29C7D1004B88CA /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 285BE1A02E29C7D1004B88CA /* AppKit.framework */; };
+		285BE1C12E29C89F004B88CA /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 285BE1A22E29C89F004B88CA /* Info.plist */; };
+		285BE1C72E29CB40004B88CA /* JetBrainsMono-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 285BE1C42E29CB40004B88CA /* JetBrainsMono-Bold.ttf */; };
+		285BE1C82E29CB40004B88CA /* JetBrainsMono-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 285BE1C52E29CB40004B88CA /* JetBrainsMono-Medium.ttf */; };
+		285BE1C92E29CB40004B88CA /* JetBrainsMono-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 285BE1C62E29CB40004B88CA /* JetBrainsMono-Regular.ttf */; };
+		28A74C732E2B30FE00749654 /* PhantomGateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A74C722E2B30FE00749654 /* PhantomGateApp.swift */; };
+		28A74C822E2B350D00749654 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A74C812E2B350D00749654 /* ContentView.swift */; };
+		28A74C842E2B35A500749654 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A74C832E2B35A500749654 /* AudioEngine.swift */; };
+		28A74C862E2B35C500749654 /* FontManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A74C852E2B35C500749654 /* FontManager.swift */; };
+		28A74C882E2B35D700749654 /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A74C872E2B35D700749654 /* WaveformView.swift */; };
+		28A74C8A2E2B35F500749654 /* FloatingWindowManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A74C892E2B35F500749654 /* FloatingWindowManager.swift */; };
+		28A74C8C2E2B360C00749654 /* MenuBarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28A74C8B2E2B360C00749654 /* MenuBarManager.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		285BE1812E29C192004B88CA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 285BE16A2E29C192004B88CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 285BE1712E29C192004B88CA;
+			remoteInfo = PhantomGate2;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		285BE1722E29C192004B88CA /* PhantomGate2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhantomGate2.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		285BE1802E29C192004B88CA /* PhantomGate2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomGate2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		285BE19E2E29C7C4004B88CA /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		285BE1A02E29C7D1004B88CA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		285BE1A22E29C89F004B88CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		285BE1C42E29CB40004B88CA /* JetBrainsMono-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Bold.ttf"; sourceTree = "<group>"; };
+		285BE1C52E29CB40004B88CA /* JetBrainsMono-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Medium.ttf"; sourceTree = "<group>"; };
+		285BE1C62E29CB40004B88CA /* JetBrainsMono-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "JetBrainsMono-Regular.ttf"; sourceTree = "<group>"; };
+		28A74C722E2B30FE00749654 /* PhantomGateApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhantomGateApp.swift; sourceTree = "<group>"; };
+		28A74C812E2B350D00749654 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		28A74C832E2B35A500749654 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AudioEngine.swift; path = Sources/Audio/AudioEngine.swift; sourceTree = "<group>"; };
+		28A74C852E2B35C500749654 /* FontManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FontManager.swift; path = Sources/Utils/FontManager.swift; sourceTree = "<group>"; };
+		28A74C872E2B35D700749654 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaveformView.swift; path = Sources/UI/WaveformView.swift; sourceTree = "<group>"; };
+		28A74C892E2B35F500749654 /* FloatingWindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FloatingWindowManager.swift; path = Sources/UI/FloatingWindowManager.swift; sourceTree = "<group>"; };
+		28A74C8B2E2B360C00749654 /* MenuBarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MenuBarManager.swift; path = Sources/UI/MenuBarManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		285BE1832E29C192004B88CA /* PhantomGate2Tests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PhantomGate2Tests;
+			sourceTree = "<group>";
+		};
+		285BE18D2E29C192004B88CA /* PhantomGate2UITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PhantomGate2UITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		285BE16F2E29C192004B88CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				285BE19F2E29C7C4004B88CA /* AVFoundation.framework in Frameworks */,
+				285BE1A12E29C7D1004B88CA /* AppKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		285BE17D2E29C192004B88CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		285BE1692E29C192004B88CA = {
+			isa = PBXGroup;
+			children = (
+				28A74C8B2E2B360C00749654 /* MenuBarManager.swift */,
+				28A74C892E2B35F500749654 /* FloatingWindowManager.swift */,
+				28A74C872E2B35D700749654 /* WaveformView.swift */,
+				28A74C852E2B35C500749654 /* FontManager.swift */,
+				28A74C832E2B35A500749654 /* AudioEngine.swift */,
+				28A74C812E2B350D00749654 /* ContentView.swift */,
+				28A74C722E2B30FE00749654 /* PhantomGateApp.swift */,
+				285BE1C22E29C9F5004B88CA /* Resources */,
+				285BE1A22E29C89F004B88CA /* Info.plist */,
+				285BE1832E29C192004B88CA /* PhantomGate2Tests */,
+				285BE18D2E29C192004B88CA /* PhantomGate2UITests */,
+				285BE19D2E29C7C4004B88CA /* Frameworks */,
+				285BE1732E29C192004B88CA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		285BE1732E29C192004B88CA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				285BE1722E29C192004B88CA /* PhantomGate2.app */,
+				285BE1802E29C192004B88CA /* PhantomGate2Tests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		285BE19D2E29C7C4004B88CA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				285BE1A02E29C7D1004B88CA /* AppKit.framework */,
+				285BE19E2E29C7C4004B88CA /* AVFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		285BE1C22E29C9F5004B88CA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				285BE1C32E29CA08004B88CA /* Fonts */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		285BE1C32E29CA08004B88CA /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				285BE1C42E29CB40004B88CA /* JetBrainsMono-Bold.ttf */,
+				285BE1C52E29CB40004B88CA /* JetBrainsMono-Medium.ttf */,
+				285BE1C62E29CB40004B88CA /* JetBrainsMono-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		285BE1712E29C192004B88CA /* PhantomGate2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 285BE1942E29C192004B88CA /* Build configuration list for PBXNativeTarget "PhantomGate2" */;
+			buildPhases = (
+				285BE16E2E29C192004B88CA /* Sources */,
+				285BE16F2E29C192004B88CA /* Frameworks */,
+				285BE1702E29C192004B88CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PhantomGate2;
+			packageProductDependencies = (
+			);
+			productName = PhantomGate2;
+			productReference = 285BE1722E29C192004B88CA /* PhantomGate2.app */;
+			productType = "com.apple.product-type.application";
+		};
+		285BE17F2E29C192004B88CA /* PhantomGate2Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 285BE1972E29C192004B88CA /* Build configuration list for PBXNativeTarget "PhantomGate2Tests" */;
+			buildPhases = (
+				285BE17C2E29C192004B88CA /* Sources */,
+				285BE17D2E29C192004B88CA /* Frameworks */,
+				285BE17E2E29C192004B88CA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				285BE1822E29C192004B88CA /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				285BE1832E29C192004B88CA /* PhantomGate2Tests */,
+			);
+			name = PhantomGate2Tests;
+			packageProductDependencies = (
+			);
+			productName = PhantomGate2Tests;
+			productReference = 285BE1802E29C192004B88CA /* PhantomGate2Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		285BE16A2E29C192004B88CA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					285BE1712E29C192004B88CA = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					285BE17F2E29C192004B88CA = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 285BE1712E29C192004B88CA;
+					};
+				};
+			};
+			buildConfigurationList = 285BE16D2E29C192004B88CA /* Build configuration list for PBXProject "PhantomGate2" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 285BE1692E29C192004B88CA;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 285BE1732E29C192004B88CA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				285BE1712E29C192004B88CA /* PhantomGate2 */,
+				285BE17F2E29C192004B88CA /* PhantomGate2Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		285BE1702E29C192004B88CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				285BE1C72E29CB40004B88CA /* JetBrainsMono-Bold.ttf in Resources */,
+				285BE1C82E29CB40004B88CA /* JetBrainsMono-Medium.ttf in Resources */,
+				285BE1C92E29CB40004B88CA /* JetBrainsMono-Regular.ttf in Resources */,
+				285BE1C12E29C89F004B88CA /* Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		285BE17E2E29C192004B88CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		285BE16E2E29C192004B88CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28A74C8C2E2B360C00749654 /* MenuBarManager.swift in Sources */,
+				28A74C8A2E2B35F500749654 /* FloatingWindowManager.swift in Sources */,
+				28A74C882E2B35D700749654 /* WaveformView.swift in Sources */,
+				28A74C862E2B35C500749654 /* FontManager.swift in Sources */,
+				28A74C842E2B35A500749654 /* AudioEngine.swift in Sources */,
+				28A74C822E2B350D00749654 /* ContentView.swift in Sources */,
+				28A74C732E2B30FE00749654 /* PhantomGateApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		285BE17C2E29C192004B88CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		285BE1822E29C192004B88CA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 285BE1712E29C192004B88CA /* PhantomGate2 */;
+			targetProxy = 285BE1812E29C192004B88CA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		285BE1922E29C192004B88CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 322XNT4KVA;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		285BE1932E29C192004B88CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 322XNT4KVA;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		285BE1952E29C192004B88CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = None;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PhantomGate2.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 322XNT4KVA;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = PhantomGate;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGate2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		285BE1962E29C192004B88CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = None;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PhantomGate2.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 322XNT4KVA;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = PhantomGate;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGate2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		285BE1982E29C192004B88CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 322XNT4KVA;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGate2Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomGate2.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PhantomGate2";
+			};
+			name = Debug;
+		};
+		285BE1992E29C192004B88CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 322XNT4KVA;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGate2Tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomGate2.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PhantomGate2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		285BE16D2E29C192004B88CA /* Build configuration list for PBXProject "PhantomGate2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				285BE1922E29C192004B88CA /* Debug */,
+				285BE1932E29C192004B88CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		285BE1942E29C192004B88CA /* Build configuration list for PBXNativeTarget "PhantomGate2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				285BE1952E29C192004B88CA /* Debug */,
+				285BE1962E29C192004B88CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		285BE1972E29C192004B88CA /* Build configuration list for PBXNativeTarget "PhantomGate2Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				285BE1982E29C192004B88CA /* Debug */,
+				285BE1992E29C192004B88CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 285BE16A2E29C192004B88CA /* Project object */;
+}
