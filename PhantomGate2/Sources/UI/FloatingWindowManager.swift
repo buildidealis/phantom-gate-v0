@@ -15,6 +15,7 @@ class FloatingWindowManager: ObservableObject {
     private var window: NSWindow?
     private(set) var audioEngine: AudioEngine?
     private var contentView: NSHostingView<FloatingControlView>?
+    private var windowDelegate: FloatingWindowDelegate?
     
     init() {
         setupWindow()
@@ -34,10 +35,16 @@ class FloatingWindowManager: ObservableObject {
         window.hasShadow = true
         window.ignoresMouseEvents = false
         window.isReleasedWhenClosed = false
+        window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         
         window.setAccessibilityIdentifier("PhantomGate")
         window.title = "PhantomGate"
         
+        // Make window draggable
+        windowDelegate = FloatingWindowDelegate()
+        window.delegate = windowDelegate
+        
+        // Position window in bottom right corner
         if let screenFrame = NSScreen.main?.visibleFrame {
             let windowFrame = window.frame
             let newOrigin = NSPoint(
@@ -61,10 +68,20 @@ class FloatingWindowManager: ObservableObject {
         let hostingView = NSHostingView(rootView: view)
         window.contentView = hostingView
         self.contentView = hostingView
+        
+        // Add dragging behavior
+        let trackingArea = NSTrackingArea(
+            rect: .zero,
+            options: [.mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect],
+            owner: window.contentView,
+            userInfo: nil
+        )
+        window.contentView?.addTrackingArea(trackingArea)
     }
     
     private func showWindow() {
         window?.orderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
     private func hideWindow() {
@@ -74,6 +91,47 @@ class FloatingWindowManager: ObservableObject {
     func toggleVisibility() {
         guard window != nil else { return }
         isVisible.toggle()
+    }
+}
+
+// Window delegate to handle dragging
+class FloatingWindowDelegate: NSObject, NSWindowDelegate {
+    var initialLocation: NSPoint?
+    
+    func windowWillMove(_ notification: Notification) {
+        if let window = notification.object as? NSWindow {
+            initialLocation = window.mouseLocationOutsideOfEventStream
+        }
+    }
+    
+    func windowDidMove(_ notification: Notification) {
+        guard let window = notification.object as? NSWindow else { return }
+        
+        // Keep window within screen bounds
+        if let screen = window.screen {
+            var frame = window.frame
+            let screenFrame = screen.visibleFrame
+            
+            // Ensure window stays within horizontal bounds
+            if frame.maxX > screenFrame.maxX {
+                frame.origin.x = screenFrame.maxX - frame.width
+            }
+            if frame.minX < screenFrame.minX {
+                frame.origin.x = screenFrame.minX
+            }
+            
+            // Ensure window stays within vertical bounds
+            if frame.maxY > screenFrame.maxY {
+                frame.origin.y = screenFrame.maxY - frame.height
+            }
+            if frame.minY < screenFrame.minY {
+                frame.origin.y = screenFrame.minY
+            }
+            
+            if frame != window.frame {
+                window.setFrame(frame, display: true)
+            }
+        }
     }
 }
 

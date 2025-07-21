@@ -112,16 +112,17 @@ class AudioEngine: ObservableObject {
                 mData.copyMemory(from: baseAddress,
                                byteCount: Int(frameCount) * MemoryLayout<Float>.stride)
             }
+            
             return noErr
         }
         
-        noiseGenerator = node
         engine.attach(node)
-        engine.connect(node, to: mainMixer, format: format)
+        engine.connect(node, to: engine.mainMixerNode, format: format)
         
         do {
             try engine.start()
             isPlaying = true
+            noiseGenerator = node
         } catch {
             throw AudioEngineError.engineStartFailed(error)
         }
@@ -130,13 +131,12 @@ class AudioEngine: ObservableObject {
     func stopPlayback() async throws {
         guard isPlaying else { return }
         
-        engine.stop()
-        if let generator = noiseGenerator {
-            engine.disconnectNodeOutput(generator)
-            engine.detach(generator)
+        if let node = noiseGenerator {
+            engine.detach(node)
             noiseGenerator = nil
         }
         
+        engine.stop()
         isPlaying = false
         currentFrequency = 0
     }

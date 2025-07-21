@@ -3,7 +3,11 @@ import AppKit
 
 @MainActor
 class MenuBarManager: ObservableObject {
-    @Published private(set) var isEnabled = false
+    @Published private(set) var isEnabled = false {
+        didSet {
+            updateStatusItemIcon()
+        }
+    }
     private var statusItem: NSStatusItem?
     private(set) var audioEngine: AudioEngine?
     private(set) var floatingManager: FloatingWindowManager?
@@ -13,26 +17,47 @@ class MenuBarManager: ObservableObject {
     }
     
     private func setupStatusItem() {
-        let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
-        statusItem = NSStatusBar.system.statusItem(withLength: isUITesting ? NSStatusItem.squareLength : NSStatusItem.variableLength)
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         
         if let button = statusItem?.button {
-            button.title = "PG"
+            if let iconImage = NSImage(named: "PGicon") {
+                iconImage.size = NSSize(width: 18, height: 18)
+                button.image = iconImage
+            }
             button.target = self
             button.action = #selector(statusItemClicked(_:))
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
             
             button.setAccessibilityIdentifier("PG")
             button.setAccessibilityLabel("PhantomGate Menu")
         }
+        updateStatusItemIcon()
+    }
+    
+    private func updateStatusItemIcon() {
+        guard let button = statusItem?.button else { return }
+        if isEnabled {
+            button.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "Close")
+        } else {
+            if let iconImage = NSImage(named: "PGicon") {
+                iconImage.size = NSSize(width: 18, height: 18)
+                button.image = iconImage
+            }
+        }
     }
     
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
+        if let event = NSApp.currentEvent {
+            if event.type == .rightMouseUp {
+                showMenu()
+            } else {
+                toggleEnabled()
+            }
+        }
+    }
+    
+    private func showMenu() {
         let menu = NSMenu()
-        
-        let toggleItem = NSMenuItem(title: "Enable/Disable", action: #selector(toggleEnabled), keyEquivalent: "")
-        toggleItem.target = self
-        toggleItem.state = isEnabled ? .on : .off
-        menu.addItem(toggleItem)
         
         let noiseToggleItem = NSMenuItem(title: "Toggle Noise", action: #selector(toggleNoise), keyEquivalent: "b")
         noiseToggleItem.target = self
