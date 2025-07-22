@@ -1,0 +1,48 @@
+{
+  "source": "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/UI/FloatingWindowManager.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Select broadband interference option:",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 160
+        }
+      },
+      {
+        "comment": "",
+        "key": "Noise Type",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 164
+        }
+      },
+      {
+        "comment": "",
+        "key": "PhantomGate",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 149
+        }
+      },
+      {
+        "comment": "",
+        "key": "Stop scramble",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 193
+        }
+      },
+      {
+        "comment": "",
+        "key": "Start scramble",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 193
+        }
+      }
+    ]
+  },
+  "version": 1
+}

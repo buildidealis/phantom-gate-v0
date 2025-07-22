@@ -22,8 +22,13 @@ class MenuBarManager: ObservableObject {
         if let button = statusItem?.button {
             if let iconImage = NSImage(named: "PGicon") {
                 iconImage.size = NSSize(width: 18, height: 18)
+                iconImage.isTemplate = true  // This ensures proper dark/light mode handling
                 button.image = iconImage
+            } else {
+                print("Failed to load PGicon image")
+                button.title = "PG"  // Fallback to text if image fails to load
             }
+            
             button.target = self
             button.action = #selector(statusItemClicked(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -31,16 +36,19 @@ class MenuBarManager: ObservableObject {
             button.setAccessibilityIdentifier("PG")
             button.setAccessibilityLabel("PhantomGate Menu")
         }
-        updateStatusItemIcon()
     }
     
     private func updateStatusItemIcon() {
         guard let button = statusItem?.button else { return }
         if isEnabled {
-            button.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "Close")
+            if let closeImage = NSImage(systemSymbolName: "xmark", accessibilityDescription: "Close") {
+                closeImage.size = NSSize(width: 18, height: 18)
+                button.image = closeImage
+            }
         } else {
             if let iconImage = NSImage(named: "PGicon") {
                 iconImage.size = NSSize(width: 18, height: 18)
+                iconImage.isTemplate = true
                 button.image = iconImage
             }
         }

@@ -32,6 +32,7 @@ class AppState: ObservableObject {
             NSApp.setActivationPolicy(.accessory)
         }
         
+        // Register fonts
         FontManager.shared.registerFonts()
         
         // Set up dependencies
@@ -47,6 +48,15 @@ struct PhantomGateApp: App {
     @StateObject private var appState = AppState()
     
     var body: some Scene {
+        MenuBarExtra {
+            EmptyView()
+        } label: {
+            Image("PGicon")
+                .resizable()
+                .frame(width: 18, height: 18)
+        }
+        .menuBarExtraStyle(.window)
+        
         Settings {
             EmptyView()
         }

@@ -26,16 +26,11 @@
     <string>public.app-category.utilities</string>
     <key>LSUIElement</key>
     <true/>
-    <key>UIAppFonts</key>
-    <array>
-        <string>Resources/Fonts/JetBrainsMono-Regular.ttf</string>
-        <string>Resources/Fonts/JetBrainsMono-Medium.ttf</string>
-        <string>Resources/Fonts/JetBrainsMono-Bold.ttf</string>
-    </array>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <true/>
-    </dict>
+    <key>ATSApplicationFontsPath</key>
+    <string>Resources/Fonts</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSSupportsAutomaticGraphicsSwitching</key>
+    <true/>
 </dict>
 </plist> 

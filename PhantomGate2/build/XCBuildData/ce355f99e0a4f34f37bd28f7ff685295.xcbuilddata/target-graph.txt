@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'PhantomGate2' in project 'PhantomGate2' (no dependencies)

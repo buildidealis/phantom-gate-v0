@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/PhantomGateApp.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Toggle Noise",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 65
+        }
+      }
+    ]
+  },
+  "version": 1
+}

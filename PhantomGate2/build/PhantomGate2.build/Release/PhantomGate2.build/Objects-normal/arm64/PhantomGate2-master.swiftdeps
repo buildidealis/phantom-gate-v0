@@ -1,0 +1,12 @@
+version: "Apple Swift version 6.1.2 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)"
+options: "8b2a76823e3505f5c7169fce14027f3ad389e00f00a0b4dd01cf38e04a95517e"
+build_start_time: [1753142401, 383007000]
+build_end_time: [1753142403, 502059000]
+inputs:
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/ContentView.swift": [1753058795, 506612782]
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/PhantomGateApp.swift": [1753140640, 469701147]
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/Audio/AudioEngine.swift": [1753140286, 60885605]
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/UI/FloatingWindowManager.swift": [1753139721, 188228850]
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/UI/MenuBarManager.swift": [1753140562, 431934240]
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/UI/WaveformView.swift": [1752891764, 853274268]
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/Utils/FontManager.swift": [1752891738, 814642489]

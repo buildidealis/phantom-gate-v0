@@ -1,0 +1,45 @@
+{
+  "" : {
+    "const-values" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGate2-master.swiftconstvalues",
+    "dependencies" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGate2-master.d",
+    "diagnostics" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGate2-master.dia",
+    "emit-module-dependencies" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGate2-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGate2-master-emit-module.dia",
+    "swift-dependencies" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGate2-master.swiftdeps"
+  },
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/ContentView.swift" : {
+    "index-unit-output-path" : "/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/PhantomGateApp.swift" : {
+    "index-unit-output-path" : "/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGateApp.o",
+    "llvm-bc" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGateApp.bc",
+    "object" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/PhantomGateApp.o"
+  },
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/Audio/AudioEngine.swift" : {
+    "index-unit-output-path" : "/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/AudioEngine.o",
+    "llvm-bc" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/AudioEngine.bc",
+    "object" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/AudioEngine.o"
+  },
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/UI/FloatingWindowManager.swift" : {
+    "index-unit-output-path" : "/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/FloatingWindowManager.o",
+    "llvm-bc" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/FloatingWindowManager.bc",
+    "object" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/FloatingWindowManager.o"
+  },
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/UI/MenuBarManager.swift" : {
+    "index-unit-output-path" : "/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/MenuBarManager.o",
+    "llvm-bc" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/MenuBarManager.bc",
+    "object" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/MenuBarManager.o"
+  },
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/UI/WaveformView.swift" : {
+    "index-unit-output-path" : "/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/WaveformView.o",
+    "llvm-bc" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/WaveformView.bc",
+    "object" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/WaveformView.o"
+  },
+  "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/Sources/Utils/FontManager.swift" : {
+    "index-unit-output-path" : "/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/FontManager.o",
+    "llvm-bc" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/FontManager.bc",
+    "object" : "/Users/mariesa/Documents/WS/phantomgate/PhantomGate2/build/PhantomGate2.build/Release/PhantomGate2.build/Objects-normal/arm64/FontManager.o"
+  }
+}
