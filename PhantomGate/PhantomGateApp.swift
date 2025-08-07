@@ -2,13 +2,12 @@
 //  PhantomGateApp.swift
 //  PhantomGate
 //
-//  Created by Mariesa Lenz on 7/17/25.
+//  Created by David Jensenius on 2025-08-07.
 //
 
 import SwiftUI
 import AppKit
 
-// Separate class to handle our app's state
 @MainActor
 class AppState: ObservableObject {
     let audioEngine: AudioEngine
@@ -45,7 +44,7 @@ class AppState: ObservableObject {
 @main
 struct PhantomGateApp: App {
     @StateObject private var appState = AppState()
-    
+
     var body: some Scene {
         Settings {
             EmptyView()

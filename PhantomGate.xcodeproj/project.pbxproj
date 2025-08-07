@@ -1,0 +1,612 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6308FFF22E45648E0092BC4F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6308FFF12E45648E0092BC4F /* AppKit.framework */; };
+		6308FFF42E4564950092BC4F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6308FFF32E4564950092BC4F /* AVFoundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6308FFAD2E4563450092BC4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6308FF962E4563440092BC4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6308FF9D2E4563440092BC4F;
+			remoteInfo = PhantomGate;
+		};
+		6308FFB72E4563450092BC4F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6308FF962E4563440092BC4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6308FF9D2E4563440092BC4F;
+			remoteInfo = PhantomGate;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		6308FF9E2E4563440092BC4F /* PhantomGate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhantomGate.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6308FFAC2E4563450092BC4F /* PhantomGateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomGateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6308FFB62E4563450092BC4F /* PhantomGateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomGateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6308FFF12E45648E0092BC4F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		6308FFF32E4564950092BC4F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6308FFE02E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Audio/AudioEngine.swift,
+				"Resources/Fonts/JetBrainsMono-Bold.ttf",
+				"Resources/Fonts/JetBrainsMono-Medium.ttf",
+				"Resources/Fonts/JetBrainsMono-Regular.ttf",
+				UI/FloatingWindowManager.swift,
+				UI/MenuBarManager.swift,
+				UI/WaveformView.swift,
+				Utils/FontManager.swift,
+			);
+			target = 6308FFAB2E4563450092BC4F /* PhantomGateTests */;
+		};
+		6308FFE12E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Audio/AudioEngine.swift,
+				"Resources/Fonts/JetBrainsMono-Bold.ttf",
+				"Resources/Fonts/JetBrainsMono-Medium.ttf",
+				"Resources/Fonts/JetBrainsMono-Regular.ttf",
+				UI/FloatingWindowManager.swift,
+				UI/MenuBarManager.swift,
+				UI/WaveformView.swift,
+				Utils/FontManager.swift,
+			);
+			target = 6308FFB52E4563450092BC4F /* PhantomGateUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		6308FFA02E4563440092BC4F /* PhantomGate */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6308FFE02E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateTests" target */,
+				6308FFE12E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateUITests" target */,
+			);
+			path = PhantomGate;
+			sourceTree = "<group>";
+		};
+		6308FFAF2E4563450092BC4F /* PhantomGateTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PhantomGateTests;
+			sourceTree = "<group>";
+		};
+		6308FFB92E4563450092BC4F /* PhantomGateUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = PhantomGateUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6308FF9B2E4563440092BC4F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6308FFF42E4564950092BC4F /* AVFoundation.framework in Frameworks */,
+				6308FFF22E45648E0092BC4F /* AppKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6308FFA92E4563450092BC4F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6308FFB32E4563450092BC4F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6308FF952E4563440092BC4F = {
+			isa = PBXGroup;
+			children = (
+				6308FFA02E4563440092BC4F /* PhantomGate */,
+				6308FFAF2E4563450092BC4F /* PhantomGateTests */,
+				6308FFB92E4563450092BC4F /* PhantomGateUITests */,
+				6308FFF02E45648D0092BC4F /* Frameworks */,
+				6308FF9F2E4563440092BC4F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6308FF9F2E4563440092BC4F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6308FF9E2E4563440092BC4F /* PhantomGate.app */,
+				6308FFAC2E4563450092BC4F /* PhantomGateTests.xctest */,
+				6308FFB62E4563450092BC4F /* PhantomGateUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6308FFF02E45648D0092BC4F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6308FFF32E4564950092BC4F /* AVFoundation.framework */,
+				6308FFF12E45648E0092BC4F /* AppKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6308FF9D2E4563440092BC4F /* PhantomGate */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6308FFC02E4563450092BC4F /* Build configuration list for PBXNativeTarget "PhantomGate" */;
+			buildPhases = (
+				6308FF9A2E4563440092BC4F /* Sources */,
+				6308FF9B2E4563440092BC4F /* Frameworks */,
+				6308FF9C2E4563440092BC4F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6308FFA02E4563440092BC4F /* PhantomGate */,
+			);
+			name = PhantomGate;
+			packageProductDependencies = (
+			);
+			productName = PhantomGate;
+			productReference = 6308FF9E2E4563440092BC4F /* PhantomGate.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6308FFAB2E4563450092BC4F /* PhantomGateTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6308FFC32E4563450092BC4F /* Build configuration list for PBXNativeTarget "PhantomGateTests" */;
+			buildPhases = (
+				6308FFA82E4563450092BC4F /* Sources */,
+				6308FFA92E4563450092BC4F /* Frameworks */,
+				6308FFAA2E4563450092BC4F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6308FFAE2E4563450092BC4F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6308FFAF2E4563450092BC4F /* PhantomGateTests */,
+			);
+			name = PhantomGateTests;
+			packageProductDependencies = (
+			);
+			productName = PhantomGateTests;
+			productReference = 6308FFAC2E4563450092BC4F /* PhantomGateTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6308FFB52E4563450092BC4F /* PhantomGateUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6308FFC62E4563450092BC4F /* Build configuration list for PBXNativeTarget "PhantomGateUITests" */;
+			buildPhases = (
+				6308FFB22E4563450092BC4F /* Sources */,
+				6308FFB32E4563450092BC4F /* Frameworks */,
+				6308FFB42E4563450092BC4F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6308FFB82E4563450092BC4F /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				6308FFB92E4563450092BC4F /* PhantomGateUITests */,
+			);
+			name = PhantomGateUITests;
+			packageProductDependencies = (
+			);
+			productName = PhantomGateUITests;
+			productReference = 6308FFB62E4563450092BC4F /* PhantomGateUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6308FF962E4563440092BC4F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					6308FF9D2E4563440092BC4F = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					6308FFAB2E4563450092BC4F = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 6308FF9D2E4563440092BC4F;
+					};
+					6308FFB52E4563450092BC4F = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 6308FF9D2E4563440092BC4F;
+					};
+				};
+			};
+			buildConfigurationList = 6308FF992E4563440092BC4F /* Build configuration list for PBXProject "PhantomGate" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6308FF952E4563440092BC4F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 6308FF9F2E4563440092BC4F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6308FF9D2E4563440092BC4F /* PhantomGate */,
+				6308FFAB2E4563450092BC4F /* PhantomGateTests */,
+				6308FFB52E4563450092BC4F /* PhantomGateUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6308FF9C2E4563440092BC4F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6308FFAA2E4563450092BC4F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6308FFB42E4563450092BC4F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6308FF9A2E4563440092BC4F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6308FFA82E4563450092BC4F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6308FFB22E4563450092BC4F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6308FFAE2E4563450092BC4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6308FF9D2E4563440092BC4F /* PhantomGate */;
+			targetProxy = 6308FFAD2E4563450092BC4F /* PBXContainerItemProxy */;
+		};
+		6308FFB82E4563450092BC4F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6308FF9D2E4563440092BC4F /* PhantomGate */;
+			targetProxy = 6308FFB72E4563450092BC4F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		6308FFBE2E4563450092BC4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		6308FFBF2E4563450092BC4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		6308FFC12E4563450092BC4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PhantomGate/PhantomGate.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6308FFC22E4563450092BC4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PhantomGate/PhantomGate.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGate;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6308FFC42E4563450092BC4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomGate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PhantomGate";
+			};
+			name = Debug;
+		};
+		6308FFC52E4563450092BC4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGateTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PhantomGate.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PhantomGate";
+			};
+			name = Release;
+		};
+		6308FFC72E4563450092BC4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGateUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = PhantomGate;
+			};
+			name = Debug;
+		};
+		6308FFC82E4563450092BC4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9JALHNGRBQ;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.buildidealis.PhantomGateUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = PhantomGate;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6308FF992E4563440092BC4F /* Build configuration list for PBXProject "PhantomGate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6308FFBE2E4563450092BC4F /* Debug */,
+				6308FFBF2E4563450092BC4F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6308FFC02E4563450092BC4F /* Build configuration list for PBXNativeTarget "PhantomGate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6308FFC12E4563450092BC4F /* Debug */,
+				6308FFC22E4563450092BC4F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6308FFC32E4563450092BC4F /* Build configuration list for PBXNativeTarget "PhantomGateTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6308FFC42E4563450092BC4F /* Debug */,
+				6308FFC52E4563450092BC4F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6308FFC62E4563450092BC4F /* Build configuration list for PBXNativeTarget "PhantomGateUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6308FFC72E4563450092BC4F /* Debug */,
+				6308FFC82E4563450092BC4F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6308FF962E4563440092BC4F /* Project object */;
+}
