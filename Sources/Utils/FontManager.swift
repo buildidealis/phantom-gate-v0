@@ -29,20 +29,37 @@ final class FontManager {
     }
     
     private func registerFont(name: String) {
-        guard !loadedFonts.contains(name),
-              let fontURL = Bundle.main.url(forResource: name, withExtension: "ttf"),
-              let fontDataProvider = CGDataProvider(url: fontURL as CFURL),
-              let font = CGFont(fontDataProvider) else {
-            print("Failed to load font: \(name)")
+        // Early exit if font already loaded
+        guard !loadedFonts.contains(name) else { return }
+
+        // Locate font file in bundle
+        guard let fontURL = Bundle.main.url(forResource: name, withExtension: "ttf") else {
+            print("Error: Font file '\(name).ttf' not found in bundle.")
             return
         }
-        
-        var error: Unmanaged<CFError>?
-        if !CTFontManagerRegisterGraphicsFont(font, &error) {
-            print("Failed to register font \(name): \(error.debugDescription)")
-        } else {
-            loadedFonts.insert(name)
+
+        // Create data provider
+        guard let fontDataProvider = CGDataProvider(url: fontURL as CFURL) else {
+            print("Error: Could not create data provider for font '\(name)'.")
+            return
         }
+
+        // Create CGFont
+        guard let cgFont = CGFont(fontDataProvider) else {
+            print("Error: Could not create CGFont object for '\(name)'.")
+            return
+        }
+
+        // Register font with CoreText
+        var error: Unmanaged<CFError>?
+        if !CTFontManagerRegisterGraphicsFont(cgFont, &error) {
+            let errorDescription = error?.takeUnretainedValue().localizedDescription ?? "Unknown error"
+            print("Error: Failed to register font '\(name)': \(errorDescription)")
+            return
+        }
+
+        // Mark as loaded
+        loadedFonts.insert(name)
     }
     
     func font(weight: FontWeight = .regular, size: CGFloat) -> Font {
