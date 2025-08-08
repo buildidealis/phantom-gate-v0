@@ -122,7 +122,7 @@ struct UIComponentTests {
     // MARK: - MenuBarManager Tests
     
     @Test func testMenuBarManagerInitialization() async throws {
-        let menuBarManager = MenuBarManager()
+        let menuBarManager = await MainActor.run { MenuBarManager() }
         
         // Test initial state
         #expect(await menuBarManager.isEnabled == false)
@@ -131,9 +131,9 @@ struct UIComponentTests {
     }
     
     @Test func testMenuBarManagerDependencyInjection() async throws {
-        let menuBarManager = MenuBarManager()
-        let audioEngine = AudioEngine()
-        let floatingManager = FloatingWindowManager()
+        let menuBarManager = await MainActor.run { MenuBarManager() }
+        let audioEngine = await MainActor.run { AudioEngine() }
+        let floatingManager = await MainActor.run { FloatingWindowManager() }
         
         // Test setting dependencies
         await menuBarManager.setAudioEngine(audioEngine)
@@ -146,7 +146,7 @@ struct UIComponentTests {
     // MARK: - FloatingWindowManager Tests
     
     @Test func testFloatingWindowManagerInitialization() async throws {
-        let floatingManager = FloatingWindowManager()
+        let floatingManager = await MainActor.run { FloatingWindowManager() }
         
         // Test initial state
         #expect(await floatingManager.isVisible == false)
@@ -154,7 +154,7 @@ struct UIComponentTests {
     }
     
     @Test func testFloatingWindowManagerVisibilityToggle() async throws {
-        let floatingManager = FloatingWindowManager()
+        let floatingManager = await MainActor.run { FloatingWindowManager() }
         
         // Test initial state
         #expect(await floatingManager.isVisible == false)
@@ -169,8 +169,8 @@ struct UIComponentTests {
     }
     
     @Test func testFloatingWindowManagerAudioEngineSetup() async throws {
-        let floatingManager = FloatingWindowManager()
-        let audioEngine = AudioEngine()
+        let floatingManager = await MainActor.run { FloatingWindowManager() }
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test setting audio engine
         await floatingManager.setAudioEngine(audioEngine)
