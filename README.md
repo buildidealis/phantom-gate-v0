@@ -116,31 +116,10 @@ PhantomGate/
 └── PhantomGateApp.swift # Main application entry point
 ```
 
-## Contributing
-
-We welcome contributions to PhantomGate! Please feel free to submit issues, feature requests, or pull requests.
-
-### Development Guidelines
-
-- Follow Swift coding conventions
-- Include tests for new functionality
-- Update documentation as needed
-- Ensure accessibility compliance
-
 ## Support & Feedback
 
 For support, bug reports, or feature requests, please contact:
 - Email: lenzmariesa@gmail.com
-
-## License
-
-This project is open source. Please see the repository for license details.
-
-## Acknowledgments
-
-- Built with Swift and SwiftUI
-- Uses JetBrains Mono font
-- Inspired by the need for better focus tools in the modern workspace
 
 ---
 
