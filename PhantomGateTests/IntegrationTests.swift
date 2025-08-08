@@ -192,4 +192,3 @@ struct IntegrationTests {
         #expect(midHeightBar.delay == 0.35)
     }
 }
-}
