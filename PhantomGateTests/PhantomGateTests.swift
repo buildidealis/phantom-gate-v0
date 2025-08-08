@@ -33,7 +33,7 @@ struct PhantomGateTests {
         }
     }
 
-    @Test func testBasicComponentCreation() async throws {
+    @Test @MainActor func testBasicComponentCreation() async throws {
         // Test that FontManager (non-UI component) can be created
         let fontManager = FontManager.shared
         #expect(fontManager != nil)

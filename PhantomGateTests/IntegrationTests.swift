@@ -15,7 +15,7 @@ struct IntegrationTests {
 
     // MARK: - App Integration Logic Tests (No Hardware Dependencies)
 
-    @Test func testAppStateInitialization() async throws {
+    @Test @MainActor func testAppStateInitialization() async throws {
         // Test app state logic without creating actual components
 
         // Test ProcessInfo arguments handling
@@ -147,7 +147,7 @@ struct IntegrationTests {
         }
     }
 
-    @Test func testMultipleFontCreationCalls() async throws {
+    @Test @MainActor func testMultipleFontCreationCalls() async throws {
         let fontManager = FontManager.shared
 
         // Test creating many fonts rapidly

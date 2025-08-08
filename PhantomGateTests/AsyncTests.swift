@@ -144,7 +144,7 @@ struct AsyncTests {
 
         // Simulate async initialization
         await withCheckedContinuation { continuation in
-            Task {
+            Task { @MainActor in
                 // Simulate font registration
                 let fontManager = FontManager.shared
                 fontManager.registerFonts()
@@ -163,12 +163,12 @@ struct AsyncTests {
     }
 
     @Test func testConcurrentFontCreation() async throws {
-        let fontManager = FontManager.shared
+        let fontManager = await FontManager.shared
 
         // Test creating fonts concurrently
         await withTaskGroup(of: Void.self) { group in
             for size in stride(from: 12, through: 24, by: 2) {
-                group.addTask {
+                group.addTask { @MainActor in
                     let font = fontManager.font(weight: .regular, size: CGFloat(size))
                     #expect(font != nil)
                 }

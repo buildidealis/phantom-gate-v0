@@ -33,7 +33,7 @@ struct FontManagerTests {
 
     // MARK: - FontManager Singleton Tests
 
-    @Test func testFontManagerSingletonPattern() async throws {
+    @Test @MainActor func testFontManagerSingletonPattern() async throws {
         let instance1 = FontManager.shared
         let instance2 = FontManager.shared
 
@@ -43,7 +43,7 @@ struct FontManagerTests {
 
     // MARK: - Font Creation Tests
 
-    @Test func testFontCreationWithDifferentWeights() async throws {
+    @Test @MainActor func testFontCreationWithDifferentWeights() async throws {
         let fontManager = FontManager.shared
 
         let regularFont = fontManager.font(weight: .regular, size: 16)
@@ -71,7 +71,7 @@ struct FontManagerTests {
         #expect(largeFont != nil)
     }
 
-    @Test func testFontCreationWithDefaultWeight() async throws {
+    @Test @MainActor func testFontCreationWithDefaultWeight() async throws {
         let fontManager = FontManager.shared
 
         // Test default weight (should be .regular)
@@ -83,7 +83,7 @@ struct FontManagerTests {
         #expect(explicitRegularFont != nil)
     }
 
-    @Test func testFontCreationWithEdgeCaseSizes() async throws {
+    @Test @MainActor func testFontCreationWithEdgeCaseSizes() async throws {
         let fontManager = FontManager.shared
 
         // Test with very small and large sizes
@@ -99,7 +99,7 @@ struct FontManagerTests {
 
     // MARK: - Font Registration Tests
 
-    @Test func testFontRegistrationCanBeCalled() async throws {
+    @Test @MainActor func testFontRegistrationCanBeCalled() async throws {
         let fontManager = FontManager.shared
 
         // Test that registerFonts() can be called without errors
