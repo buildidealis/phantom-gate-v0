@@ -209,7 +209,7 @@ struct FloatingControlView: View {
                     }
                     .accessibilityIdentifier("TogglePlaybackButton")
                     .disabled(manager.audioEngine == nil)
-                    .environment(\.colorScheme, .dark) 
+                    .environment(\.colorScheme, .dark)
                 }
             }
         }
