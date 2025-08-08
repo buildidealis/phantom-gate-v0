@@ -38,26 +38,14 @@ final class FontManager {
             return
         }
 
-        // Create data provider
-        guard let fontDataProvider = CGDataProvider(url: fontURL as CFURL) else {
-            print("Error: Could not create data provider for font '\(name)'.")
-            return
-        }
-
-        // Create CGFont
-        guard let cgFont = CGFont(fontDataProvider) else {
-            print("Error: Could not create CGFont object for '\(name)'.")
-            return
-        }
-
         // Register font with CoreText
         var error: Unmanaged<CFError>?
-        if !CTFontManagerRegisterGraphicsFont(cgFont, &error) {
-            let errorDescription = error?.takeUnretainedValue().localizedDescription ?? "Unknown error"
-            print("Error: Failed to register font '\(name)': \(errorDescription)")
+        let success = CTFontManagerRegisterFontsForURL(fontURL as CFURL, .process, &error)
+        if !success {
+            let message = (error?.takeRetainedValue().localizedDescription) ?? "Unknown error"
+            print("Error: Failed to register font '\(name)' via URL: \(message)")
             return
         }
-
         // Mark as loaded
         loadedFonts.insert(name)
     }
