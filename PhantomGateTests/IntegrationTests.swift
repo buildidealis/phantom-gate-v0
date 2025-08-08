@@ -17,19 +17,19 @@ struct IntegrationTests {
         let appState = AppState()
         
         // Test that all components are properly initialized
-        #expect(appState.audioEngine != nil)
-        #expect(appState.menuBarManager != nil)
-        #expect(appState.floatingManager != nil)
-        #expect(appState.isInitialized == true)
+        #expect(await appState.audioEngine != nil)
+        #expect(await appState.menuBarManager != nil)
+        #expect(await appState.floatingManager != nil)
+        #expect(await appState.isInitialized == true)
     }
     
     @Test func testAppStateDependencyWiring() async throws {
         let appState = AppState()
         
         // Test that dependencies are properly wired
-        #expect(appState.menuBarManager.audioEngine === appState.audioEngine)
-        #expect(appState.menuBarManager.floatingManager === appState.floatingManager)
-        #expect(appState.floatingManager.audioEngine === appState.audioEngine)
+        #expect(await appState.menuBarManager.audioEngine === await appState.audioEngine)
+        #expect(await appState.menuBarManager.floatingManager === await appState.floatingManager)
+        #expect(await appState.floatingManager.audioEngine === await appState.audioEngine)
     }
     
     // MARK: - Component Interaction Tests
@@ -38,11 +38,11 @@ struct IntegrationTests {
         let menuBarManager = MenuBarManager()
         let floatingManager = FloatingWindowManager()
         
-        menuBarManager.setFloatingManager(floatingManager)
+        await menuBarManager.setFloatingManager(floatingManager)
         
         // Initial states
-        #expect(menuBarManager.isEnabled == false)
-        #expect(floatingManager.isVisible == false)
+        #expect(await menuBarManager.isEnabled == false)
+        #expect(await floatingManager.isVisible == false)
         
         // Note: Actual UI interaction testing would require AppKit to be available
         // In a real test environment with UI, we would test the toggle functionality
@@ -52,13 +52,13 @@ struct IntegrationTests {
         let menuBarManager = MenuBarManager()
         let audioEngine = AudioEngine()
         
-        menuBarManager.setAudioEngine(audioEngine)
+        await menuBarManager.setAudioEngine(audioEngine)
         
         // Verify the audio engine is properly set
-        #expect(menuBarManager.audioEngine === audioEngine)
+        #expect(await menuBarManager.audioEngine === audioEngine)
         
         // Test initial audio state
-        #expect(audioEngine.isPlaying == false)
+        #expect(await audioEngine.isPlaying == false)
     }
     
     // MARK: - Edge Case Tests
@@ -68,8 +68,8 @@ struct IntegrationTests {
         let engine2 = AudioEngine()
         
         // Test that multiple instances can coexist
-        #expect(engine1.isPlaying == false)
-        #expect(engine2.isPlaying == false)
+        #expect(await engine1.isPlaying == false)
+        #expect(await engine2.isPlaying == false)
         #expect(engine1 !== engine2) // Different instances
     }
     
@@ -77,15 +77,15 @@ struct IntegrationTests {
         let audioEngine = AudioEngine()
         
         // Test initial state consistency
-        #expect(audioEngine.isPlaying == false)
-        #expect(audioEngine.currentFrequency == 0.0)
+        #expect(await audioEngine.isPlaying == false)
+        #expect(await audioEngine.currentFrequency == 0.0)
         
         // Test noise type selection consistency
         for noiseType in NoiseType.allCases {
-            audioEngine.selectNoiseType(noiseType)
+            await audioEngine.selectNoiseType(noiseType)
             // State should remain consistent
-            #expect(audioEngine.isPlaying == false)
-            #expect(audioEngine.currentFrequency == 0.0)
+            #expect(await audioEngine.isPlaying == false)
+            #expect(await audioEngine.currentFrequency == 0.0)
         }
     }
     
@@ -125,7 +125,7 @@ struct IntegrationTests {
         // Test that async operations can be called without immediate errors
         do {
             try await audioEngine.stopPlayback() // Should not error when already stopped
-            #expect(audioEngine.isPlaying == false)
+            #expect(await audioEngine.isPlaying == false)
         } catch {
             Issue.record("stopPlayback should not throw when already stopped: \(error)")
         }

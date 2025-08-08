@@ -70,8 +70,8 @@ struct AudioEngineTests {
         let audioEngine = AudioEngine()
         
         // Test initial state
-        #expect(audioEngine.isPlaying == false)
-        #expect(audioEngine.currentFrequency == 0.0)
+        #expect(await audioEngine.isPlaying == false)
+        #expect(await audioEngine.currentFrequency == 0.0)
     }
     
     @Test func testAudioEngineNoiseTypeSelection() async throws {
@@ -79,9 +79,9 @@ struct AudioEngineTests {
         
         // Test that noise type selection doesn't crash when not playing
         for noiseType in NoiseType.allCases {
-            audioEngine.selectNoiseType(noiseType)
+            await audioEngine.selectNoiseType(noiseType)
             // Should remain in non-playing state
-            #expect(audioEngine.isPlaying == false)
+            #expect(await audioEngine.isPlaying == false)
         }
     }
     
@@ -89,13 +89,13 @@ struct AudioEngineTests {
         let audioEngine = AudioEngine()
         
         // Test initial state
-        #expect(audioEngine.isPlaying == false)
+        #expect(await audioEngine.isPlaying == false)
         
         // Test that multiple stop calls don't cause issues
         do {
             try await audioEngine.stopPlayback()
             try await audioEngine.stopPlayback()
-            #expect(audioEngine.isPlaying == false)
+            #expect(await audioEngine.isPlaying == false)
         } catch {
             // StopPlayback should not throw when already stopped
             Issue.record("stopPlayback should not throw when already stopped: \(error)")

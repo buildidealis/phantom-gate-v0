@@ -16,12 +16,12 @@ struct AsyncTests {
         let audioEngine = AudioEngine()
         
         // Verify initial state
-        #expect(audioEngine.isPlaying == false)
+        #expect(await audioEngine.isPlaying == false)
         
         // Test that stopping when already stopped doesn't throw
         do {
             try await audioEngine.stopPlayback()
-            #expect(audioEngine.isPlaying == false)
+            #expect(await audioEngine.isPlaying == false)
         } catch {
             Issue.record("stopPlayback should not throw when already stopped: \(error)")
         }
@@ -34,7 +34,7 @@ struct AsyncTests {
         for _ in 0..<3 {
             do {
                 try await audioEngine.stopPlayback()
-                #expect(audioEngine.isPlaying == false)
+                #expect(await audioEngine.isPlaying == false)
             } catch {
                 Issue.record("Multiple stop calls should not throw: \(error)")
             }
@@ -57,20 +57,20 @@ struct AsyncTests {
             }
         }
         
-        #expect(audioEngine.isPlaying == false)
+        #expect(await audioEngine.isPlaying == false)
     }
     
     @Test func testAudioEngineStateConsistencyAfterAsyncOperations() async throws {
         let audioEngine = AudioEngine()
         
         // Test that state remains consistent after async operations
-        let initialPlaying = audioEngine.isPlaying
-        let initialFrequency = audioEngine.currentFrequency
+        let initialPlaying = await audioEngine.isPlaying
+        let initialFrequency = await audioEngine.currentFrequency
         
         try await audioEngine.stopPlayback()
         
-        #expect(audioEngine.isPlaying == initialPlaying) // Should remain false
-        #expect(audioEngine.currentFrequency == initialFrequency) // Should remain 0
+        #expect(await audioEngine.isPlaying == initialPlaying) // Should remain false
+        #expect(await audioEngine.currentFrequency == initialFrequency) // Should remain 0
     }
     
     // MARK: - Task-based Tests
@@ -82,13 +82,13 @@ struct AsyncTests {
         await withTaskGroup(of: Void.self) { group in
             for noiseType in NoiseType.allCases {
                 group.addTask {
-                    audioEngine.selectNoiseType(noiseType)
+                    await audioEngine.selectNoiseType(noiseType)
                 }
             }
         }
         
         // Should not crash and should remain in stopped state
-        #expect(audioEngine.isPlaying == false)
+        #expect(await audioEngine.isPlaying == false)
     }
     
     @Test func testComponentInitializationConcurrency() async throws {
@@ -104,9 +104,9 @@ struct AsyncTests {
             }
             
             for await (audioEngine, menuBarManager, floatingManager) in group {
-                #expect(audioEngine.isPlaying == false)
-                #expect(menuBarManager.isEnabled == false)
-                #expect(floatingManager.isVisible == false)
+                #expect(await audioEngine.isPlaying == false)
+                #expect(await menuBarManager.isEnabled == false)
+                #expect(await floatingManager.isVisible == false)
             }
         }
     }
@@ -119,7 +119,7 @@ struct AsyncTests {
         let appState = AppState()
         let endTime = Date()
         
-        #expect(appState.isInitialized == true)
+        #expect(await appState.isInitialized == true)
         
         // Initialization should be relatively quick
         let duration = endTime.timeIntervalSince(startTime)

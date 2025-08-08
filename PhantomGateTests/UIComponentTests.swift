@@ -125,9 +125,9 @@ struct UIComponentTests {
         let menuBarManager = MenuBarManager()
         
         // Test initial state
-        #expect(menuBarManager.isEnabled == false)
-        #expect(menuBarManager.audioEngine == nil)
-        #expect(menuBarManager.floatingManager == nil)
+        #expect(await menuBarManager.isEnabled == false)
+        #expect(await menuBarManager.audioEngine == nil)
+        #expect(await menuBarManager.floatingManager == nil)
     }
     
     @Test func testMenuBarManagerDependencyInjection() async throws {
@@ -136,11 +136,11 @@ struct UIComponentTests {
         let floatingManager = FloatingWindowManager()
         
         // Test setting dependencies
-        menuBarManager.setAudioEngine(audioEngine)
-        menuBarManager.setFloatingManager(floatingManager)
+        await menuBarManager.setAudioEngine(audioEngine)
+        await menuBarManager.setFloatingManager(floatingManager)
         
-        #expect(menuBarManager.audioEngine === audioEngine)
-        #expect(menuBarManager.floatingManager === floatingManager)
+        #expect(await menuBarManager.audioEngine === audioEngine)
+        #expect(await menuBarManager.floatingManager === floatingManager)
     }
     
     // MARK: - FloatingWindowManager Tests
@@ -149,20 +149,20 @@ struct UIComponentTests {
         let floatingManager = FloatingWindowManager()
         
         // Test initial state
-        #expect(floatingManager.isVisible == false)
-        #expect(floatingManager.audioEngine == nil)
+        #expect(await floatingManager.isVisible == false)
+        #expect(await floatingManager.audioEngine == nil)
     }
     
     @Test func testFloatingWindowManagerVisibilityToggle() async throws {
         let floatingManager = FloatingWindowManager()
         
         // Test initial state
-        #expect(floatingManager.isVisible == false)
+        #expect(await floatingManager.isVisible == false)
         
         // Note: toggleVisibility() requires a window to be set up,
         // so we can't test the actual toggle in a unit test environment,
         // but we can verify the method exists and can be called
-        floatingManager.toggleVisibility()
+        await floatingManager.toggleVisibility()
         
         // The toggle should not crash even without proper window setup
         #expect(true) // If we reach this point, no crash occurred
@@ -173,8 +173,8 @@ struct UIComponentTests {
         let audioEngine = AudioEngine()
         
         // Test setting audio engine
-        floatingManager.setAudioEngine(audioEngine)
+        await floatingManager.setAudioEngine(audioEngine)
         
-        #expect(floatingManager.audioEngine === audioEngine)
+        #expect(await floatingManager.audioEngine === audioEngine)
     }
 }

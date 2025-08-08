@@ -59,10 +59,10 @@ struct PhantomGateTests {
         // Test that the main app state can be created
         let appState = AppState()
         
-        #expect(appState.isInitialized == true)
-        #expect(appState.audioEngine != nil)
-        #expect(appState.menuBarManager != nil)
-        #expect(appState.floatingManager != nil)
+        #expect(await appState.isInitialized == true)
+        #expect(await appState.audioEngine != nil)
+        #expect(await appState.menuBarManager != nil)
+        #expect(await appState.floatingManager != nil)
     }
 
 }
