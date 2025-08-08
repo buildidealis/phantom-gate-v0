@@ -60,12 +60,15 @@ class FloatingWindowManager: ObservableObject {
         let root = FloatingControlView(manager: self)
         let hosting = NSHostingView(rootView: root.fixedSize()) // fixedSize to hug content
         window.contentView = hosting
-
+        
         // Defer first intrinsic sizing one tick
+        // This is breaking in Swift 6 / iOS 26
+        /*
         DispatchQueue.main.async { [weak self, weak hosting] in
             guard let self, let hosting, self.window != nil else { return }
             self.applySize(hosting.fittingSize, anchorTopRight: true, animated: false)
         }
+         */
     }
 
     func resize(to newContentSize: CGSize) {
