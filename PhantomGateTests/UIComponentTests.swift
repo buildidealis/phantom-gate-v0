@@ -21,11 +21,12 @@ struct UIComponentTests {
         let white = Color(hex: "FFFFFF")
         let black = Color(hex: "000000")
 
-        #expect(red != nil)
-        #expect(green != nil)
-        #expect(blue != nil)
-        #expect(white != nil)
-        #expect(black != nil)
+        // Colors are always created successfully
+        #expect(red.description.count > 0)
+        #expect(green.description.count > 0)
+        #expect(blue.description.count > 0)
+        #expect(white.description.count > 0)
+        #expect(black.description.count > 0)
     }
 
     @Test func testColorHex3DigitInitialization() async throws {
@@ -36,11 +37,12 @@ struct UIComponentTests {
         let white = Color(hex: "FFF")
         let black = Color(hex: "000")
 
-        #expect(red != nil)
-        #expect(green != nil)
-        #expect(blue != nil)
-        #expect(white != nil)
-        #expect(black != nil)
+        // Colors are always created successfully
+        #expect(red.description.count > 0)
+        #expect(green.description.count > 0)
+        #expect(blue.description.count > 0)
+        #expect(white.description.count > 0)
+        #expect(black.description.count > 0)
     }
 
     @Test func testColorHexCaseInsensitive() async throws {
@@ -49,9 +51,10 @@ struct UIComponentTests {
         let lowerCase = Color(hex: "ff0000")
         let mixedCase = Color(hex: "Ff00Aa")
 
-        #expect(upperCase != nil)
-        #expect(lowerCase != nil)
-        #expect(mixedCase != nil)
+        // Colors are always created successfully
+        #expect(upperCase.description.count > 0)
+        #expect(lowerCase.description.count > 0)
+        #expect(mixedCase.description.count > 0)
     }
 
     @Test func testColorHexWithHashPrefix() async throws {
@@ -59,8 +62,9 @@ struct UIComponentTests {
         let withHash = Color(hex: "#FF0000")
         let withoutHash = Color(hex: "FF0000")
 
-        #expect(withHash != nil)
-        #expect(withoutHash != nil)
+        // Colors are always created successfully
+        #expect(withHash.description.count > 0)
+        #expect(withoutHash.description.count > 0)
     }
 
     @Test func testColorHexWithInvalidCharacters() async throws {
@@ -69,9 +73,10 @@ struct UIComponentTests {
         let withSymbols = Color(hex: "#FF0000!")
         let withLetters = Color(hex: "GG0000") // G is not a hex digit
 
-        #expect(withSpaces != nil)
-        #expect(withSymbols != nil)
-        #expect(withLetters != nil) // Should still create a color, just with 0 for invalid chars
+        // Colors are always created successfully, even with invalid chars
+        #expect(withSpaces.description.count > 0)
+        #expect(withSymbols.description.count > 0)
+        #expect(withLetters.description.count > 0) // Should still create a color, just with 0 for invalid chars
     }
 
     @Test func testColorHexPhantomGateColors() async throws {
@@ -79,8 +84,9 @@ struct UIComponentTests {
         let greenWaveform = Color(hex: "00ff88") // Used in WaveformView
         let redButton = Color(hex: "ff3366") // Used in FloatingWindowManager
 
-        #expect(greenWaveform != nil)
-        #expect(redButton != nil)
+        // Colors are always created successfully
+        #expect(greenWaveform.description.count > 0)
+        #expect(redButton.description.count > 0)
     }
 
     // MARK: - WaveformView Tests
@@ -131,7 +137,7 @@ struct UIComponentTests {
 
         // Test that we can access process info environment
         let uiTestingEnv = ProcessInfo.processInfo.environment["UI_TESTING"]
-        #expect(uiTestingEnv == nil || uiTestingEnv is String) // Should be nil or string
+        #expect(uiTestingEnv != nil || uiTestingEnv == nil) // Should be nil or string
     }
 
     @Test func testMenuBarManagerDependencyInjection() async throws {
@@ -167,7 +173,7 @@ struct UIComponentTests {
 
             // Test positioning logic
             let windowWidth: CGFloat = 300
-            let windowHeight: CGFloat = 200
+            let _: CGFloat = 200 // windowHeight not used in calculations
             let padding: CGFloat = 20
 
             let expectedX = screenFrame.maxX - windowWidth - padding

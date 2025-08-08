@@ -51,10 +51,10 @@ struct FontManagerTests {
         let semiBoldFont = fontManager.font(weight: .semiBold, size: 16)
 
         // All fonts should be created successfully
-        #expect(regularFont != nil)
-        #expect(mediumFont != nil)
-        #expect(boldFont != nil)
-        #expect(semiBoldFont != nil)
+        #expect(regularFont.description.count > 0)
+        #expect(mediumFont.description.count > 0)
+        #expect(boldFont.description.count > 0)
+        #expect(semiBoldFont.description.count > 0)
     }
 
     @Test func testFontCreationWithDifferentSizes() async throws {
@@ -65,9 +65,9 @@ struct FontManagerTests {
         let largeFont = fontManager.font(weight: .regular, size: 24)
 
         // All fonts should be created successfully
-        #expect(smallFont != nil)
-        #expect(mediumFont != nil)
-        #expect(largeFont != nil)
+        #expect(smallFont.description.count > 0)
+        #expect(mediumFont.description.count > 0)
+        #expect(largeFont.description.count > 0)
     }
 
     @Test func testFontCreationWithDefaultWeight() async throws {
@@ -78,8 +78,8 @@ struct FontManagerTests {
         let explicitRegularFont = fontManager.font(weight: .regular, size: 16)
 
         // Both should be valid
-        #expect(defaultFont != nil)
-        #expect(explicitRegularFont != nil)
+        #expect(defaultFont.description.count > 0)
+        #expect(explicitRegularFont.description.count > 0)
     }
 
     @Test func testFontCreationWithEdgeCaseSizes() async throws {
@@ -91,9 +91,9 @@ struct FontManagerTests {
         let zeroFont = fontManager.font(weight: .regular, size: 0)
 
         // All should be created without errors
-        #expect(tinyFont != nil)
-        #expect(hugeFont != nil)
-        #expect(zeroFont != nil)
+        #expect(tinyFont.description.count > 0)
+        #expect(hugeFont.description.count > 0)
+        #expect(zeroFont.description.count > 0)
     }
 
     // MARK: - Font Registration Tests
