@@ -146,63 +146,69 @@ struct FloatingControlView: View {
     }
 
     private var content: some View {
-        VStack(spacing: 16) {
-            HStack {
-                Text("PhantomGate")
-                    .font(FontManager.shared.font(weight: .bold, size: 18))
+        VStack(alignment: .trailing) {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    Text("PhantomGate")
+                        .font(FontManager.shared.font(weight: .bold, size: 48))
+                        .foregroundColor(Color.phantomGreen)
+                    Spacer()
+                    Button(
+                        action: { manager.toggleVisibility() },
+                        label: {
+                            Image(systemName: "xmark")
+                                .foregroundColor(.white)
+                                .accessibilityIdentifier("CloseButton")
+                        }
+                    )
+                }
+
+                Text("Select broadband interference option:")
+                    .font(FontManager.shared.font(weight: .medium, size: 14))
                     .foregroundColor(.white)
-                Spacer()
-                Button(
-                    action: { manager.toggleVisibility() },
-                    label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(.white)
-                            .accessibilityIdentifier("CloseButton")
+
+                Picker("", selection: $selectedNoiseType) {
+                        ForEach(NoiseType.allCases, id: \.self) { type in
+                            Text(type.rawValue).tag(type)
+                        }
                     }
-                )
-            }
-
-            Text("Select broadband interference option:")
-                .font(FontManager.shared.font(weight: .medium, size: 14))
-                .foregroundColor(.white)
-
-            Picker("Noise Type", selection: $selectedNoiseType) {
-                ForEach(NoiseType.allCases, id: \.self) { type in
-                    Text(type.rawValue).tag(type)
-                }
-            }
-            .pickerStyle(.menu)
-            .disabled(isPlaying)
-            .accessibilityIdentifier("NoiseTypePicker")
-            .onChange(of: selectedNoiseType) { _, newValue in
-                guard let engine = manager.audioEngine else { return }
-                Task { engine.selectNoiseType(newValue) }
-            }
-
-            HStack {
-                VStack(alignment: .leading) {
-                    WaveformView(isPlaying: isPlaying)
-                        .frame(width: 100)
-                        .accessibilityIdentifier("WaveformView")
-                    if isPlaying {
-                        Text(String(format: "%.1f kHz", currentFrequency / 1000))
-                            .font(FontManager.shared.font(weight: .medium, size: 12))
-                            .foregroundColor(.white)
-                            .accessibilityIdentifier("FrequencyLabel")
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .disabled(isPlaying)
+                    .accessibilityIdentifier("NoiseTypePicker")
+                    .accessibilityLabel("Select broadband interface option")
+                    .onChange(of: selectedNoiseType) { _, newValue in
+                        guard let engine = manager.audioEngine else { return }
+                        Task { engine.selectNoiseType(newValue)}
                     }
-                }
+            }
 
-                Button(action: togglePlayback) {
-                    Text(isPlaying ? "Stop scramble" : "Start scramble")
-                        .font(FontManager.shared.font(weight: .medium, size: 14))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 8)
-                        .background(Color(hex: isPlaying ? "ff3366" : "00ff88"))
-                        .cornerRadius(4)
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                    VStack {
+                        WaveformView(isPlaying: isPlaying)
+                            .frame(width: 100)
+                            .accessibilityIdentifier("WaveformView")
+                        if isPlaying {
+                            Text(String(format: "%.1f kHz", currentFrequency / 1000))
+                                .font(FontManager.shared.font(weight: .medium, size: 12))
+                                .foregroundColor(.white)
+                                .accessibilityIdentifier("FrequencyLabel")
+                        }
+                    }
+
+                    Button(action: togglePlayback) {
+                        Text(isPlaying ? "Stop scramble" : "Start scramble")
+                            .font(FontManager.shared.font(weight: .medium, size: 14))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color(hex: isPlaying ? "ff3366" : "00ff88"))
+                            .cornerRadius(4)
+                    }
+                    .accessibilityIdentifier("TogglePlaybackButton")
+                    .disabled(manager.audioEngine == nil)
                 }
-                .accessibilityIdentifier("TogglePlaybackButton")
-                .disabled(manager.audioEngine == nil)
             }
         }
     }
@@ -303,3 +309,88 @@ extension Color {
         )
     }
 }
+
+#if DEBUG
+
+// MARK: - Mock Audio Engine (adjust if your real API differs)
+final class MockAudioEngine: AudioEngine {
+    override var isPlaying: Bool {
+        get { _isPlaying }
+        set { _isPlaying = newValue }
+    }
+    private var _isPlaying = false
+
+    override var currentFrequency: Float { mockFrequency }
+    var mockFrequency: Float = 12_345
+
+    override func selectNoiseType(_ type: NoiseType) {
+        // no-op
+    }
+
+    override func startPlayback() async throws {
+        _isPlaying = true
+    }
+
+    override func stopPlayback() async throws {
+        _isPlaying = false
+    }
+}
+
+// MARK: - Preview Manager (skips real window sizing side-effects)
+@MainActor
+final class PreviewFloatingWindowManager: FloatingWindowManager {
+    override init() {
+        super.init()
+        // Inject a mock engine if you want interactive pieces enabled
+        let mock = MockAudioEngine()
+        self.setAudioEngine(mock)
+    }
+}
+
+// Convenience helpers
+@MainActor
+private extension PreviewFloatingWindowManager {
+    static func idle() -> PreviewFloatingWindowManager {
+        PreviewFloatingWindowManager()
+    }
+    static func playing() -> PreviewFloatingWindowManager {
+        let mgr = PreviewFloatingWindowManager()
+        if let engine = mgr.audioEngine as? MockAudioEngine {
+            engine.isPlaying = true
+        }
+        return mgr
+    }
+}
+
+// MARK: - Previews
+
+#Preview("Idle (Dark)") {
+    FloatingControlView(manager: PreviewFloatingWindowManager.idle())
+        .padding()
+        .background(Color.black)
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Playing (Dark)") {
+    FloatingControlView(manager: PreviewFloatingWindowManager.playing())
+        .padding()
+        .background(Color.black)
+        .preferredColorScheme(.dark)
+}
+
+#Preview("Idle (Light)") {
+    FloatingControlView(manager: PreviewFloatingWindowManager.idle())
+        .padding()
+        .background(Color.gray.opacity(0.15))
+        .preferredColorScheme(.light)
+}
+
+// Example with fixed preview size
+#Preview("Fixed Size 300x260") {
+    FloatingControlView(manager: PreviewFloatingWindowManager.idle())
+        .frame(width: 300, height: 260)
+        .background(Color.black)
+        .preferredColorScheme(.dark)
+}
+
+#endif
