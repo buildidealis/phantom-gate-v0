@@ -265,11 +265,11 @@ private struct SizeReader: View {
                     lastSize = size
                     onChange(size)
                 }
-                .onChange(of: proxy.size) { new in
-                    guard abs(new.width - lastSize.width) > 0.5 ||
-                          abs(new.height - lastSize.height) > 0.5 else { return }
-                    lastSize = new
-                    onChange(new)
+                .onChange(of: proxy.size, initial: true) { _, newSize in
+                    guard abs(newSize.width - lastSize.width) > 0.5 ||
+                          abs(newSize.height - lastSize.height) > 0.5 else { return }
+                    lastSize = newSize
+                    onChange(newSize)
                 }
         }
         // GeometryReader expands—collapse it back down
