@@ -67,7 +67,7 @@ struct AudioEngineTests {
     // MARK: - AudioEngine Basic Tests
     
     @Test func testAudioEngineInitialState() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test initial state
         #expect(await audioEngine.isPlaying == false)
@@ -75,7 +75,7 @@ struct AudioEngineTests {
     }
     
     @Test func testAudioEngineNoiseTypeSelection() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test that noise type selection doesn't crash when not playing
         for noiseType in NoiseType.allCases {
@@ -86,7 +86,7 @@ struct AudioEngineTests {
     }
     
     @Test func testAudioEnginePlaybackStateTransitions() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test initial state
         #expect(await audioEngine.isPlaying == false)

@@ -33,9 +33,9 @@ struct PhantomGateTests {
     
     @Test func testBasicComponentCreation() async throws {
         // Test that basic components can be created without errors
-        let audioEngine = AudioEngine()
-        let menuBarManager = MenuBarManager()
-        let floatingManager = FloatingWindowManager()
+        let audioEngine = await MainActor.run { AudioEngine() }
+        let menuBarManager = await MainActor.run { MenuBarManager() }
+        let floatingManager = await MainActor.run { FloatingWindowManager() }
         let fontManager = FontManager.shared
         
         #expect(audioEngine != nil)
@@ -57,7 +57,7 @@ struct PhantomGateTests {
     
     @Test func testAppStateBasics() async throws {
         // Test that the main app state can be created
-        let appState = AppState()
+        let appState = await MainActor.run { AppState() }
         
         #expect(await appState.isInitialized == true)
         #expect(await appState.audioEngine != nil)

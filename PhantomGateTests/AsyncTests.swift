@@ -6,6 +6,9 @@
 //
 
 import Testing
+import Foundation
+import SwiftUI
+import CoreGraphics
 @testable import PhantomGate
 
 struct AsyncTests {
@@ -13,7 +16,7 @@ struct AsyncTests {
     // MARK: - Async AudioEngine Tests
     
     @Test func testAudioEngineStopPlaybackWhenStopped() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Verify initial state
         #expect(await audioEngine.isPlaying == false)
@@ -28,7 +31,7 @@ struct AsyncTests {
     }
     
     @Test func testMultipleStopCallsInSequence() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test multiple stop calls in sequence
         for _ in 0..<3 {
@@ -42,7 +45,7 @@ struct AsyncTests {
     }
     
     @Test func testConcurrentStopCalls() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test concurrent stop calls
         await withTaskGroup(of: Void.self) { group in
@@ -61,7 +64,7 @@ struct AsyncTests {
     }
     
     @Test func testAudioEngineStateConsistencyAfterAsyncOperations() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test that state remains consistent after async operations
         let initialPlaying = await audioEngine.isPlaying
@@ -76,7 +79,7 @@ struct AsyncTests {
     // MARK: - Task-based Tests
     
     @Test func testAsyncNoiseTypeSelection() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test noise type selection in async context
         await withTaskGroup(of: Void.self) { group in
@@ -96,9 +99,9 @@ struct AsyncTests {
         await withTaskGroup(of: (AudioEngine, MenuBarManager, FloatingWindowManager).self) { group in
             for _ in 0..<3 {
                 group.addTask {
-                    let audioEngine = AudioEngine()
-                    let menuBarManager = MenuBarManager()
-                    let floatingManager = FloatingWindowManager()
+                    let audioEngine = await MainActor.run { AudioEngine() }
+                    let menuBarManager = await MainActor.run { MenuBarManager() }
+                    let floatingManager = await MainActor.run { FloatingWindowManager() }
                     return (audioEngine, menuBarManager, floatingManager)
                 }
             }
@@ -116,7 +119,7 @@ struct AsyncTests {
     @Test func testAppStateAsyncInitialization() async throws {
         // Test AppState initialization doesn't block
         let startTime = Date()
-        let appState = AppState()
+        let appState = await MainActor.run { AppState() }
         let endTime = Date()
         
         #expect(await appState.isInitialized == true)

@@ -7,6 +7,7 @@
 
 import Testing
 import SwiftUI
+import CoreGraphics
 @testable import PhantomGate
 
 struct IntegrationTests {
@@ -14,7 +15,7 @@ struct IntegrationTests {
     // MARK: - App State Integration Tests
     
     @Test func testAppStateInitialization() async throws {
-        let appState = AppState()
+        let appState = await MainActor.run { AppState() }
         
         // Test that all components are properly initialized
         #expect(await appState.audioEngine != nil)
@@ -24,7 +25,7 @@ struct IntegrationTests {
     }
     
     @Test func testAppStateDependencyWiring() async throws {
-        let appState = AppState()
+        let appState = await MainActor.run { AppState() }
         
         // Test that dependencies are properly wired
         #expect(await appState.menuBarManager.audioEngine === await appState.audioEngine)
@@ -35,8 +36,8 @@ struct IntegrationTests {
     // MARK: - Component Interaction Tests
     
     @Test func testMenuBarManagerFloatingManagerInteraction() async throws {
-        let menuBarManager = MenuBarManager()
-        let floatingManager = FloatingWindowManager()
+        let menuBarManager = await MainActor.run { MenuBarManager() }
+        let floatingManager = await MainActor.run { FloatingWindowManager() }
         
         await menuBarManager.setFloatingManager(floatingManager)
         
@@ -49,8 +50,8 @@ struct IntegrationTests {
     }
     
     @Test func testAudioEngineMenuBarManagerInteraction() async throws {
-        let menuBarManager = MenuBarManager()
-        let audioEngine = AudioEngine()
+        let menuBarManager = await MainActor.run { MenuBarManager() }
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         await menuBarManager.setAudioEngine(audioEngine)
         
@@ -64,8 +65,8 @@ struct IntegrationTests {
     // MARK: - Edge Case Tests
     
     @Test func testMultipleAudioEngineInstances() async throws {
-        let engine1 = AudioEngine()
-        let engine2 = AudioEngine()
+        let engine1 = await MainActor.run { AudioEngine() }
+        let engine2 = await MainActor.run { AudioEngine() }
         
         // Test that multiple instances can coexist
         #expect(await engine1.isPlaying == false)
@@ -74,7 +75,7 @@ struct IntegrationTests {
     }
     
     @Test func testAudioEngineStateConsistency() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test initial state consistency
         #expect(await audioEngine.isPlaying == false)
@@ -120,7 +121,7 @@ struct IntegrationTests {
     // MARK: - Concurrency Safety Tests
     
     @Test func testAudioEngineAsyncOperations() async throws {
-        let audioEngine = AudioEngine()
+        let audioEngine = await MainActor.run { AudioEngine() }
         
         // Test that async operations can be called without immediate errors
         do {
