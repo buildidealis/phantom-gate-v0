@@ -63,7 +63,7 @@ class FloatingWindowManager: ObservableObject {
 
         // Defer first intrinsic sizing one tick
         DispatchQueue.main.async { [weak self, weak hosting] in
-            guard let self, let hosting, let _ = self.window else { return }
+            guard let self, let hosting, self.window != nil else { return }
             self.applySize(hosting.fittingSize, anchorTopRight: true, animated: false)
         }
     }
