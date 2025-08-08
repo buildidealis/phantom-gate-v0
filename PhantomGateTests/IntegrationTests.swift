@@ -26,7 +26,7 @@ struct IntegrationTests {
         // Test FontManager registration
         let fontManager = FontManager.shared
         fontManager.registerFonts()
-        #expect(fontManager != nil)
+        #expect(fontManager === FontManager.shared)
     }
 
     @Test func testAppStateDependencyWiring() async throws {
@@ -109,10 +109,10 @@ struct IntegrationTests {
         let justHashColor = Color(hex: "#")
 
         // These should not crash, even if they produce default colors
-        #expect(emptyColor != nil)
-        #expect(shortColor != nil)
-        #expect(longColor != nil)
-        #expect(justHashColor != nil)
+        #expect(emptyColor.description.count > 0)
+        #expect(shortColor.description.count > 0)
+        #expect(longColor.description.count > 0)
+        #expect(justHashColor.description.count > 0)
     }
 
     @Test func testFontManagerMemoryConsistency() async throws {
@@ -124,8 +124,7 @@ struct IntegrationTests {
         let font2 = manager2.font(weight: .bold, size: 16)
 
         // Both should work since they're the same singleton
-        #expect(font1 != nil)
-        #expect(font2 != nil)
+        // Font creation succeeded if we reach this point
         #expect(manager1 === manager2)
     }
 
@@ -155,9 +154,7 @@ struct IntegrationTests {
         }
 
         // All fonts should be created successfully
-        for font in fonts {
-            #expect(font != nil)
-        }
+        // Font creation succeeded if we reach this point without throwing
         #expect(fonts.count == 10)
     }
 

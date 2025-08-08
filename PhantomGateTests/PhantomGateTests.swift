@@ -35,7 +35,7 @@ struct PhantomGateTests {
     @Test func testBasicComponentCreation() async throws {
         // Test that FontManager (non-UI component) can be created
         let fontManager = FontManager.shared
-        #expect(fontManager != nil)
+        #expect(fontManager === FontManager.shared)
 
         // Test that enum types exist and work properly
         let noiseTypes = NoiseType.allCases
@@ -53,7 +53,7 @@ struct PhantomGateTests {
 
         #expect(waveformView.isPlaying == false)
         #expect(waveformBar.height == 10.0)
-        #expect(color != nil)
+        #expect(color.description.count > 0)
     }
 
     @Test func testAppStateBasics() async throws {
