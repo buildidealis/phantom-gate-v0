@@ -65,12 +65,20 @@
 			);
 			target = 6308FFB52E4563450092BC4F /* PhantomGateUITests */;
 		};
+		6352E8972E46379F000069EC /* Exceptions for "PhantomGate" folder in "PhantomGate" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6308FF9D2E4563440092BC4F /* PhantomGate */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6308FFA02E4563440092BC4F /* PhantomGate */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				6352E8972E46379F000069EC /* Exceptions for "PhantomGate" folder in "PhantomGate" target */,
 				6308FFE02E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateTests" target */,
 				6308FFE12E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateUITests" target */,
 			);
@@ -457,6 +465,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PhantomGate/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -486,6 +496,8 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PhantomGate/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.business";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
