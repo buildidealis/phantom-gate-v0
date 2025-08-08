@@ -40,6 +40,7 @@
 		6308FFE02E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Audio/AudioEngine.swift,
 				"Resources/Fonts/JetBrainsMono-Bold.ttf",
 				"Resources/Fonts/JetBrainsMono-Medium.ttf",
@@ -54,6 +55,7 @@
 		6308FFE12E4563FB0092BC4F /* Exceptions for "PhantomGate" folder in "PhantomGateUITests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Assets.xcassets,
 				Audio/AudioEngine.swift,
 				"Resources/Fonts/JetBrainsMono-Bold.ttf",
 				"Resources/Fonts/JetBrainsMono-Medium.ttf",
