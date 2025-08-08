@@ -16,6 +16,7 @@ enum FontWeight: CaseIterable {
     }
 }
 
+@MainActor
 final class FontManager {
     static let shared = FontManager()
     private var loadedFonts: Set<String> = []

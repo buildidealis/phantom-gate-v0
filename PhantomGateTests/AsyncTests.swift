@@ -11,6 +11,7 @@ import SwiftUI
 import CoreGraphics
 @testable import PhantomGate
 
+@MainActor
 struct AsyncTests {
 
     // MARK: - Async Logic Tests (No Hardware Dependencies)

@@ -10,6 +10,7 @@ import SwiftUI
 import CoreGraphics
 @testable import PhantomGate
 
+@MainActor
 struct IntegrationTests {
 
     // MARK: - App Integration Logic Tests (No Hardware Dependencies)

@@ -9,6 +9,7 @@ import Testing
 import SwiftUI
 @testable import PhantomGate
 
+@MainActor
 struct FontManagerTests {
 
     // MARK: - FontWeight Tests

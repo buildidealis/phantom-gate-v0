@@ -10,6 +10,7 @@ import SwiftUI
 import Foundation
 @testable import PhantomGate
 
+@MainActor
 struct PhantomGateTests {
 
     // MARK: - Basic Smoke Tests
