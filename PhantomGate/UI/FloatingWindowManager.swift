@@ -161,6 +161,7 @@ struct FloatingControlView: View {
                                 .accessibilityIdentifier("CloseButton")
                         }
                     )
+                        .environment(\.colorScheme, .dark)
                 }
 
                 Text("Select broadband interference option:")
@@ -200,14 +201,15 @@ struct FloatingControlView: View {
                     Button(action: togglePlayback) {
                         Text(isPlaying ? "Stop scramble" : "Start scramble")
                             .font(FontManager.shared.font(weight: .medium, size: 14))
-                            .foregroundColor(.white)
+                            .foregroundColor(
+                                isPlaying ? .phantomRed : .phantomGreen
+                            )
                             .padding(.horizontal, 16)
                             .padding(.vertical, 8)
-                            .background(Color(hex: isPlaying ? "ff3366" : "00ff88"))
-                            .cornerRadius(4)
                     }
                     .accessibilityIdentifier("TogglePlaybackButton")
                     .disabled(manager.audioEngine == nil)
+                    .environment(\.colorScheme, .dark) 
                 }
             }
         }
