@@ -138,8 +138,9 @@ struct UIComponentTests {
         // Test dependency injection patterns without creating actual managers
         // This tests the logic of how dependencies would be wired
         
-        // Test that NSStatusItem has expected constants
-        #expect(NSStatusItem.squareLength > 0)
+        // Test that NSStatusItem has expected constants (per Apple documentation)
+        #expect(NSStatusItem.squareLength == -2.0)
+        #expect(NSStatusItem.variableLength == -1.0)
         #expect(NSStatusItem.variableLength != NSStatusItem.squareLength)
     }
     
