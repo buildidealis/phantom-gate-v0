@@ -7,6 +7,7 @@
 
 import Testing
 import SwiftUI
+import Foundation
 @testable import PhantomGate
 
 struct PhantomGateTests {
@@ -67,7 +68,7 @@ struct PhantomGateTests {
         // Test that AudioEngineError types exist
         let errors: [AudioEngineError] = [
             .formatCreationFailed,
-            .engineStartFailed(TestAudioError.sampleError),
+            .engineStartFailed(NSError(domain: "test", code: 1, userInfo: nil)),
             .noAudioFormat
         ]
         

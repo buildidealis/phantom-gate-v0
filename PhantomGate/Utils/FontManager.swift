@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum FontWeight {
+enum FontWeight: CaseIterable {
     case regular
     case medium
     case bold
