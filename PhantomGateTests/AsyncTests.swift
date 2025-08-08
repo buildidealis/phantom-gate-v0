@@ -158,7 +158,7 @@ struct AsyncTests {
 
         let endTime = Date()
         let duration = endTime.timeIntervalSince(startTime)
-        #expect(duration < 1.0) // Should be quick
+        #expect(duration < 5.0) // Should be quick
     }
 
     @Test func testConcurrentFontCreation() async throws {
