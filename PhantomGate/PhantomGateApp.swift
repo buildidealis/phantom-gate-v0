@@ -14,25 +14,25 @@ class AppState: ObservableObject {
     let menuBarManager: MenuBarManager
     let floatingManager: FloatingWindowManager
     @Published var isInitialized = false
-    
+
     init() {
         // Create instances
         audioEngine = AudioEngine()
         menuBarManager = MenuBarManager()
         floatingManager = FloatingWindowManager()
-        
+
         // Set up environment
         let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
                          ProcessInfo.processInfo.environment["UI_TESTING"] == "1"
-        
+
         if isUITesting {
             NSApp.setActivationPolicy(.regular)
         } else {
             NSApp.setActivationPolicy(.accessory)
         }
-        
+
         FontManager.shared.registerFonts()
-        
+
         // Set up dependencies
         menuBarManager.setAudioEngine(audioEngine)
         menuBarManager.setFloatingManager(floatingManager)

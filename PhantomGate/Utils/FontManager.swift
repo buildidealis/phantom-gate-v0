@@ -5,7 +5,7 @@ enum FontWeight: CaseIterable {
     case medium
     case bold
     case semiBold
-    
+
     var filename: String {
         switch self {
         case .regular: return "JetBrainsMono-Regular"
@@ -19,15 +19,15 @@ enum FontWeight: CaseIterable {
 final class FontManager {
     static let shared = FontManager()
     private var loadedFonts: Set<String> = []
-    
+
     private init() {}
-    
+
     func registerFonts() {
         registerFont(name: FontWeight.regular.filename)
         registerFont(name: FontWeight.medium.filename)
         registerFont(name: FontWeight.bold.filename)
     }
-    
+
     private func registerFont(name: String) {
         // Early exit if font already loaded
         guard !loadedFonts.contains(name) else { return }
@@ -49,7 +49,7 @@ final class FontManager {
         // Mark as loaded
         loadedFonts.insert(name)
     }
-    
+
     func font(weight: FontWeight = .regular, size: CGFloat) -> Font {
         Font.custom(weight.filename, size: size)
     }
