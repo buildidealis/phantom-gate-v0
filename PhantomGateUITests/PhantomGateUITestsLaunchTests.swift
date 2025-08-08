@@ -7,7 +7,7 @@
 
 import XCTest
 
-final class PhantomGateUITestsLaunchTests: XCTestCase {
+class PhantomGateUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

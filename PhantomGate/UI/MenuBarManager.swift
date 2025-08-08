@@ -13,8 +13,13 @@ class MenuBarManager: ObservableObject {
     }
 
     private func setupStatusItem() {
-        let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
-        statusItem = NSStatusBar.system.statusItem(withLength: isUITesting ? NSStatusItem.squareLength : NSStatusItem.variableLength)
+        let isUITesting = ProcessInfo
+            .processInfo
+            .arguments
+            .contains("--ui-testing")
+        statusItem = NSStatusBar
+            .system
+            .statusItem(withLength: isUITesting ? NSStatusItem.squareLength : NSStatusItem.variableLength)
 
         if let button = statusItem?.button {
             button.title = "PG"

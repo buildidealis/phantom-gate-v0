@@ -54,8 +54,8 @@ class AudioEngine: ObservableObject {
         var crossings = 0
         var prev = data[0]
 
-        for i in 1..<Int(buffer.frameLength) {
-            let current = data[i]
+        for index in 1..<Int(buffer.frameLength) {
+            let current = data[index]
             if (prev < 0 && current >= 0) || (prev >= 0 && current < 0) {
                 crossings += 1
             }
