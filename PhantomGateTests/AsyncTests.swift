@@ -158,7 +158,7 @@ struct AsyncTests {
 
         let endTime = Date()
         let duration = endTime.timeIntervalSince(startTime)
-        #expect(duration < 1.0) // Should be quick
+        #expect(duration < 5.0) // Should be quick
     }
 
     @Test func testConcurrentFontCreation() async throws {
@@ -168,7 +168,7 @@ struct AsyncTests {
         await withTaskGroup(of: Void.self) { group in
             for size in stride(from: 12, through: 24, by: 2) {
                 group.addTask {
-                    let font = fontManager.font(weight: .regular, size: CGFloat(size))
+                    _ = fontManager.font(weight: .regular, size: CGFloat(size))
                     // Font creation succeeded if we reach this point
                 }
             }

@@ -120,8 +120,8 @@ struct IntegrationTests {
         let manager2 = FontManager.shared
 
         // Create fonts from both references
-        let font1 = manager1.font(weight: .bold, size: 16)
-        let font2 = manager2.font(weight: .bold, size: 16)
+        _ = manager1.font(weight: .bold, size: 16)
+        _ = manager2.font(weight: .bold, size: 16)
 
         // Both should work since they're the same singleton
         // Font creation succeeded if we reach this point

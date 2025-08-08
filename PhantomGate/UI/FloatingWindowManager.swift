@@ -61,11 +61,13 @@ class FloatingWindowManager: ObservableObject {
         let hosting = NSHostingView(rootView: root.fixedSize()) // fixedSize to hug content
         window.contentView = hosting
 
-        // Defer first intrinsic sizing one tick
+        // This is breaking in Swift 6 / iOS 26
+        /*
         DispatchQueue.main.async { [weak self, weak hosting] in
             guard let self, let hosting, self.window != nil else { return }
             self.applySize(hosting.fittingSize, anchorTopRight: true, animated: false)
         }
+         */
     }
 
     func resize(to newContentSize: CGSize) {
@@ -385,14 +387,6 @@ private extension PreviewFloatingWindowManager {
         .padding()
         .background(Color.gray.opacity(0.15))
         .preferredColorScheme(.light)
-}
-
-// Example with fixed preview size
-#Preview("Fixed Size 300x260") {
-    FloatingControlView(manager: PreviewFloatingWindowManager.idle())
-        .frame(width: 300, height: 260)
-        .background(Color.black)
-        .preferredColorScheme(.dark)
 }
 
 #endif

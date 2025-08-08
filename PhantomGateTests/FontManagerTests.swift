@@ -46,10 +46,10 @@ struct FontManagerTests {
         let fontManager = FontManager.shared
 
         // Test that fonts can be created without throwing errors
-        let regularFont = fontManager.font(weight: .regular, size: 16)
-        let mediumFont = fontManager.font(weight: .medium, size: 16)
-        let boldFont = fontManager.font(weight: .bold, size: 16)
-        let semiBoldFont = fontManager.font(weight: .semiBold, size: 16)
+        _ = fontManager.font(weight: .regular, size: 16)
+        _ = fontManager.font(weight: .medium, size: 16)
+        _ = fontManager.font(weight: .bold, size: 16)
+        _ = fontManager.font(weight: .semiBold, size: 16)
 
         // If we reach this point, all fonts were created successfully
         #expect(true)
@@ -59,9 +59,9 @@ struct FontManagerTests {
         let fontManager = FontManager.shared
 
         // Test that fonts can be created with different sizes without throwing errors
-        let smallFont = fontManager.font(weight: .regular, size: 12)
-        let mediumFont = fontManager.font(weight: .regular, size: 16)
-        let largeFont = fontManager.font(weight: .regular, size: 24)
+        _ = fontManager.font(weight: .regular, size: 12)
+        _ = fontManager.font(weight: .regular, size: 16)
+        _ = fontManager.font(weight: .regular, size: 24)
 
         // If we reach this point, all fonts were created successfully
         #expect(true)
@@ -71,8 +71,8 @@ struct FontManagerTests {
         let fontManager = FontManager.shared
 
         // Test default weight (should be .regular)
-        let defaultFont = fontManager.font(size: 16)
-        let explicitRegularFont = fontManager.font(weight: .regular, size: 16)
+        _ = fontManager.font(size: 16)
+        _ = fontManager.font(weight: .regular, size: 16)
 
         // If we reach this point, both fonts were created successfully
         #expect(true)
@@ -82,9 +82,9 @@ struct FontManagerTests {
         let fontManager = FontManager.shared
 
         // Test with very small and large sizes
-        let tinyFont = fontManager.font(weight: .regular, size: 1)
-        let hugeFont = fontManager.font(weight: .regular, size: 100)
-        let zeroFont = fontManager.font(weight: .regular, size: 0)
+        _ = fontManager.font(weight: .regular, size: 1)
+        _ = fontManager.font(weight: .regular, size: 100)
+        _ = fontManager.font(weight: .regular, size: 0)
 
         // If we reach this point, all fonts were created without errors
         #expect(true)
