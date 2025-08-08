@@ -162,11 +162,11 @@ struct FloatingControlView: View {
                         }
                     )
                 }
-                
+
                 Text("Select broadband interference option:")
                     .font(FontManager.shared.font(weight: .medium, size: 14))
                     .foregroundColor(.white)
-                
+
                 Picker("", selection: $selectedNoiseType) {
                         ForEach(NoiseType.allCases, id: \.self) { type in
                             Text(type.rawValue).tag(type)
@@ -182,10 +182,10 @@ struct FloatingControlView: View {
                         Task { engine.selectNoiseType(newValue)}
                     }
             }
-            
+
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    VStack() {
+                    VStack {
                         WaveformView(isPlaying: isPlaying)
                             .frame(width: 100)
                             .accessibilityIdentifier("WaveformView")
@@ -196,7 +196,7 @@ struct FloatingControlView: View {
                                 .accessibilityIdentifier("FrequencyLabel")
                         }
                     }
-                    
+
                     Button(action: togglePlayback) {
                         Text(isPlaying ? "Stop scramble" : "Start scramble")
                             .font(FontManager.shared.font(weight: .medium, size: 14))
