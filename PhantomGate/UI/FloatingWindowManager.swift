@@ -247,6 +247,59 @@ struct FloatingControlView: View {
         }
 }
 
+// MARK: - Size Change Shim (macOS 14+ API with fallback)
+
+private struct SizeChangeShim: ViewModifier {
+    let size: CGSize
+    @Binding var lastSize: CGSize
+    let onChange: (CGSize) -> Void
+
+    func body(content: Content) -> some View {
+        #if os(macOS)
+        if #available(macOS 14.0, *) {
+            content
+                .onChange(of: size, initial: true) { oldSize, newSize in
+                    applyIfNeeded(old: oldSize, new: newSize)
+                }
+        } else {
+            content
+                .onAppear {
+                    lastSize = size
+                    onChange(size)
+                }
+                .onChange(of: size) { newSize in
+                    applyLegacy(newSize)
+                }
+        }
+        #else
+        content
+            .onAppear {
+                lastSize = size
+                onChange(size)
+            }
+            .onChange(of: size) { newSize in
+                applyLegacy(newSize)
+            }
+        #endif
+    }
+
+    // macOS 14 path (have old & new)
+    private func applyIfNeeded(old: CGSize, new: CGSize) {
+        guard abs(new.width - old.width) > 0.5 ||
+              abs(new.height - old.height) > 0.5 else { return }
+        lastSize = new
+        onChange(new)
+    }
+
+    // Legacy path uses stored lastSize
+    private func applyLegacy(_ new: CGSize) {
+        guard abs(new.width - lastSize.width) > 0.5 ||
+              abs(new.height - lastSize.height) > 0.5 else { return }
+        lastSize = new
+        onChange(new)
+    }
+}
+
 // MARK: - Simple Geometry helper (no PreferenceKey)
 
 private struct SizeReader: View {
@@ -260,17 +313,7 @@ private struct SizeReader: View {
     var body: some View {
         GeometryReader { proxy in
             Color.clear
-                .onAppear {
-                    let size = proxy.size
-                    lastSize = size
-                    onChange(size)
-                }
-                .onChange(of: proxy.size, initial: true) { _, newSize in
-                    guard abs(newSize.width - lastSize.width) > 0.5 ||
-                          abs(newSize.height - lastSize.height) > 0.5 else { return }
-                    lastSize = newSize
-                    onChange(newSize)
-                }
+                .modifier(SizeChangeShim(size: proxy.size, lastSize: $lastSize, onChange: onChange))
         }
         // GeometryReader expands—collapse it back down
         .allowsHitTesting(false) // ensure it doesn't swallow events
