@@ -41,8 +41,9 @@ final class PhantomGateUITestsLaunchTests: XCTestCase {
         // Don't add --ui-testing to test normal menu bar mode
         app.launch()
         
-        // App should still launch successfully in menu bar mode
-        XCTAssert(app.state == .runningForeground, "App should be running even in menu bar mode")
+        // App should launch successfully in menu bar mode (runs as accessory app in background)
+        XCTAssert(app.state == .runningBackground || app.state == .runningForeground, 
+                 "App should be running in menu bar mode (actual state: \(app.state))")
         
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = "Menu Bar Launch"
