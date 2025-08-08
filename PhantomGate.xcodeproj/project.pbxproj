@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		6308FFF22E45648E0092BC4F /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6308FFF12E45648E0092BC4F /* AppKit.framework */; };
 		6308FFF42E4564950092BC4F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6308FFF32E4564950092BC4F /* AVFoundation.framework */; };
-		6308FFF52E4564A60092BC4F /* CoreAudioTypes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6308FFF62E4564A60092BC4F /* CoreAudioTypes.framework */; };
+		6308FFF52E4564A60092BC4F /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6308FFF62E4564A60092BC4F /* CoreAudio.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,7 +35,7 @@
 		6308FFB62E4563450092BC4F /* PhantomGateUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhantomGateUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6308FFF12E45648E0092BC4F /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		6308FFF32E4564950092BC4F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		6308FFF62E4564A60092BC4F /* CoreAudioTypes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudioTypes.framework; path = System/Library/Frameworks/CoreAudioTypes.framework; sourceTree = SDKROOT; };
+		6308FFF62E4564A60092BC4F /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -108,7 +108,7 @@
 			files = (
 				6308FFF42E4564950092BC4F /* AVFoundation.framework in Frameworks */,
 				6308FFF22E45648E0092BC4F /* AppKit.framework in Frameworks */,
-				6308FFF52E4564A60092BC4F /* CoreAudioTypes.framework in Frameworks */,
+				6308FFF52E4564A60092BC4F /* CoreAudio.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -155,7 +155,7 @@
 			children = (
 				6308FFF32E4564950092BC4F /* AVFoundation.framework */,
 				6308FFF12E45648E0092BC4F /* AppKit.framework */,
-				6308FFF62E4564A60092BC4F /* CoreAudioTypes.framework */,
+				6308FFF62E4564A60092BC4F /* CoreAudio.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
