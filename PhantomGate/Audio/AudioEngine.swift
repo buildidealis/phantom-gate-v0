@@ -1,4 +1,5 @@
 import AVFoundation
+import CoreAudio
 
 enum NoiseType: String, CaseIterable {
     case green = "Green noise"
