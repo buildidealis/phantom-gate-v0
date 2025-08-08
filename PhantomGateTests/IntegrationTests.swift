@@ -28,9 +28,16 @@ struct IntegrationTests {
         let appState = await MainActor.run { AppState() }
         
         // Test that dependencies are properly wired
-        #expect(await appState.menuBarManager.audioEngine === await appState.audioEngine)
-        #expect(await appState.menuBarManager.floatingManager === await appState.floatingManager)
-        #expect(await appState.floatingManager.audioEngine === await appState.audioEngine)
+        let menuBarAudioEngine = await appState.menuBarManager.audioEngine
+        let appStateAudioEngine = await appState.audioEngine
+        #expect(menuBarAudioEngine === appStateAudioEngine)
+        
+        let menuBarFloatingManager = await appState.menuBarManager.floatingManager
+        let appStateFloatingManager = await appState.floatingManager
+        #expect(menuBarFloatingManager === appStateFloatingManager)
+        
+        let floatingManagerAudioEngine = await appState.floatingManager.audioEngine
+        #expect(floatingManagerAudioEngine === appStateAudioEngine)
     }
     
     // MARK: - Component Interaction Tests
