@@ -116,6 +116,12 @@ class FloatingWindowManager: ObservableObject {
     }
 }
 
+// MARK: - Protocol for Audio Level Provider
+
+protocol AudioLevelProvider {
+    func getAudioLevels() -> [CGFloat]
+}
+
 // MARK: - SwiftUI Content
 
 struct FloatingControlView: View {
@@ -134,17 +140,17 @@ struct FloatingControlView: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(Color.black.opacity(0.78))
                     .overlay(
-                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
-                                )
-                                .shadow(color: .black.opacity(0.45), radius: 12, x: 0, y: 6)
-                        )
-                        // If you prefer a macOS material look instead, replace the above with:
-                        // .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                        // .shadow(color: .black.opacity(0.25), radius: 10, y: 4)
-                        .fixedSize(horizontal: true, vertical: true) // Hug content
-                        // Measure AFTER background so size includes padding & shape
-                        .overlay(SizeReader { manager.resize(to: $0) })
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .stroke(Color.white.opacity(0.15), lineWidth: 1)
+                    )
+                    .shadow(color: .black.opacity(0.45), radius: 12, x: 0, y: 6)
+            )
+            // If you prefer a macOS material look instead, replace the above with:
+            // .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            // .shadow(color: .black.opacity(0.25), radius: 10, y: 4)
+            .fixedSize(horizontal: true, vertical: true) // Hug content
+            // Measure AFTER background so size includes padding & shape
+            .overlay(SizeReader { manager.resize(to: $0) })
     }
 
     private var content: some View {
@@ -163,7 +169,7 @@ struct FloatingControlView: View {
                                 .accessibilityIdentifier("CloseButton")
                         }
                     )
-                        .environment(\.colorScheme, .dark)
+                    .environment(\.colorScheme, .dark)
                 }
 
                 Text("Select broadband interference option:")
@@ -171,27 +177,36 @@ struct FloatingControlView: View {
                     .foregroundColor(.white)
 
                 Picker("", selection: $selectedNoiseType) {
-                        ForEach(NoiseType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type)
-                        }
+                    ForEach(NoiseType.allCases, id: \.self) { type in
+                        Text(type.rawValue).tag(type)
                     }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .disabled(isPlaying)
-                    .accessibilityIdentifier("NoiseTypePicker")
-                    .accessibilityLabel("Select broadband interface option")
-                    .onChange(of: selectedNoiseType) { _, newValue in
-                        guard let engine = manager.audioEngine else { return }
-                        Task { engine.selectNoiseType(newValue)}
-                    }
+                }
+                .labelsHidden()
+                .pickerStyle(.menu)
+                .disabled(isPlaying)
+                .accessibilityIdentifier("NoiseTypePicker")
+                .accessibilityLabel("Select broadband interface option")
+                .onChange(of: selectedNoiseType) { _, newValue in
+                    guard let engine = manager.audioEngine else { return }
+                    Task { engine.selectNoiseType(newValue) }
+                }
             }
 
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     VStack {
-                        WaveformView(isPlaying: isPlaying)
-                            .frame(width: 100)
-                            .accessibilityIdentifier("WaveformView")
+                        // Pass the audio engine to WaveformView for real audio data
+                        if let audioEngine = manager.audioEngine as? AudioLevelProvider {
+                            WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
+                                .frame(width: 100)
+                                .accessibilityIdentifier("WaveformView")
+                        } else {
+                            // Fallback to original behavior if no audio engine
+                            WaveformView(isPlaying: isPlaying)
+                                .frame(width: 100)
+                                .accessibilityIdentifier("WaveformView")
+                        }
+                        
                         if isPlaying {
                             Text(String(format: "%.1f kHz", currentFrequency / 1000))
                                 .font(FontManager.shared.font(weight: .medium, size: 12))
@@ -215,46 +230,54 @@ struct FloatingControlView: View {
                 }
             }
         }
+        .onChange(of: isPlaying) { _, newValue in
+            if newValue {
+                startFrequencyMonitoring()
+            } else {
+                frequencyTask?.cancel()
+                frequencyTask = nil
+            }
+        }
     }
 
     private func startFrequencyMonitoring() {
-            guard let engine = manager.audioEngine else { return }
+        guard let engine = manager.audioEngine else { return }
 
-            frequencyTask?.cancel()
-            frequencyTask = Task {
-                let stream = AsyncStream(Float.self) { continuation in
-                    Task {
-                        while !Task.isCancelled {
-                            continuation.yield(engine.currentFrequency)
-                            try? await Task.sleep(nanoseconds: 100_000_000)
-                        }
-                        continuation.finish()
+        frequencyTask?.cancel()
+        frequencyTask = Task {
+            let stream = AsyncStream(Float.self) { continuation in
+                Task {
+                    while !Task.isCancelled {
+                        continuation.yield(engine.currentFrequency)
+                        try? await Task.sleep(nanoseconds: 100_000_000)
                     }
-                }
-
-                for await frequency in stream {
-                    guard !Task.isCancelled else { break }
-                    currentFrequency = frequency
+                    continuation.finish()
                 }
             }
-        }
 
-        private func togglePlayback() {
-            guard let engine = manager.audioEngine else { return }
-
-            Task {
-                do {
-                    if isPlaying {
-                        try await engine.stopPlayback()
-                    } else {
-                        try await engine.startPlayback()
-                    }
-                    isPlaying = engine.isPlaying
-                } catch {
-                    print("Audio playback error: \(error)")
-                }
+            for await frequency in stream {
+                guard !Task.isCancelled else { break }
+                currentFrequency = frequency
             }
         }
+    }
+
+    private func togglePlayback() {
+        guard let engine = manager.audioEngine else { return }
+
+        Task {
+            do {
+                if isPlaying {
+                    try await engine.stopPlayback()
+                } else {
+                    try await engine.startPlayback()
+                }
+                isPlaying = engine.isPlaying
+            } catch {
+                print("Audio playback error: \(error)")
+            }
+        }
+    }
 }
 
 // MARK: - Simple Geometry helper (no PreferenceKey)
@@ -288,35 +311,10 @@ private struct SizeReader: View {
     }
 }
 
-extension Color {
-    init(hex: String) {
-        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let alpha, red, green, blue: UInt64
-        switch hex.count {
-        case 3: // RGB (12-bit)
-            (alpha, red, green, blue) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: // RGB (24-bit)
-            (alpha, red, green, blue) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        case 8: // ARGB (32-bit)
-            (alpha, red, green, blue) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
-        default:
-            (alpha, red, green, blue) = (255, 0, 0, 0)
-        }
-        self.init(
-            .sRGB,
-            red: Double(red) / 255,
-            green: Double(green) / 255,
-            blue: Double(blue) / 255,
-            opacity: Double(alpha) / 255
-        )
-    }
-}
-
 #if DEBUG
 
-// MARK: - Mock Audio Engine (adjust if your real API differs)
+// MARK: - Mock Audio Engine
+
 final class MockAudioEngine: AudioEngine {
     override var isPlaying: Bool {
         get { _isPlaying }
@@ -326,6 +324,17 @@ final class MockAudioEngine: AudioEngine {
 
     override var currentFrequency: Float { mockFrequency }
     var mockFrequency: Float = 12_345
+    
+    // Override the method from the parent class
+    // (Assuming getAudioLevels() is declared in the main AudioEngine class)
+    override func getAudioLevels() -> [CGFloat] {
+        if _isPlaying {
+            // Generate random levels for mock visualization
+            return (0..<8).map { _ in CGFloat.random(in: -40...0) }
+        } else {
+            return Array(repeating: -160, count: 8)
+        }
+    }
 
     override func selectNoiseType(_ type: NoiseType) {
         // no-op
@@ -341,6 +350,7 @@ final class MockAudioEngine: AudioEngine {
 }
 
 // MARK: - Preview Manager (skips real window sizing side-effects)
+
 @MainActor
 final class PreviewFloatingWindowManager: FloatingWindowManager {
     override init() {
@@ -357,6 +367,7 @@ private extension PreviewFloatingWindowManager {
     static func idle() -> PreviewFloatingWindowManager {
         PreviewFloatingWindowManager()
     }
+    
     static func playing() -> PreviewFloatingWindowManager {
         let mgr = PreviewFloatingWindowManager()
         if let engine = mgr.audioEngine as? MockAudioEngine {

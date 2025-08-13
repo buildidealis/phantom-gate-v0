@@ -140,4 +140,15 @@ class AudioEngine: ObservableObject {
         isPlaying = false
         currentFrequency = 0
     }
+    
+    func getAudioLevels() -> [CGFloat] {
+            // Base implementation
+            if isPlaying {
+                // Add your actual audio analysis here
+                return (0..<8).map { _ in CGFloat.random(in: -40...0) }
+            } else {
+                return Array(repeating: -160, count: 8)
+            }
+        }
 }
+
