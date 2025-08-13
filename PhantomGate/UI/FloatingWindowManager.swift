@@ -206,7 +206,7 @@ struct FloatingControlView: View {
                                 .frame(width: 100)
                                 .accessibilityIdentifier("WaveformView")
                         }
-                        
+
                         if isPlaying {
                             Text(String(format: "%.1f kHz", currentFrequency / 1000))
                                 .font(FontManager.shared.font(weight: .medium, size: 12))
@@ -324,7 +324,7 @@ final class MockAudioEngine: AudioEngine {
 
     override var currentFrequency: Float { mockFrequency }
     var mockFrequency: Float = 12_345
-    
+
     // Override the method from the parent class
     // (Assuming getAudioLevels() is declared in the main AudioEngine class)
     override func getAudioLevels() -> [CGFloat] {
@@ -367,7 +367,7 @@ private extension PreviewFloatingWindowManager {
     static func idle() -> PreviewFloatingWindowManager {
         PreviewFloatingWindowManager()
     }
-    
+
     static func playing() -> PreviewFloatingWindowManager {
         let mgr = PreviewFloatingWindowManager()
         if let engine = mgr.audioEngine as? MockAudioEngine {

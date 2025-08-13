@@ -140,7 +140,7 @@ class AudioEngine: ObservableObject {
         isPlaying = false
         currentFrequency = 0
     }
-    
+
     func getAudioLevels() -> [CGFloat] {
             // Base implementation
             if isPlaying {
@@ -151,4 +151,3 @@ class AudioEngine: ObservableObject {
             }
         }
 }
-
