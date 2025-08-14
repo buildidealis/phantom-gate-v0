@@ -194,27 +194,28 @@ struct FloatingControlView: View {
 
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    HStack {
-                        // Pass the audio engine to WaveformView for real audio data
-                        if let audioEngine = manager.audioEngine as? AudioLevelProvider {
-                            WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
-                                .frame(width: 100)
-                                .accessibilityIdentifier("WaveformView")
-                        } else {
-                            // Fallback to original behavior if no audio engine
-                            WaveformView(isPlaying: isPlaying)
-                                .frame(width: 100)
-                                .accessibilityIdentifier("WaveformView")
-                        }
+                    if isPlaying {
+                        HStack {
+                            // Pass the audio engine to WaveformView for real audio data
+                            if let audioEngine = manager.audioEngine as? AudioLevelProvider {
+                                WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
+                                    .frame(width: 100)
+                                    .accessibilityIdentifier("WaveformView")
+                            } else {
+                                // Fallback to original behavior if no audio engine
+                                WaveformView(isPlaying: isPlaying)
+                                    .frame(width: 100)
+                                    .accessibilityIdentifier("WaveformView")
+                            }
 
-                        if isPlaying {
-                            Text(String(format: "%.1f kHz", currentFrequency / 1000))
-                                .font(FontManager.shared.font(weight: .medium, size: 12))
-                                .foregroundColor(.white)
-                                .accessibilityIdentifier("FrequencyLabel")
+                            if isPlaying {
+                                Text(String(format: "%.1f kHz", currentFrequency / 1000))
+                                    .font(FontManager.shared.font(weight: .medium, size: 12))
+                                    .foregroundColor(.white)
+                                    .accessibilityIdentifier("FrequencyLabel")
+                            }
                         }
                     }
-
                     Button(action: togglePlayback) {
                         Text(isPlaying ? "Stop scramble" : "Start scramble")
                             .font(FontManager.shared.font(weight: .medium, size: 14))
