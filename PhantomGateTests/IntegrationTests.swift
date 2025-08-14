@@ -101,20 +101,6 @@ struct IntegrationTests {
         #expect(initialFrequency >= 0.0)
     }
 
-    @Test func testColorHexEdgeCases() async throws {
-        // Test empty and malformed hex strings
-        let emptyColor = Color(hex: "")
-        let shortColor = Color(hex: "F")
-        let longColor = Color(hex: "FF00001122") // Too long
-        let justHashColor = Color(hex: "#")
-
-        // These should not crash, even if they produce default colors
-        #expect(emptyColor.description.count > 0)
-        #expect(shortColor.description.count > 0)
-        #expect(longColor.description.count > 0)
-        #expect(justHashColor.description.count > 0)
-    }
-
     @Test func testFontManagerMemoryConsistency() async throws {
         let manager1 = FontManager.shared
         let manager2 = FontManager.shared

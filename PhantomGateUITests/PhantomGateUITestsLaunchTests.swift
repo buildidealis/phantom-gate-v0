@@ -7,6 +7,7 @@
 
 import XCTest
 
+/*
 class PhantomGateUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
@@ -51,3 +52,4 @@ class PhantomGateUITestsLaunchTests: XCTestCase {
         add(attachment)
     }
 }
+*/

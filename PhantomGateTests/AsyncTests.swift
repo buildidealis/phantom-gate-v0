@@ -174,18 +174,4 @@ struct AsyncTests {
             }
         }
     }
-
-    @Test func testAsyncColorCreation() async throws {
-        let hexColors = ["FF0000", "00FF00", "0000FF", "FFFFFF", "000000", "ff3366", "00ff88"]
-
-        // Test creating colors concurrently
-        await withTaskGroup(of: Void.self) { group in
-            for hex in hexColors {
-                group.addTask {
-                    let color = Color(hex: hex)
-                    #expect(color.description.count > 0)
-                }
-            }
-        }
-    }
 }

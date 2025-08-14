@@ -49,7 +49,7 @@ struct PhantomGateTests {
         // Test that UI components can be created
         let waveformView = WaveformView(isPlaying: false)
         let waveformBar = WaveformBar(height: 10.0, delay: 0.1)
-        let color = Color(hex: "FF0000")
+        let color = Color(.phantomGreen)
 
         #expect(waveformView.isPlaying == false)
         #expect(waveformBar.height == 10.0)
