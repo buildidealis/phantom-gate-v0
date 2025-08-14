@@ -6,15 +6,24 @@ class FloatingWindowManager: ObservableObject {
     @Published private(set) var isVisible = false {
         didSet { isVisible ? showWindow() : hideWindow() }
     }
+    @Published var isMouseInWindow = false
 
     private var window: NSWindow?
     private(set) var audioEngine: AudioEngine?
+    private var trackingArea: NSTrackingArea?
+    private var eventMonitor: Any?
 
     // Track last size to avoid jitter
     private var lastSize: CGSize = .zero
 
     init() {
         setupWindow()
+    }
+
+    deinit {
+        if let eventMonitor = eventMonitor {
+            NSEvent.removeMonitor(eventMonitor)
+        }
     }
 
     private func setupWindow() {
@@ -48,6 +57,25 @@ class FloatingWindowManager: ObservableObject {
         }
 
         self.window = window
+        setupMouseTracking()
+    }
+
+    private func setupMouseTracking() {
+        guard let window = window else { return }
+
+        // Create a custom view that handles mouse tracking
+        let trackingView = MouseTrackingView { [weak self] isInside in
+            self?.isMouseInWindow = isInside
+        }
+
+        // If there's already a content view, wrap it
+        if let existingContent = window.contentView {
+            trackingView.addSubview(existingContent)
+            existingContent.frame = trackingView.bounds
+            existingContent.autoresizingMask = [.width, .height]
+        }
+
+        window.contentView = trackingView
     }
 
     func setAudioEngine(_ engine: AudioEngine) {
@@ -59,15 +87,16 @@ class FloatingWindowManager: ObservableObject {
         guard let window else { return }
         let root = FloatingControlView(manager: self)
         let hosting = NSHostingView(rootView: root.fixedSize()) // fixedSize to hug content
-        window.contentView = hosting
 
-        // This is breaking in Swift 6 / iOS 26
-        /*
-        DispatchQueue.main.async { [weak self, weak hosting] in
-            guard let self, let hosting, self.window != nil else { return }
-            self.applySize(hosting.fittingSize, anchorTopRight: true, animated: false)
+        // Wrap in tracking view
+        let trackingView = MouseTrackingView { [weak self] isInside in
+            self?.isMouseInWindow = isInside
         }
-         */
+        trackingView.addSubview(hosting)
+        hosting.frame = trackingView.bounds
+        hosting.autoresizingMask = [.width, .height]
+
+        window.contentView = trackingView
     }
 
     func resize(to newContentSize: CGSize) {
@@ -116,6 +145,92 @@ class FloatingWindowManager: ObservableObject {
     }
 }
 
+// MARK: - Custom NSView for Mouse Tracking
+
+class MouseTrackingView: NSView {
+    private var trackingArea: NSTrackingArea?
+    private let mouseHandler: (Bool) -> Void
+
+    init(mouseHandler: @escaping (Bool) -> Void) {
+        self.mouseHandler = mouseHandler
+        super.init(frame: .zero)
+        updateTrackingAreas()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    override func updateTrackingAreas() {
+        if let existingArea = trackingArea {
+            removeTrackingArea(existingArea)
+        }
+
+        let options: NSTrackingArea.Options = [
+            .mouseEnteredAndExited,
+            .activeAlways,
+            .inVisibleRect
+        ]
+
+        trackingArea = NSTrackingArea(
+            rect: bounds,
+            options: options,
+            owner: self,
+            userInfo: nil
+        )
+
+        if let trackingArea = trackingArea {
+            addTrackingArea(trackingArea)
+        }
+
+        super.updateTrackingAreas()
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        mouseHandler(true)
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        mouseHandler(false)
+    }
+}
+
+// MARK: - Stoplight Close Button View
+
+struct StoplightCloseButton: View {
+    let isVisible: Bool
+    @State private var isHovered = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(Color(red: 1.0, green: 0.373, blue: 0.341)) // #FF5F57
+                    .overlay(
+                        Circle()
+                            .stroke(Color.black.opacity(0.12), lineWidth: 0.5)
+                    )
+
+                if isHovered {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 6, weight: .medium))
+                        .foregroundColor(Color.black.opacity(0.5))
+                }
+            }
+            .frame(width: 12, height: 12)
+        }
+        .buttonStyle(PlainButtonStyle())
+        .opacity(isVisible ? 1 : 0)
+        .animation(.easeInOut(duration: 0.2), value: isVisible)
+        .onHover { hovering in
+            isHovered = hovering
+        }
+        .accessibilityIdentifier("StoplightCloseButton")
+        .accessibilityLabel("Close window")
+    }
+}
+
 // MARK: - Protocol for Audio Level Provider
 
 protocol AudioLevelProvider {
@@ -134,7 +249,7 @@ struct FloatingControlView: View {
 
     var body: some View {
         content
-            .padding(16)
+            .padding(24) // Increased padding from 16 to 24
             // Ensure the view reports its natural size (no expansion)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -143,60 +258,55 @@ struct FloatingControlView: View {
                         RoundedRectangle(cornerRadius: 14, style: .continuous)
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
-                    .shadow(color: .black.opacity(0.45), radius: 12, x: 0, y: 6)
             )
-            // If you prefer a macOS material look instead, replace the above with:
-            // .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-            // .shadow(color: .black.opacity(0.25), radius: 10, y: 4)
             .fixedSize(horizontal: true, vertical: true) // Hug content
             // Measure AFTER background so size includes padding & shape
             .overlay(SizeReader { manager.resize(to: $0) })
     }
 
     private var content: some View {
-        VStack(alignment: .trailing) {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
+        VStack(alignment: .leading, spacing: 20) { // Increased spacing from 16 to 20
+            // Close button positioned absolutely in top-left
+            ZStack(alignment: .topLeading) {
+                // Main header content
+                VStack(alignment: .leading, spacing: 20) { // Increased spacing
                     Text("PhantomGate")
                         .font(FontManager.shared.font(weight: .bold, size: 48))
                         .foregroundColor(Color.phantomGreen)
-                    Spacer()
-                    Button(
-                        action: { manager.toggleVisibility() },
-                        label: {
-                            Image(systemName: "xmark")
-                                .foregroundColor(.white)
-                                .accessibilityIdentifier("CloseButton")
+                        .padding(.top, 4) // Add some top padding to align better with close button
+
+                    Text("Select broadband interference option:")
+                        .font(FontManager.shared.font(weight: .medium, size: 14))
+                        .foregroundColor(.white)
+
+                    Picker("", selection: $selectedNoiseType) {
+                        ForEach(NoiseType.allCases, id: \.self) { type in
+                            Text(type.rawValue).tag(type)
                         }
-                    )
-                    .environment(\.colorScheme, .dark)
-                }
-
-                Text("Select broadband interference option:")
-                    .font(FontManager.shared.font(weight: .medium, size: 14))
-                    .foregroundColor(.white)
-
-                Picker("", selection: $selectedNoiseType) {
-                    ForEach(NoiseType.allCases, id: \.self) { type in
-                        Text(type.rawValue).tag(type)
+                    }
+                    .labelsHidden()
+                    .pickerStyle(.menu)
+                    .disabled(isPlaying)
+                    .accessibilityIdentifier("NoiseTypePicker")
+                    .accessibilityLabel("Select broadband interface option")
+                    .onChange(of: selectedNoiseType) { _, newValue in
+                        guard let engine = manager.audioEngine else { return }
+                        Task { engine.selectNoiseType(newValue) }
                     }
                 }
-                .labelsHidden()
-                .pickerStyle(.menu)
-                .disabled(isPlaying)
-                .accessibilityIdentifier("NoiseTypePicker")
-                .accessibilityLabel("Select broadband interface option")
-                .onChange(of: selectedNoiseType) { _, newValue in
-                    guard let engine = manager.audioEngine else { return }
-                    Task { engine.selectNoiseType(newValue) }
-                }
+
+                // Stoplight close button positioned in top-left corner
+                StoplightCloseButton(
+                    isVisible: manager.isMouseInWindow,
+                    action: { manager.toggleVisibility() }
+                )
+                .offset(x: -8, y: -8) // Position it in the corner with negative offset
             }
 
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
+            VStack(alignment: .leading, spacing: 20) {
+                HStack(spacing: 12) {
                     if isPlaying {
-                        HStack {
-                            // Pass the audio engine to WaveformView for real audio data
+                        HStack(spacing: 12) {
                             if let audioEngine = manager.audioEngine as? AudioLevelProvider {
                                 WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
                                     .frame(width: 100)
@@ -216,6 +326,9 @@ struct FloatingControlView: View {
                             }
                         }
                     }
+
+                    Spacer(minLength: 0)
+
                     Button(action: togglePlayback) {
                         Text(isPlaying ? "Stop scramble" : "Start scramble")
                             .font(FontManager.shared.font(weight: .medium, size: 14))
@@ -359,6 +472,8 @@ final class PreviewFloatingWindowManager: FloatingWindowManager {
         // Inject a mock engine if you want interactive pieces enabled
         let mock = MockAudioEngine()
         self.setAudioEngine(mock)
+        // For preview, set mouse as inside window
+        self.isMouseInWindow = true
     }
 }
 

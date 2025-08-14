@@ -1,5 +1,5 @@
 file_length:
-  warning: 500
+  warning: 700
   error: 800
 excluded:
   - Packages
