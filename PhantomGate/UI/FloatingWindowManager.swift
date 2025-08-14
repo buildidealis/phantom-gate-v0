@@ -194,7 +194,7 @@ struct FloatingControlView: View {
 
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                    VStack {
+                    HStack {
                         // Pass the audio engine to WaveformView for real audio data
                         if let audioEngine = manager.audioEngine as? AudioLevelProvider {
                             WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
