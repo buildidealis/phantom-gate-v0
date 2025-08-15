@@ -269,15 +269,16 @@ struct FloatingControlView: View {
             // Close button positioned absolutely in top-left
             ZStack(alignment: .topLeading) {
                 // Main header content
-                VStack(alignment: .leading, spacing: 20) { // Increased spacing
+                VStack(alignment: .leading, spacing: 0) {
                     Text("PhantomGate")
                         .font(FontManager.shared.font(weight: .bold, size: 48))
                         .foregroundColor(Color.phantomGreen)
-                        .padding(.top, 4) // Add some top padding to align better with close button
+                        .padding(.top, 0) // Add some top padding to align better with close button
 
                     Text("Select broadband interference option:")
                         .font(FontManager.shared.font(weight: .medium, size: 14))
                         .foregroundColor(.white)
+                        .padding(.bottom, 16)
 
                     Picker("", selection: $selectedNoiseType) {
                         ForEach(NoiseType.allCases, id: \.self) { type in
@@ -300,7 +301,7 @@ struct FloatingControlView: View {
                     isVisible: manager.isMouseInWindow,
                     action: { manager.toggleVisibility() }
                 )
-                .offset(x: -8, y: -8) // Position it in the corner with negative offset
+                .offset(x: -12, y: -12) // Position it in the corner with negative offset
             }
 
             VStack(alignment: .leading, spacing: 20) {
