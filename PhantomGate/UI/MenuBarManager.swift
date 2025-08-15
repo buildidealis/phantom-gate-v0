@@ -97,7 +97,7 @@ class MenuBarManager: ObservableObject {
         }
     }
 
-    @objc private func toggleEnabled() {
+    @objc func toggleEnabled() {
         isEnabled.toggle()
         floatingManager?.toggleVisibility()
     }

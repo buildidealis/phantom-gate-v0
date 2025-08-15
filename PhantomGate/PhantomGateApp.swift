@@ -19,7 +19,7 @@ class AppState: ObservableObject {
         // Create instances
         audioEngine = AudioEngine()
         menuBarManager = MenuBarManager()
-        floatingManager = FloatingWindowManager()
+        floatingManager = FloatingWindowManager(menuBarManager: menuBarManager)
 
         // Set up environment
         let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
