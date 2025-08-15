@@ -10,13 +10,15 @@ class FloatingWindowManager: ObservableObject {
 
     private var window: NSWindow?
     private(set) var audioEngine: AudioEngine?
+    var menuBarManager: MenuBarManager?
     private var trackingArea: NSTrackingArea?
     private var eventMonitor: Any?
 
     // Track last size to avoid jitter
     private var lastSize: CGSize = .zero
 
-    init() {
+    init(menuBarManager: MenuBarManager?) {
+        self.menuBarManager = menuBarManager
         setupWindow()
     }
 
@@ -85,7 +87,7 @@ class FloatingWindowManager: ObservableObject {
 
     private func setupContentView() {
         guard let window else { return }
-        let root = FloatingControlView(manager: self)
+        let root = FloatingControlView(manager: self, menuBarManager: menuBarManager)
         let hosting = NSHostingView(rootView: root.fixedSize()) // fixedSize to hug content
 
         // Wrap in tracking view
@@ -111,7 +113,7 @@ class FloatingWindowManager: ObservableObject {
         guard let window else { return }
 
         // Clamp to sensible minimums
-        let minWidth: CGFloat = 200
+        let minWidth: CGFloat = 220
         let minHeight: CGFloat = 120
         var target = size
         target.width = max(target.width, minWidth)
@@ -241,6 +243,7 @@ protocol AudioLevelProvider {
 
 struct FloatingControlView: View {
     @ObservedObject var manager: FloatingWindowManager
+    var menuBarManager: MenuBarManager?
     @State private var selectedNoiseType: NoiseType = .green
     @State private var isPlaying = false
     @State private var currentFrequency: Float = 0
@@ -299,7 +302,7 @@ struct FloatingControlView: View {
                 // Stoplight close button positioned in top-left corner
                 StoplightCloseButton(
                     isVisible: manager.isMouseInWindow,
-                    action: { manager.toggleVisibility() }
+                    action: { menuBarManager?.toggleEnabled() }
                 )
                 .offset(x: -12, y: -12) // Position it in the corner with negative offset
             }
@@ -310,12 +313,12 @@ struct FloatingControlView: View {
                         HStack(spacing: 12) {
                             if let audioEngine = manager.audioEngine as? AudioLevelProvider {
                                 WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
-                                    .frame(width: 100)
+                                    .frame(width: 50)
                                     .accessibilityIdentifier("WaveformView")
                             } else {
                                 // Fallback to original behavior if no audio engine
                                 WaveformView(isPlaying: isPlaying)
-                                    .frame(width: 100)
+                                    .frame(width: 50)
                                     .accessibilityIdentifier("WaveformView")
                             }
 
@@ -343,7 +346,7 @@ struct FloatingControlView: View {
                     .disabled(manager.audioEngine == nil)
                     .environment(\.colorScheme, .dark)
                 }
-            }
+            }.padding(8)
         }
         .onChange(of: isPlaying) { _, newValue in
             if newValue {
@@ -465,7 +468,7 @@ final class MockAudioEngine: AudioEngine {
 }
 
 // MARK: - Preview Manager (skips real window sizing side-effects)
-
+/*
 @MainActor
 final class PreviewFloatingWindowManager: FloatingWindowManager {
     override init() {
@@ -516,5 +519,5 @@ private extension PreviewFloatingWindowManager {
         .background(Color.gray.opacity(0.15))
         .preferredColorScheme(.light)
 }
-
+*/
 #endif
