@@ -258,7 +258,7 @@ struct FloatingControlView: View {
     @State private var currentFrequency: Float = 0
     @State private var frequencyStreamError: Error?
     @State private var frequencyTask: Task<Void, Never>?
-    
+
     // Use the published property from the manager that observes the AudioEngine
     private var isPlaying: Bool {
         manager.audioEngineIsPlaying

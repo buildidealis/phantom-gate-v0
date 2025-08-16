@@ -88,20 +88,20 @@ struct IntegrationTests {
     }
 
     // MARK: - State Synchronization Tests
-    
+
     @Test func testFloatingWindowManagerAudioEngineSync() async throws {
         // Test that FloatingWindowManager properly observes AudioEngine state
-        
+
         // Create a mock audio engine
         let mockEngine = MockAudioEngine()
-        
+
         // Verify initial state
         #expect(mockEngine.isPlaying == false)
-        
+
         // Test that we can change the mock engine state
         try await mockEngine.startPlayback()
         #expect(mockEngine.isPlaying == true)
-        
+
         try await mockEngine.stopPlayback()
         #expect(mockEngine.isPlaying == false)
     }
