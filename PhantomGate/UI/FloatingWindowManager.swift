@@ -1,5 +1,6 @@
 import SwiftUI
 import AppKit
+import Combine
 
 @MainActor
 class FloatingWindowManager: ObservableObject {
@@ -7,12 +8,14 @@ class FloatingWindowManager: ObservableObject {
         didSet { isVisible ? showWindow() : hideWindow() }
     }
     @Published var isMouseInWindow = false
+    @Published private(set) var audioEngineIsPlaying = false
 
     private var window: NSWindow?
     private(set) var audioEngine: AudioEngine?
     var menuBarManager: MenuBarManager?
     private var trackingArea: NSTrackingArea?
     private var eventMonitor: Any?
+    private var audioEngineObserver: AnyCancellable?
 
     // Track last size to avoid jitter
     private var lastSize: CGSize = .zero
@@ -26,6 +29,7 @@ class FloatingWindowManager: ObservableObject {
         if let eventMonitor = eventMonitor {
             NSEvent.removeMonitor(eventMonitor)
         }
+        audioEngineObserver?.cancel()
     }
 
     private func setupWindow() {
@@ -82,6 +86,12 @@ class FloatingWindowManager: ObservableObject {
 
     func setAudioEngine(_ engine: AudioEngine) {
         audioEngine = engine
+        // Observe the AudioEngine's isPlaying state and mirror it in our own @Published property
+        audioEngineObserver = engine.$isPlaying
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isPlaying in
+                self?.audioEngineIsPlaying = isPlaying
+            }
         setupContentView()
     }
 
@@ -245,10 +255,14 @@ struct FloatingControlView: View {
     @ObservedObject var manager: FloatingWindowManager
     var menuBarManager: MenuBarManager?
     @State private var selectedNoiseType: NoiseType = .green
-    @State private var isPlaying = false
     @State private var currentFrequency: Float = 0
     @State private var frequencyStreamError: Error?
     @State private var frequencyTask: Task<Void, Never>?
+
+    // Use the published property from the manager that observes the AudioEngine
+    private var isPlaying: Bool {
+        manager.audioEngineIsPlaying
+    }
 
     var body: some View {
         content
@@ -390,7 +404,8 @@ struct FloatingControlView: View {
                 } else {
                     try await engine.startPlayback()
                 }
-                isPlaying = engine.isPlaying
+                // No need to manually set isPlaying - it will be updated automatically
+                // via the computed property observing engine.isPlaying
             } catch {
                 print("Audio playback error: \(error)")
             }
