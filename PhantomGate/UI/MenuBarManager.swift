@@ -45,6 +45,33 @@ class MenuBarManager: ObservableObject {
         )
         toggleItem.target = self
         menu.addItem(toggleItem)
+        
+        if let engine = audioEngine {
+            let micState = engine.virtualMicState
+            var title = ""
+            var enabled = true
+            var action: Selector? = nil
+
+            switch micState {
+            case .driverMissing:
+                title = "Install Virtual Mic…"
+                action = #selector(installVirtualMic)
+            case .ready:
+                title = "Start Virtual Mic"
+                action = #selector(startVirtualMic)
+            case .streaming:
+                title = "Stop Virtual Mic"
+                action = #selector(stopVirtualMic)
+            case .error(let msg):
+                title = "Virtual Mic Error (\(msg))"
+                enabled = false
+            }
+
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+            item.target = self
+            item.isEnabled = enabled
+            menu.addItem(item)
+        }
 
         // Toggle Noise
         let noiseToggleItem = NSMenuItem(
@@ -138,5 +165,25 @@ class MenuBarManager: ObservableObject {
 
     func setFloatingManager(_ manager: FloatingWindowManager) {
         self.floatingManager = manager
+    }
+    
+    @objc private func installVirtualMic() {
+        if let url = URL(string: "https://existential.audio/blackhole/") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    private func updateMenu() {
+        statusItem?.menu = buildMenu()
+    }
+
+    @objc private func startVirtualMic() {
+        audioEngine?.startVirtualMic()
+        updateMenu()
+    }
+    
+    @objc private func stopVirtualMic() {
+        audioEngine?.stopVirtualMic()
+        updateMenu()
     }
 }
