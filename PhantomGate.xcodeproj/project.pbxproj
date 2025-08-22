@@ -42,6 +42,8 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				Audio/AudioEngine.swift,
+				Audio/AudioEngineError.swift,
+				Audio/NoiseType.swift,
 				Audio/VirtualMicInjector.swift,
 				Audio/VirtualMicState.swift,
 				"Resources/Fonts/JetBrainsMono-Bold.ttf",
@@ -59,6 +61,8 @@
 			membershipExceptions = (
 				Assets.xcassets,
 				Audio/AudioEngine.swift,
+				Audio/AudioEngineError.swift,
+				Audio/NoiseType.swift,
 				Audio/VirtualMicInjector.swift,
 				Audio/VirtualMicState.swift,
 				"Resources/Fonts/JetBrainsMono-Bold.ttf",

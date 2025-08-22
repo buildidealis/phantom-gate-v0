@@ -24,7 +24,7 @@ final class AudioBufferQueue {
                 continue
             }
             let src = channelData[0]
-            target.advanced(by: framesWritten).assign(from: src, count: framesToCopy)
+            target.advanced(by: framesWritten).update(from: src, count: framesToCopy)
             if framesToCopy == availableFrames {
                 buffers.removeFirst()
             } else {
@@ -33,7 +33,7 @@ final class AudioBufferQueue {
                 if let newBuffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: AVAudioFrameCount(remainder)) {
                     newBuffer.frameLength = AVAudioFrameCount(remainder)
                     if let newChannelData = newBuffer.floatChannelData, format.channelCount > 0 {
-                        newChannelData[0].assign(from: src.advanced(by: framesToCopy), count: remainder)
+                        newChannelData[0].update(from: src.advanced(by: framesToCopy), count: remainder)
                     }
                     buffers[0] = newBuffer
                 } else {
@@ -92,118 +92,165 @@ final class VirtualMicInjector {
 
     deinit {
         print("VirtualMicInjector deinit")
-        stop() // Defensive: ensures audio unit is always stopped before deallocation
+        stop()
     }
 
     private func instantiateHAL() throws {
-        var desc = AudioComponentDescription(componentType: kAudioUnitType_Output,
-                                             componentSubType: kAudioUnitSubType_HALOutput,
-                                             componentManufacturer: kAudioUnitManufacturer_Apple,
-                                             componentFlags: 0,
-                                             componentFlagsMask: 0)
+        let audioComponent = try makeAudioComponent()
+        let audioUnitInstance = try makeAudioUnitInstance(audioComponent)
+        try enableOutputScope(audioUnitInstance)
+        try setAudioDevice(audioUnitInstance)
+        try setAudioStreamFormat(audioUnitInstance)
+        try setAudioRenderCallback(audioUnitInstance)
+        try check(AudioUnitInitialize(audioUnitInstance))
+        audioUnit = audioUnitInstance
+    }
 
+    private func makeAudioComponent() throws -> AudioComponent {
+        var desc = AudioComponentDescription(
+            componentType: kAudioUnitType_Output,
+            componentSubType: kAudioUnitSubType_HALOutput,
+            componentManufacturer: kAudioUnitManufacturer_Apple,
+            componentFlags: 0,
+            componentFlagsMask: 0
+        )
         guard let comp = AudioComponentFindNext(nil, &desc) else {
             throw InjectorError.audioUnit(-1)
         }
+        return comp
+    }
 
+    private func makeAudioUnitInstance(_ component: AudioComponent) throws -> AudioUnit {
         var unit: AudioUnit?
-        try check(AudioComponentInstanceNew(comp, &unit))
-        guard let au = unit else { throw InjectorError.audioUnit(-1) }
+        try check(AudioComponentInstanceNew(component, &unit))
+        guard let audioUnit = unit else { throw InjectorError.audioUnit(-1) }
+        return audioUnit
+    }
 
-        // Enable output scope
+    private func enableOutputScope(_ audioUnit: AudioUnit) throws {
         var enable: UInt32 = 1
-        try check(AudioUnitSetProperty(au,
-                                       kAudioOutputUnitProperty_EnableIO,
-                                       kAudioUnitScope_Output,
-                                       0,
-                                       &enable,
-                                       UInt32(MemoryLayout.size(ofValue: enable))))
+        try check(AudioUnitSetProperty(
+            audioUnit,
+            kAudioOutputUnitProperty_EnableIO,
+            kAudioUnitScope_Output,
+            0,
+            &enable,
+            UInt32(MemoryLayout.size(ofValue: enable))
+        ))
+    }
 
-        // Set device
+    private func setAudioDevice(_ audioUnit: AudioUnit) throws {
         var dev = deviceID
-        try check(AudioUnitSetProperty(au,
-                                       kAudioOutputUnitProperty_CurrentDevice,
-                                       kAudioUnitScope_Global,
-                                       0,
-                                       &dev,
-                                       UInt32(MemoryLayout.size(ofValue: dev))))
+        try check(AudioUnitSetProperty(
+            audioUnit,
+            kAudioOutputUnitProperty_CurrentDevice,
+            kAudioUnitScope_Global,
+            0,
+            &dev,
+            UInt32(MemoryLayout.size(ofValue: dev))
+        ))
+    }
 
-        // Stream format
-        var asbd = AudioStreamBasicDescription(mSampleRate: sampleRate,
-                                               mFormatID: kAudioFormatLinearPCM,
-                                               mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked,
-                                               mBytesPerPacket: 4 * channels,
-                                               mFramesPerPacket: 1,
-                                               mBytesPerFrame: 4 * channels,
-                                               mChannelsPerFrame: channels,
-                                               mBitsPerChannel: 32,
-                                               mReserved: 0)
-        try check(AudioUnitSetProperty(au,
-                                       kAudioUnitProperty_StreamFormat,
-                                       kAudioUnitScope_Input,
-                                       0,
-                                       &asbd,
-                                       UInt32(MemoryLayout.size(ofValue: asbd))))
+    private func setAudioStreamFormat(_ audioUnit: AudioUnit) throws {
+        var asbd = AudioStreamBasicDescription(
+            mSampleRate: sampleRate,
+            mFormatID: kAudioFormatLinearPCM,
+            mFormatFlags: kAudioFormatFlagIsFloat | kAudioFormatFlagIsPacked,
+            mBytesPerPacket: 4 * channels,
+            mFramesPerPacket: 1,
+            mBytesPerFrame: 4 * channels,
+            mChannelsPerFrame: channels,
+            mBitsPerChannel: 32,
+            mReserved: 0
+        )
+        try check(AudioUnitSetProperty(
+            audioUnit,
+            kAudioUnitProperty_StreamFormat,
+            kAudioUnitScope_Input,
+            0,
+            &asbd,
+            UInt32(MemoryLayout.size(ofValue: asbd))
+        ))
+    }
 
-        // Render callback
-        var cb = AURenderCallbackStruct(inputProc: { refCon, _, _, _, frameCount, ioDataPointer in
-            let queue = Unmanaged<AudioBufferQueue>
-                .fromOpaque(refCon).takeUnretainedValue()
-            guard let ioDataPointer else { return noErr }
-
-            let bufferList = UnsafeMutableAudioBufferListPointer(ioDataPointer)
-            for bufferIndex in bufferList.indices {
-                guard let dataPointer = bufferList[bufferIndex].mData, frameCount > 0 else { continue }
-                let floatPointer = dataPointer.assumingMemoryBound(to: Float.self)
-                let framesWritten = queue.dequeue(into: floatPointer, frameCount: Int(frameCount))
-                if framesWritten < Int(frameCount) {
-                    memset(floatPointer.advanced(by: framesWritten), 0, Int(frameCount - UInt32(framesWritten)) * MemoryLayout<Float>.size)
+    private func setAudioRenderCallback(_ audioUnit: AudioUnit) throws {
+        var callbackStruct = AURenderCallbackStruct(
+            inputProc: { refCon, _, _, _, frameCount, ioDataPointer in
+                let queue = Unmanaged<AudioBufferQueue>
+                    .fromOpaque(refCon).takeUnretainedValue()
+                guard let ioDataPointer else { return noErr }
+                let bufferList = UnsafeMutableAudioBufferListPointer(ioDataPointer)
+                for bufferIndex in bufferList.indices {
+                    guard let dataPointer = bufferList[bufferIndex].mData, frameCount > 0 else { continue }
+                    let floatPointer = dataPointer.assumingMemoryBound(to: Float.self)
+                    let framesWritten = queue.dequeue(into: floatPointer, frameCount: Int(frameCount))
+                    if framesWritten < Int(frameCount) {
+                        let zeroBytes = Int(frameCount - UInt32(framesWritten)) * MemoryLayout<Float>.size
+                        memset(floatPointer.advanced(by: framesWritten), 0, zeroBytes)
+                    }
+                    bufferList[bufferIndex].mDataByteSize = UInt32(frameCount * 4)
                 }
-                bufferList[bufferIndex].mDataByteSize = UInt32(frameCount * 4)
-            }
-            return noErr
-        }, inputProcRefCon: Unmanaged.passUnretained(bufferQueue).toOpaque())
-
-        try check(AudioUnitSetProperty(au,
-                                       kAudioUnitProperty_SetRenderCallback,
-                                       kAudioUnitScope_Global,
-                                       0,
-                                       &cb,
-                                       UInt32(MemoryLayout.size(ofValue: cb))))
-
-        try check(AudioUnitInitialize(au))
-        audioUnit = au
+                return noErr
+            },
+            inputProcRefCon: Unmanaged.passUnretained(bufferQueue).toOpaque()
+        )
+        try check(AudioUnitSetProperty(
+            audioUnit,
+            kAudioUnitProperty_SetRenderCallback,
+            kAudioUnitScope_Global,
+            0,
+            &callbackStruct,
+            UInt32(MemoryLayout.size(ofValue: callbackStruct))
+        ))
     }
 
     private func findDevice(named target: String) throws -> AudioDeviceID {
-        var address = AudioObjectPropertyAddress(mSelector: kAudioHardwarePropertyDevices,
-                                                 mScope: kAudioObjectPropertyScopeGlobal,
-                                                 mElement: kAudioObjectPropertyElementMain)
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDevices,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
         var dataSize: UInt32 = 0
-        var status = AudioObjectGetPropertyDataSize(AudioObjectID(kAudioObjectSystemObject),
-                                                    &address,
-                                                    0,
-                                                    nil,
-                                                    &dataSize)
+        var status = AudioObjectGetPropertyDataSize(
+            AudioObjectID(kAudioObjectSystemObject),
+            &address,
+            0,
+            nil,
+            &dataSize
+        )
         guard status == noErr else { throw InjectorError.audioUnit(status) }
         let deviceCount = Int(dataSize) / MemoryLayout<AudioDeviceID>.size
         var deviceIDs = [AudioDeviceID](repeating: 0, count: deviceCount)
-        status = AudioObjectGetPropertyData(AudioObjectID(kAudioObjectSystemObject),
-                                            &address,
-                                            0,
-                                            nil,
-                                            &dataSize,
-                                            &deviceIDs)
+        status = AudioObjectGetPropertyData(
+            AudioObjectID(kAudioObjectSystemObject),
+            &address,
+            0,
+            nil,
+            &dataSize,
+            &deviceIDs
+        )
         guard status == noErr else { throw InjectorError.audioUnit(status) }
 
         for deviceID in deviceIDs {
-            var nameAddress = AudioObjectPropertyAddress(mSelector: kAudioObjectPropertyName,
-                                                         mScope: kAudioObjectPropertyScopeGlobal,
-                                                         mElement: kAudioObjectPropertyElementMain)
-            var deviceName: CFString = "" as CFString
-            var nameSize = UInt32(MemoryLayout<CFString>.size)
-            if AudioObjectGetPropertyData(deviceID, &nameAddress, 0, nil, &nameSize, &deviceName) == noErr {
-                if (deviceName as String).caseInsensitiveCompare(target) == .orderedSame {
+            var nameAddress = AudioObjectPropertyAddress(
+                mSelector: kAudioObjectPropertyName,
+                mScope: kAudioObjectPropertyScopeGlobal,
+                mElement: kAudioObjectPropertyElementMain
+            )
+            var deviceNameRef: CFString?
+            var nameSize = UInt32(MemoryLayout<CFString?>.size)
+            let status = withUnsafeMutablePointer(to: &deviceNameRef) { ptr in
+                AudioObjectGetPropertyData(
+                    deviceID,
+                    &nameAddress,
+                    0,
+                    nil,
+                    &nameSize,
+                    UnsafeMutableRawPointer(ptr)
+                )
+            }
+            if status == noErr, let deviceName = deviceNameRef as String? {
+                if deviceName.caseInsensitiveCompare(target) == .orderedSame {
                     return deviceID
                 }
             }

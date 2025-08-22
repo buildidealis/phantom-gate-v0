@@ -2,41 +2,25 @@ import AVFoundation
 import CoreGraphics
 import Foundation
 
-enum NoiseType: String, CaseIterable {
-    case green = "Green noise"
-    case pink = "Pink noise"
-    case pinkBabble = "Pink babble noise"
-}
-
-enum AudioEngineError: Error {
-    case formatCreationFailed
-    case engineStartFailed(Error)
-    case noAudioFormat
-}
-
 class AudioEngine: ObservableObject {
     let engine = AVAudioEngine()
     let mainMixer: AVAudioMixerNode
     private var noiseGenerator: AVAudioSourceNode?
 
-    // Virtual mic state and injector
     @Published var virtualMicState: VirtualMicState = .driverMissing
     private var injector: VirtualMicInjector?
     private var virtualMicTapInstalled: Bool = false
 
-    // Combined mixer for noise + mic
     private var combinedMixer: AVAudioMixerNode?
     private var micInputNode: AVAudioInputNode?
     private var micFormat: AVAudioFormat?
 
-    // Playback state
     @Published private(set) var isPlaying = false
     @Published private(set) var currentFrequency: Float = 0
 
-    // Noise generation params
     private var currentNoiseType: NoiseType = .green
     private let sampleRate: Double = 44100
-    private let nyquistFrequency: Double = 22050 // sampleRate / 2 (unused for now)
+    private let nyquistFrequency: Double = 22050
 
     init() {
         self.mainMixer = engine.mainMixerNode
@@ -80,8 +64,9 @@ class AudioEngine: ObservableObject {
         let format = outputNode.inputFormat(forBus: 0)
 
         engine.mainMixerNode.outputVolume = 1.0
-        // Frequency estimation tap (does not interfere with virtual mic path)
-        engine.mainMixerNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
+        engine.mainMixerNode.installTap(
+            onBus: 0, bufferSize: 1024, format: format
+        ) { [weak self] buffer, _ in
             guard let self else { return }
             let frequency = self.calculateApproximateFrequency(buffer)
             Task { @MainActor in
@@ -126,22 +111,7 @@ class AudioEngine: ObservableObject {
             throw AudioEngineError.formatCreationFailed
         }
 
-        let generator = { [currentNoiseType] (frameCount: Int) -> [Float] in
-            var samples = [Float](repeating: 0, count: frameCount)
-            for frame in 0..<frameCount {
-                switch currentNoiseType {
-                case .green:
-                    samples[frame] = Float.random(in: -1...1) * 0.8
-                case .pink:
-                    samples[frame] = Float.random(in: -1...1) * 0.6
-                case .pinkBabble:
-                    let pink = Float.random(in: -1...1) * 0.6
-                    let babble = Float.random(in: -0.3...0.3)
-                    samples[frame] = (pink + babble) * 0.7
-                }
-            }
-            return samples
-        }
+        let generator = makeNoiseGenerator()
 
         let node = AVAudioSourceNode { _, _, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
@@ -189,50 +159,60 @@ class AudioEngine: ObservableObject {
         }
     }
 
-    // MARK: - Virtual Mic Integration
-
-    /// Checks for BlackHole (or other device)
     func checkVirtualMicPresence() {
         let exists = (try? VirtualMicInjector().start(deviceName: "BlackHole 2ch")) != nil
         virtualMicState = exists ? .ready : .driverMissing
     }
 
-    /// Start the virtual mic with a combined audio path (noise + user's mic)
     func startVirtualMic(includeUserMic: Bool = true) {
         checkVirtualMicPresence()
         guard case .ready = virtualMicState else { return }
 
-        // 1. Setup combined mixer
-        if combinedMixer == nil {
-            let mixer = AVAudioMixerNode()
-            engine.attach(mixer)
-            combinedMixer = mixer
-        }
+        setupCombinedMixerIfNeeded()
+        connectNoiseGenerator()
+        connectMicInputIfNeeded(includeUserMic: includeUserMic)
+        connectCombinedMixerToMainMixer()
+        setupVirtualMicInjectorAndTap()
+        startEngineIfNeeded()
+    }
 
-        guard let combinedMixer = combinedMixer else {
-            virtualMicState = .error("Mixer creation failed")
+    func stopVirtualMic() {
+        guard case .streaming = virtualMicState else {
+            injector?.stop()
+            injector = nil
             return
         }
+        if virtualMicTapInstalled, let combinedMixer = combinedMixer {
+            combinedMixer.removeTap(onBus: 0)
+            virtualMicTapInstalled = false
+        }
+        injector?.stop()
+        injector = nil
+        if let combinedMixer = combinedMixer {
+            engine.disconnectNodeInput(combinedMixer)
+            engine.disconnectNodeOutput(combinedMixer)
+            engine.detach(combinedMixer)
+            self.combinedMixer = nil
+        }
+        if let inputNode = micInputNode {
+            engine.disconnectNodeOutput(inputNode)
+        }
+        virtualMicState = .ready
+    }
+}
 
-        // 2. Connect noise generator
+// MARK: - Virtual Mic Helpers (moved out of type body for linting)
+private extension AudioEngine {
+    func setupCombinedMixerIfNeeded() {
+        guard combinedMixer == nil else { return }
+        let mixer = AVAudioMixerNode()
+        engine.attach(mixer)
+        combinedMixer = mixer
+    }
+
+    func connectNoiseGenerator() {
         if noiseGenerator == nil {
-            let format = AVAudioFormat(standardFormatWithSampleRate: sampleRate, channels: 1)!
-            let generator = { [currentNoiseType] (frameCount: Int) -> [Float] in
-                var samples = [Float](repeating: 0, count: frameCount)
-                for frame in 0..<frameCount {
-                    switch currentNoiseType {
-                    case .green:
-                        samples[frame] = Float.random(in: -1...1) * 0.8
-                    case .pink:
-                        samples[frame] = Float.random(in: -1...1) * 0.6
-                    case .pinkBabble:
-                        let pink = Float.random(in: -1...1) * 0.6
-                        let babble = Float.random(in: -0.3...0.3)
-                        samples[frame] = (pink + babble) * 0.7
-                    }
-                }
-                return samples
-            }
+            let generator = makeNoiseGenerator()
             let node = AVAudioSourceNode { _, _, frameCount, audioBufferList -> OSStatus in
                 let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
                 let samples = generator(Int(frameCount))
@@ -246,13 +226,18 @@ class AudioEngine: ObservableObject {
             noiseGenerator = node
             engine.attach(node)
         }
-        if let noiseNode = noiseGenerator {
-            // Reconnect to combined mixer (even if already connected)
+        if let noiseNode = noiseGenerator, let combinedMixer = combinedMixer {
             engine.disconnectNodeOutput(noiseNode)
-            engine.connect(noiseNode, to: combinedMixer, format: mainMixer.outputFormat(forBus: 0))
+            engine.connect(
+                noiseNode,
+                to: combinedMixer,
+                format: mainMixer.outputFormat(forBus: 0)
+            )
         }
+    }
 
-        // 3. Optionally connect mic input
+    func connectMicInputIfNeeded(includeUserMic: Bool) {
+        guard let combinedMixer = combinedMixer else { return }
         if includeUserMic {
             let inputNode = engine.inputNode
             let micFormat = inputNode.outputFormat(forBus: 0)
@@ -261,28 +246,36 @@ class AudioEngine: ObservableObject {
             engine.disconnectNodeOutput(inputNode)
             engine.connect(inputNode, to: combinedMixer, format: micFormat)
         } else if let inputNode = micInputNode {
-            // Disconnect mic if previously connected
             engine.disconnectNodeOutput(inputNode)
         }
+    }
 
-        // 4. Connect combined mixer to main output (local monitoring)
+    func connectCombinedMixerToMainMixer() {
+        guard let combinedMixer = combinedMixer else { return }
         engine.disconnectNodeOutput(combinedMixer)
-        engine.connect(combinedMixer, to: mainMixer, format: mainMixer.outputFormat(forBus: 0))
+        engine.connect(
+            combinedMixer,
+            to: mainMixer,
+            format: mainMixer.outputFormat(forBus: 0)
+        )
+    }
 
-        // 5. Create injector & tap on combined mixer
+    func setupVirtualMicInjectorAndTap() {
+        guard let combinedMixer = combinedMixer else { return }
         if injector == nil {
             injector = VirtualMicInjector(sampleRate: 44100, channels: 1)
         }
         do {
             try injector?.start(deviceName: "BlackHole 2ch")
             if !virtualMicTapInstalled {
-                combinedMixer.installTap(onBus: 0, bufferSize: 1024, format: combinedMixer.outputFormat(forBus: 0)) { [weak self] buf, _ in
+                combinedMixer.installTap(
+                    onBus: 0,
+                    bufferSize: 1024,
+                    format: combinedMixer.outputFormat(forBus: 0)
+                ) { [weak self] buf, _ in
                     self?.injector?.push(buf)
                 }
                 virtualMicTapInstalled = true
-            }
-            if !engine.isRunning {
-                try engine.start()
             }
             virtualMicState = .streaming
         } catch {
@@ -290,29 +283,33 @@ class AudioEngine: ObservableObject {
         }
     }
 
-    /// Stops the virtual mic and cleans up
-    func stopVirtualMic() {
-        guard case .streaming = virtualMicState else {
-            injector?.stop()
-            injector = nil
-            return
+    func startEngineIfNeeded() {
+        if !engine.isRunning {
+            do {
+                try engine.start()
+            } catch {
+                print("Failed to start engine: \(error)")
+            }
         }
-        if virtualMicTapInstalled, let combinedMixer = combinedMixer {
-            combinedMixer.removeTap(onBus: 0)
-            virtualMicTapInstalled = false
+    }
+
+    func makeNoiseGenerator() -> (Int) -> [Float] {
+        let type = currentNoiseType
+        return { frameCount in
+            var samples = [Float](repeating: 0, count: frameCount)
+            for frame in 0..<frameCount {
+                switch type {
+                case .green:
+                    samples[frame] = Float.random(in: -1...1) * 0.8
+                case .pink:
+                    samples[frame] = Float.random(in: -1...1) * 0.6
+                case .pinkBabble:
+                    let pink = Float.random(in: -1...1) * 0.6
+                    let babble = Float.random(in: -0.3...0.3)
+                    samples[frame] = (pink + babble) * 0.7
+                }
+            }
+            return samples
         }
-        injector?.stop()
-        injector = nil
-        // Disconnect combined mixer and input
-        if let combinedMixer = combinedMixer {
-            engine.disconnectNodeInput(combinedMixer)
-            engine.disconnectNodeOutput(combinedMixer)
-            engine.detach(combinedMixer)
-            self.combinedMixer = nil
-        }
-        if let inputNode = micInputNode {
-            engine.disconnectNodeOutput(inputNode)
-        }
-        virtualMicState = .ready
     }
 }

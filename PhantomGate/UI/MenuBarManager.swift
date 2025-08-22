@@ -33,11 +33,20 @@ class MenuBarManager: ObservableObject {
         }
     }
 
-    // Build a fresh menu each time so state reflects current properties.
+    // Split buildMenu for lint compliance
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
+        addToggleItem(to: menu)
+        addVirtualMicItemIfNeeded(to: menu)
+        addNoiseToggleItem(to: menu)
+        menu.addItem(NSMenuItem.separator())
+        addFeedbackAndHelpItems(to: menu)
+        menu.addItem(NSMenuItem.separator())
+        addQuitItem(to: menu)
+        return menu
+    }
 
-        // Enable / Disable
+    private func addToggleItem(to menu: NSMenu) {
         let toggleItem = NSMenuItem(
             title: isEnabled ? "Hide Main Window" : "Show Main Window",
             action: #selector(toggleEnabled),
@@ -45,35 +54,37 @@ class MenuBarManager: ObservableObject {
         )
         toggleItem.target = self
         menu.addItem(toggleItem)
-        
-        if let engine = audioEngine {
-            let micState = engine.virtualMicState
-            var title = ""
-            var enabled = true
-            var action: Selector? = nil
+    }
 
-            switch micState {
-            case .driverMissing:
-                title = "Install Virtual Mic…"
-                action = #selector(installVirtualMic)
-            case .ready:
-                title = "Start Virtual Mic"
-                action = #selector(startVirtualMic)
-            case .streaming:
-                title = "Stop Virtual Mic"
-                action = #selector(stopVirtualMic)
-            case .error(let msg):
-                title = "Virtual Mic Error (\(msg))"
-                enabled = false
-            }
+    private func addVirtualMicItemIfNeeded(to menu: NSMenu) {
+        guard let engine = audioEngine else { return }
+        let micState = engine.virtualMicState
+        var title = ""
+        var enabled = true
+        var action: Selector?
 
-            let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
-            item.target = self
-            item.isEnabled = enabled
-            menu.addItem(item)
+        switch micState {
+        case .driverMissing:
+            title = "Install Virtual Mic…"
+            action = #selector(installVirtualMic)
+        case .ready:
+            title = "Start Virtual Mic"
+            action = #selector(startVirtualMic)
+        case .streaming:
+            title = "Stop Virtual Mic"
+            action = #selector(stopVirtualMic)
+        case .error(let msg):
+            title = "Virtual Mic Error (\(msg))"
+            enabled = false
         }
 
-        // Toggle Noise
+        let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
+        item.target = self
+        item.isEnabled = enabled
+        menu.addItem(item)
+    }
+
+    private func addNoiseToggleItem(to menu: NSMenu) {
         let noiseToggleItem = NSMenuItem(
             title: (audioEngine?.isPlaying ?? false) ? "Stop Noise" : "Start Noise",
             action: #selector(toggleNoise),
@@ -83,9 +94,9 @@ class MenuBarManager: ObservableObject {
         noiseToggleItem.keyEquivalentModifierMask = .command
         noiseToggleItem.isEnabled = isEnabled
         menu.addItem(noiseToggleItem)
+    }
 
-        menu.addItem(NSMenuItem.separator())
-
+    private func addFeedbackAndHelpItems(to menu: NSMenu) {
         let feedbackItem = NSMenuItem(
             title: "Submit Feedback",
             action: #selector(submitFeedback),
@@ -101,22 +112,19 @@ class MenuBarManager: ObservableObject {
         )
         helpItem.target = self
         menu.addItem(helpItem)
+    }
 
-        menu.addItem(NSMenuItem.separator())
-
+    private func addQuitItem(to menu: NSMenu) {
         let quitItem = NSMenuItem(
             title: "Quit",
             action: #selector(NSApplication.terminate(_:)),
             keyEquivalent: "q"
         )
         menu.addItem(quitItem)
-
-        return menu
     }
 
     @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
         let menu = buildMenu()
-        // Show menu immediately for this click
         if let button = statusItem?.button {
             menu.popUp(positioning: nil,
                        at: NSPoint(x: 0, y: button.bounds.height - 4),
@@ -166,13 +174,13 @@ class MenuBarManager: ObservableObject {
     func setFloatingManager(_ manager: FloatingWindowManager) {
         self.floatingManager = manager
     }
-    
+
     @objc private func installVirtualMic() {
         if let url = URL(string: "https://existential.audio/blackhole/") {
             NSWorkspace.shared.open(url)
         }
     }
-    
+
     private func updateMenu() {
         statusItem?.menu = buildMenu()
     }
@@ -181,7 +189,7 @@ class MenuBarManager: ObservableObject {
         audioEngine?.startVirtualMic()
         updateMenu()
     }
-    
+
     @objc private func stopVirtualMic() {
         audioEngine?.stopVirtualMic()
         updateMenu()
