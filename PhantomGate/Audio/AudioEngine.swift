@@ -227,6 +227,7 @@ private extension AudioEngine {
             engine.attach(node)
         }
         if let noiseNode = noiseGenerator, let combinedMixer = combinedMixer {
+            noiseNode.volume = 0.1
             engine.disconnectNodeOutput(noiseNode)
             engine.connect(
                 noiseNode,
