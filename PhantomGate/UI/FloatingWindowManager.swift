@@ -255,6 +255,11 @@ struct FloatingControlView: View {
     @ObservedObject var manager: FloatingWindowManager
     var menuBarManager: MenuBarManager?
     @State private var selectedNoiseType: NoiseType = .green
+    @State private var showAdvancedSettings = false
+    @State private var enableArtifacts = false
+    @State private var artifactIntensity: Float = 0.5
+    @State private var chatterVolume: Float = 0.08
+    @State private var ultrasonicVolume: Float = 0.03
     @State private var currentFrequency: Float = 0
     @State private var frequencyStreamError: Error?
     @State private var frequencyTask: Task<Void, Never>?
@@ -266,8 +271,7 @@ struct FloatingControlView: View {
 
     var body: some View {
         content
-            .padding(24) // Increased padding from 16 to 24
-            // Ensure the view reports its natural size (no expansion)
+            .padding(24)
             .background(
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(Color.black.opacity(0.78))
@@ -276,51 +280,155 @@ struct FloatingControlView: View {
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
             )
-            .fixedSize(horizontal: true, vertical: true) // Hug content
-            // Measure AFTER background so size includes padding & shape
+            .fixedSize(horizontal: true, vertical: true)
             .overlay(SizeReader { manager.resize(to: $0) })
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: 20) { // Increased spacing from 16 to 20
-            // Close button positioned absolutely in top-left
+        VStack(alignment: .leading, spacing: 20) {
+            // Header with close button
             ZStack(alignment: .topLeading) {
-                // Main header content
                 VStack(alignment: .leading, spacing: 0) {
                     Text("PhantomGate")
                         .font(FontManager.shared.font(weight: .bold, size: 48))
                         .foregroundColor(Color.phantomGreen)
-                        .padding(.top, 0) // Add some top padding to align better with close button
+                        .padding(.top, 0)
 
-                    Text("Select broadband interference option:")
+                    Text("Privacy Protection System")
+                        .font(FontManager.shared.font(weight: .medium, size: 12))
+                        .foregroundColor(Color.white.opacity(0.7))
+                        .padding(.bottom, 8)
+
+                    Text("Select protection mode:")
                         .font(FontManager.shared.font(weight: .medium, size: 14))
                         .foregroundColor(.white)
-                        .padding(.bottom, 16)
+                        .padding(.bottom, 8)
 
-                    Picker("", selection: $selectedNoiseType) {
-                        ForEach(NoiseType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type)
+                    // Enhanced protection mode picker
+                    VStack(alignment: .leading, spacing: 8) {
+                        Picker("", selection: $selectedNoiseType) {
+                            ForEach(NoiseType.allCases.filter { $0 != .hybrid }, id: \.self) { type in
+                                VStack(alignment: .leading) {
+                                    Text(type.rawValue)
+                                        .font(FontManager.shared.font(weight: .medium, size: 13))
+                                }
+                                .tag(type)
+                            }
                         }
-                    }
-                    .labelsHidden()
-                    .pickerStyle(.menu)
-                    .disabled(isPlaying)
-                    .accessibilityIdentifier("NoiseTypePicker")
-                    .accessibilityLabel("Select broadband interface option")
-                    .onChange(of: selectedNoiseType) { _, newValue in
-                        guard let engine = manager.audioEngine else { return }
-                        Task { engine.selectNoiseType(newValue) }
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .disabled(isPlaying)
+                        .accessibilityIdentifier("EnhancedNoiseTypePicker")
+                        .onChange(of: selectedNoiseType) { _, newValue in
+                            guard let engine = manager.audioEngine else { return }
+                            engine.selectEnhancedNoiseType(newValue)
+                        }
+
+                        // Show description of selected mode
+                        Text(selectedNoiseType.description)
+                            .font(FontManager.shared.font(weight: .regular, size: 11))
+                            .foregroundColor(Color.white.opacity(0.6))
+                            .padding(.horizontal, 4)
                     }
                 }
 
-                // Stoplight close button positioned in top-left corner
+                // Stoplight close button
                 StoplightCloseButton(
                     isVisible: manager.isMouseInWindow,
                     action: { menuBarManager?.toggleEnabled() }
                 )
-                .offset(x: -12, y: -12) // Position it in the corner with negative offset
+                .offset(x: -12, y: -12)
             }
+/*
+            // Advanced Settings Section
+            VStack(alignment: .leading, spacing: 12) {
+                // Toggle for advanced settings
+                Button(action: { withAnimation { showAdvancedSettings.toggle() } }) {
+                    HStack {
+                        Image(systemName: showAdvancedSettings ? "chevron.down" : "chevron.right")
+                            .font(.system(size: 10))
+                        Text("Advanced Settings")
+                            .font(FontManager.shared.font(weight: .medium, size: 12))
+                    }
+                    .foregroundColor(Color.white.opacity(0.8))
+                }
+                .buttonStyle(PlainButtonStyle())
+                .disabled(isPlaying)
 
+                if showAdvancedSettings {
+                    VStack(alignment: .leading, spacing: 10) {
+                        // Voice Artifacts Toggle
+                        Toggle(isOn: $enableArtifacts) {
+                            Text("Voice Artifacts")
+                                .font(FontManager.shared.font(weight: .regular, size: 11))
+                        }
+                        .toggleStyle(SwitchToggleStyle(tint: Color.phantomGreen))
+                        .disabled(isPlaying)
+                        .onChange(of: enableArtifacts) { _, newValue in
+                            manager.audioEngine?.enableArtifacts = newValue
+                        }
+
+                        if enableArtifacts {
+                            HStack {
+                                Text("Intensity:")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                Slider(value: $artifactIntensity, in: 0...1)
+                                    .frame(width: 100)
+                                    .disabled(isPlaying)
+                                    .onChange(of: artifactIntensity) { _, newValue in
+                                        manager.audioEngine?.artifactIntensity = newValue
+                                    }
+                                Text("\(Int(artifactIntensity * 100))%")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                    .frame(width: 35)
+                            }
+                        }
+
+                        // Volume controls for enhanced features
+                        if [.ultrasonic, .hybrid].contains(selectedNoiseType) {
+                            HStack {
+                                Text("Ultrasonic Vol:")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                Slider(value: $ultrasonicVolume, in: 0...0.1)
+                                    .frame(width: 100)
+                                    .disabled(isPlaying)
+                                    .onChange(of: ultrasonicVolume) { _, newValue in
+                                        manager.audioEngine?.ultrasonicVolume = newValue
+                                    }
+                                Text("\(Int(ultrasonicVolume * 1000))%")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                    .frame(width: 35)
+                            }
+                        }
+
+                        if [.chatter, .hybrid].contains(selectedNoiseType) {
+                            HStack {
+                                Text("Chatter Vol:")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                Slider(value: $chatterVolume, in: 0...0.2)
+                                    .frame(width: 100)
+                                    .disabled(isPlaying)
+                                    .onChange(of: chatterVolume) { _, newValue in
+                                        manager.audioEngine?.chatterVolume = newValue
+                                    }
+                                Text("\(Int(chatterVolume * 500))%")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                    .frame(width: 35)
+                            }
+                        }
+                    }
+                    .padding(.leading, 16)
+                    .padding(.vertical, 4)
+                }
+            }
+*/
+            // Playback controls
             VStack(alignment: .leading, spacing: 20) {
                 HStack(spacing: 12) {
                     if isPlaying {
@@ -330,17 +438,20 @@ struct FloatingControlView: View {
                                     .frame(width: 50)
                                     .accessibilityIdentifier("WaveformView")
                             } else {
-                                // Fallback to original behavior if no audio engine
                                 WaveformView(isPlaying: isPlaying)
                                     .frame(width: 50)
                                     .accessibilityIdentifier("WaveformView")
                             }
 
-                            if isPlaying {
+                            VStack(alignment: .leading, spacing: 2) {
                                 Text(String(format: "%.1f kHz", currentFrequency / 1000))
                                     .font(FontManager.shared.font(weight: .medium, size: 12))
                                     .foregroundColor(.white)
-                                    .accessibilityIdentifier("FrequencyLabel")
+
+                                // Show protection status
+                                Text(protectionStatusText)
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.phantomGreen.opacity(0.8))
                             }
                         }
                     }
@@ -348,19 +459,61 @@ struct FloatingControlView: View {
                     Spacer(minLength: 0)
 
                     Button(action: togglePlayback) {
-                        Text(isPlaying ? "Stop scramble" : "Start scramble")
-                            .font(FontManager.shared.font(weight: .medium, size: 14))
-                            .foregroundColor(
-                                isPlaying ? .phantomRed : .phantomGreen
-                            )
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
+                        HStack(spacing: 6) {
+                            Image(systemName: isPlaying ? "shield.slash.fill" : "shield.fill")
+                                .font(.system(size: 14))
+                            Text(isPlaying ? "Stop Protection" : "Start Protection")
+                                .font(FontManager.shared.font(weight: .medium, size: 14))
+                        }
+                        .foregroundColor(isPlaying ? .phantomRed : .phantomGreen)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 8)
                     }
-                    .accessibilityIdentifier("TogglePlaybackButton")
+                    .accessibilityIdentifier("ToggleProtectionButton")
                     .disabled(manager.audioEngine == nil)
                     .environment(\.colorScheme, .dark)
                 }
-            }.padding(8)
+
+                // Protection indicators
+                if isPlaying {
+                    HStack(spacing: 16) {
+                        ProtectionIndicator(
+                            icon: "waveform",
+                            label: "Noise",
+                            isActive: true
+                        )
+
+                        if [.ultrasonic, .hybrid].contains(selectedNoiseType) {
+                            ProtectionIndicator(
+                                icon: "antenna.radiowaves.left.and.right",
+                                label: "Ultrasonic",
+                                isActive: true
+                            )
+                        }
+
+                        if enableArtifacts {
+                            ProtectionIndicator(
+                                icon: "waveform.path.ecg",
+                                label: "Artifacts",
+                                isActive: true
+                            )
+                        }
+
+                        if [.chatter, .hybrid].contains(selectedNoiseType) {
+                            ProtectionIndicator(
+                                icon: "water.waves",
+                                label: "Sine Waves",
+                                isActive: true
+                            )
+                        }
+                    }
+                    .padding(.top, 8)
+                }
+            }
+            .padding(8)
+        }
+        .onAppear {
+            setupInitialValues()
         }
         .onChange(of: isPlaying) { _, newValue in
             if newValue {
@@ -369,6 +522,28 @@ struct FloatingControlView: View {
                 frequencyTask?.cancel()
                 frequencyTask = nil
             }
+        }
+    }
+
+    private var protectionStatusText: String {
+        switch selectedNoiseType {
+        case .hybrid:
+            return "Maximum Protection"
+        case .ultrasonic:
+            return "Ultrasonic Active"
+        case .chatter:
+            return "Sine Waves Active"
+        default:
+            return "Basic Protection"
+        }
+    }
+
+    private func setupInitialValues() {
+        if let engine = manager.audioEngine {
+            enableArtifacts = engine.enableArtifacts
+            artifactIntensity = engine.artifactIntensity
+            chatterVolume = engine.chatterVolume
+            ultrasonicVolume = engine.ultrasonicVolume
         }
     }
 
@@ -404,12 +579,32 @@ struct FloatingControlView: View {
                 } else {
                     try await engine.startPlayback()
                 }
-                // No need to manually set isPlaying - it will be updated automatically
-                // via the computed property observing engine.isPlaying
             } catch {
                 print("Audio playback error: \(error)")
             }
         }
+    }
+}
+
+// MARK: - Protection Indicator Component
+
+struct ProtectionIndicator: View {
+    let icon: String
+    let label: String
+    let isActive: Bool
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 16))
+                .foregroundColor(isActive ? Color.phantomGreen : Color.white.opacity(0.3))
+
+            Text(label)
+                .font(FontManager.shared.font(weight: .regular, size: 9))
+                .foregroundColor(isActive ? Color.white.opacity(0.8) : Color.white.opacity(0.3))
+        }
+        .opacity(isActive ? 1.0 : 0.5)
+        .animation(.easeInOut(duration: 0.3), value: isActive)
     }
 }
 

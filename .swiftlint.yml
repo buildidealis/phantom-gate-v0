@@ -1,5 +1,8 @@
 file_length:
-  warning: 700
+  warning: 1700
+  error: 1800
+type_body_length:
+  warning: 500
   error: 800
 excluded:
   - Packages
