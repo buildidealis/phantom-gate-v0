@@ -38,6 +38,74 @@ open PhantomGate.xcodeproj
 
 3. Build and run the project in Xcode (⌘+R)
 
+## BlackHole Setup (Required for Virtual Mic Functionality)
+
+PhantomGate includes advanced virtual microphone capabilities that require BlackHole, a modern macOS virtual audio driver. This allows the app to route generated noise directly to other applications (like video conferencing software) as if it were coming from a real microphone.
+
+### Installing BlackHole
+
+1. **Download BlackHole**:
+   - Visit [https://existential.audio/blackhole/](https://existential.audio/blackhole/)
+   - Download the latest BlackHole installer (free and open source)
+   - Alternatively, use the "Install Virtual Mic..." option from PhantomGate's menu bar
+
+2. **Install BlackHole**:
+   - Open the downloaded `.pkg` file
+   - Follow the installation wizard
+   - You may need to restart your Mac after installation
+   - **Note**: BlackHole creates virtual audio devices; it doesn't install any background processes
+
+3. **Verify Installation**:
+   - Open **System Settings** → **Sound**
+   - Look for "BlackHole 2ch" in both Input and Output device lists
+   - If you don't see it, restart your Mac and check again
+
+### Configuring macOS Audio Settings
+
+1. **Set up Audio Routing**:
+   - Launch PhantomGate (appears as "PG" in menu bar)
+   - Click the PG icon and look for virtual mic options:
+     - "Install Virtual Mic..." (if BlackHole not detected)
+     - "Start Virtual Mic" (if BlackHole is ready)
+     - "Stop Virtual Mic" (when streaming is active)
+
+2. **Configure Applications**:
+   - In video conferencing apps (Zoom, Teams, Discord, etc.)
+   - Go to audio settings
+   - Select "BlackHole 2ch" as your microphone input
+   - This routes PhantomGate's noise generation directly to the application
+
+3. **Optional: Create Aggregate Device** (Advanced):
+   - Open **Audio MIDI Setup** (`/Applications/Utilities/`)
+   - Click the "+" button → "Create Aggregate Device"
+   - Check both your built-in microphone and "BlackHole 2ch"
+   - This allows mixing your voice with PhantomGate's noise
+
+### Using Virtual Mic Features
+
+1. **Start Virtual Mic Streaming**:
+   - With BlackHole installed, launch PhantomGate
+   - Click "Start Virtual Mic" from the menu bar
+   - Enable noise generation if not already running
+   - The app will route audio to BlackHole device
+
+2. **Configure Target Applications**:
+   - Open your video conferencing or recording software
+   - Set microphone input to "BlackHole 2ch"
+   - You should now hear PhantomGate's noise in the application
+
+3. **Monitor and Control**:
+   - Use PhantomGate's floating window to adjust noise types
+   - Toggle noise on/off with ⌘+B shortcut
+   - Stop virtual mic streaming when not needed
+
+### Troubleshooting BlackHole
+
+- **BlackHole not detected**: Restart your Mac after installation
+- **No audio in target app**: Check that "BlackHole 2ch" is selected as input device
+- **Can't hear your own voice**: Use an Aggregate Device to combine built-in mic + BlackHole
+- **Audio quality issues**: Ensure sample rates match between PhantomGate (44.1kHz) and your applications
+
 ## Usage
 
 ### Getting Started
@@ -52,6 +120,10 @@ open PhantomGate.xcodeproj
 
 - **Enable/Disable**: Activates/deactivates the application and shows/hides the floating window
 - **Toggle Noise**: Starts or stops audio interference generation (⌘+B)
+- **Virtual Mic Options** (when BlackHole is installed):
+  - **Install Virtual Mic...**: Opens BlackHole download page (shown when BlackHole not detected)
+  - **Start Virtual Mic**: Begins streaming audio to BlackHole virtual device
+  - **Stop Virtual Mic**: Stops streaming to virtual device
 - **Submit Feedback**: Opens email client to send feedback
 - **Help**: Access help and support
 - **Quit**: Exit the application (⌘+Q)
@@ -115,6 +187,43 @@ PhantomGate/
 ├── Assets.xcassets     # App icons and images
 └── PhantomGateApp.swift # Main application entry point
 ```
+
+### Code Quality with SwiftLint (Optional)
+
+This project uses SwiftLint to maintain consistent Swift code style and catch potential issues.
+
+#### Installing SwiftLint
+
+**Option 1: Homebrew (Recommended)**
+```bash
+brew install swiftlint
+```
+
+**Option 2: Download from GitHub**
+- Visit [https://github.com/realm/SwiftLint/releases](https://github.com/realm/SwiftLint/releases)
+- Download the latest SwiftLint.pkg
+- Run the installer
+
+#### Using SwiftLint
+
+**Run linting:**
+```bash
+swiftlint
+```
+
+**Auto-fix issues (where possible):**
+```bash
+swiftlint --fix
+```
+
+**Configuration:**
+The project includes a `.swiftlint.yml` configuration file with custom rules:
+- File length warnings at 1700 lines, errors at 1800 lines
+- Type body length warnings at 500 lines, errors at 800 lines
+- Excludes the `Packages` directory from linting
+
+**Integration with Xcode:**
+SwiftLint can be integrated as a Build Phase in Xcode for automatic linting during builds. This is optional for local development but recommended for maintaining code quality.
 
 ## Support & Feedback
 
