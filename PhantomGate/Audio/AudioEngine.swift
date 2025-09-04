@@ -148,8 +148,6 @@ class AudioEngine: ObservableObject {
         }
     }
 
-
-
     func getAudioLevels() -> [CGFloat] {
         if isPlaying {
             return (0..<8).map { _ in CGFloat.random(in: -40...0) }
@@ -259,29 +257,27 @@ class AudioEngine: ObservableObject {
     // Update startPlayback to route ALL audio through BlackHole virtual mic for privacy
     func startPlayback() async throws {
         guard !isPlaying else { return }
-        
+
         // Check virtual mic presence first
         checkVirtualMicPresence()
         guard case .ready = virtualMicState else {
             throw AudioEngineError.formatCreationFailed // Use appropriate error
         }
-        
+
         // Always use virtual mic routing for privacy protection
         // This ensures ALL audio goes to BlackHole, not system speakers
         startVirtualMic(includeUserMic: true)
-        
+
         isPlaying = true
     }
-
-
 
     // Update the stopPlayback method to handle virtual mic properly
     func stopPlayback() async throws {
         guard isPlaying else { return }
-        
+
         // Stop virtual mic which handles all cleanup
         stopVirtualMic()
-        
+
         isPlaying = false
         currentFrequency = 0
     }
@@ -298,53 +294,53 @@ private extension AudioEngine {
 
     func connectNoiseGenerator() {
         guard let combinedMixer = combinedMixer else { return }
-        
+
         // Clean up any existing noise generators and players
         cleanupAudioNodes()
-        
+
         // Connect ONLY the selected protection type
         switch enhancedNoiseType {
         case .green, .pink, .pinkBabble:
             // Traditional noise types use the noise generator
             connectTraditionalNoise()
-            
+
         case .ultrasonic:
             // ONLY ultrasonic protection
             connectUltrasonicProtection()
-            
+
         case .chatter:
             // ONLY sine wave chatter protection  
             connectChatterProtection()
-            
+
         case .hybrid:
             // Hybrid cycles between methods
             connectHybridProtection()
         }
     }
-    
+
     private func cleanupAudioNodes() {
         // Stop and disconnect existing nodes
         ultrasonicPlayer?.stop()
         chatterPlayer?.stop()
-        
+
         if let generator = noiseGenerator {
             engine.disconnectNodeOutput(generator)
             engine.detach(generator)
             noiseGenerator = nil
         }
-        
+
         if let player = ultrasonicPlayer {
             engine.disconnectNodeOutput(player)
         }
-        
+
         if let player = chatterPlayer {
             engine.disconnectNodeOutput(player)
         }
     }
-    
+
     private func connectTraditionalNoise() {
         guard let combinedMixer = combinedMixer else { return }
-        
+
         let generator = makeEnhancedNoiseGenerator()
         let node = AVAudioSourceNode { _, _, frameCount, audioBufferList -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
@@ -356,7 +352,7 @@ private extension AudioEngine {
             }
             return noErr
         }
-        
+
         noiseGenerator = node
         engine.attach(node)
         node.volume = noiseVolume
@@ -366,37 +362,37 @@ private extension AudioEngine {
             format: mainMixer.outputFormat(forBus: 0)
         )
     }
-    
+
     private func connectUltrasonicProtection() {
         guard let combinedMixer = combinedMixer,
               let buffer = audioEnhancer.generateInaudibleTones(duration: 10.0),
               let player = ultrasonicPlayer else { return }
-        
+
         let format = buffer.format
         engine.connect(player, to: combinedMixer, format: format)
-        
+
         player.scheduleBuffer(buffer, at: nil, options: .loops)
         player.volume = ultrasonicVolume
         player.play()
     }
-    
+
     private func connectChatterProtection() {
         guard let combinedMixer = combinedMixer,
               let buffer = audioEnhancer.generateBackgroundChatter(duration: 30.0),
               let player = chatterPlayer else { return }
-        
+
         let format = buffer.format
         engine.connect(player, to: combinedMixer, format: format)
-        
+
         player.scheduleBuffer(buffer, at: nil, options: .loops)
         player.volume = chatterVolume
         player.play()
     }
-    
+
     private func connectHybridProtection() {
         // For hybrid, start with ultrasonic and let it cycle
         connectUltrasonicProtection()
-        
+
         // Schedule transition to chatter after a delay
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
             guard let self = self, self.isPlaying else { return }
@@ -462,45 +458,44 @@ private extension AudioEngine {
             }
         }
     }
-    
+
     // Updated hybrid switching methods to work with virtual mic routing
     func switchToChatterInHybrid() {
         guard isPlaying, enhancedNoiseType == .hybrid else { return }
-        
+
         // Stop ultrasonic
         ultrasonicPlayer?.stop()
         if let player = ultrasonicPlayer {
             engine.disconnectNodeOutput(player)
         }
-        
+
         // Start chatter
         connectChatterProtection()
-        
+
         // Schedule switch back to ultrasonic
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
             guard let self = self, self.isPlaying else { return }
             self.switchToUltrasonicInHybrid()
         }
     }
-    
+
     func switchToUltrasonicInHybrid() {
         guard isPlaying, enhancedNoiseType == .hybrid else { return }
-        
+
         // Stop chatter
         chatterPlayer?.stop()
         if let player = chatterPlayer {
             engine.disconnectNodeOutput(player)
         }
-        
+
         // Start ultrasonic
         connectUltrasonicProtection()
-        
+
         // Schedule switch back to chatter
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
             guard let self = self, self.isPlaying else { return }
             self.switchToChatterInHybrid()
         }
     }
-
 
 }

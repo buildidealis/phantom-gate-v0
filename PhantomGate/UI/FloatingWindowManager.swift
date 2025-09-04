@@ -533,21 +533,21 @@ struct FloatingControlView: View {
                                     isActive: true
                                 )
                             }
-                            
+
                         case .ultrasonic:
                             ProtectionIndicator(
                                 icon: "antenna.radiowaves.left.and.right",
                                 label: "Ultrasonic",
                                 isActive: true
                             )
-                            
+
                         case .chatter:
                             ProtectionIndicator(
                                 icon: "water.waves",
                                 label: "Sine Waves",
                                 isActive: true
                             )
-                            
+
                         case .hybrid:
                             ProtectionIndicator(
                                 icon: "shuffle",
@@ -555,7 +555,7 @@ struct FloatingControlView: View {
                                 isActive: true
                             )
                         }
-                        
+
                         // Always show BlackHole indicator when protection is active
                         ProtectionIndicator(
                             icon: "personalhotspot",
@@ -629,7 +629,7 @@ struct FloatingControlView: View {
 
     private func togglePlayback() {
         guard let engine = manager.audioEngine else { return }
-        
+
         // Check BlackHole availability before starting
         if !isPlaying {
             engine.checkVirtualMicPresence()

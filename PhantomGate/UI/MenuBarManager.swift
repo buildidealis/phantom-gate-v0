@@ -59,11 +59,11 @@ class MenuBarManager: ObservableObject {
         // Check if BlackHole is available
         guard let engine = audioEngine else { return }
         engine.checkVirtualMicPresence()
-        
+
         let title: String
         let action: Selector?
         let enabled: Bool
-        
+
         switch engine.virtualMicState {
         case .driverMissing:
             title = "Install BlackHole for Protection…"
@@ -78,7 +78,7 @@ class MenuBarManager: ObservableObject {
             action = nil
             enabled = false
         }
-        
+
         let protectionToggleItem = NSMenuItem(
             title: title,
             action: action,
@@ -174,7 +174,7 @@ class MenuBarManager: ObservableObject {
             NSWorkspace.shared.open(url)
         }
     }
-    
+
     @objc private func installVirtualMicFromMenu() {
         installVirtualMic()
     }
@@ -182,6 +182,5 @@ class MenuBarManager: ObservableObject {
     private func updateMenu() {
         statusItem?.menu = buildMenu()
     }
-
 
 }
