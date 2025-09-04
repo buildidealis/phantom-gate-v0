@@ -20,7 +20,7 @@ struct PhantomGateTests {
         let fontWeight: FontWeight = .regular
         let audioError = AudioEngineError.formatCreationFailed
 
-        #expect(noiseType.rawValue == "Green noise")
+        #expect(noiseType.rawValue == "Green Noise")
         #expect(fontWeight.filename == "JetBrainsMono-Regular")
 
         // Verify error types exist
@@ -39,7 +39,7 @@ struct PhantomGateTests {
 
         // Test that enum types exist and work properly
         let noiseTypes = NoiseType.allCases
-        #expect(noiseTypes.count == 3)
+        #expect(noiseTypes.count == 6)
 
         let fontWeights = FontWeight.allCases
         #expect(fontWeights.count > 0)

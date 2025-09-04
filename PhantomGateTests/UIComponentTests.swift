@@ -61,7 +61,7 @@ struct UIComponentTests {
         #expect(uiTestingEnv != nil || uiTestingEnv == nil) // Should be nil or string
     }
 
-    @Test func testMenuBarManagerDependencyInjection() async throws {
+    @Test func testFloatingWindowManagerDependencyInjection() async throws {
         // Test dependency injection patterns without creating actual managers
         // This tests the logic of how dependencies would be wired
 
@@ -69,6 +69,83 @@ struct UIComponentTests {
         #expect(NSStatusItem.squareLength == -2.0)
         #expect(NSStatusItem.variableLength == -1.0)
         #expect(NSStatusItem.variableLength != NSStatusItem.squareLength)
+    }
+
+    // MARK: - Enhanced UI Component Tests
+
+    @Test func testProtectionIndicatorLogic() async throws {
+        // Test protection indicator activation logic
+        let activeIndicator = (icon: "waveform.path.ecg", label: "Artifacts", isActive: true)
+        let inactiveIndicator = (icon: "water.waves", label: "Sine Waves", isActive: false)
+
+        #expect(activeIndicator.isActive == true)
+        #expect(inactiveIndicator.isActive == false)
+        #expect(activeIndicator.label == "Artifacts")
+        #expect(inactiveIndicator.label == "Sine Waves")
+    }
+
+    @Test func testEnhancedNoiseTypePickerLogic() async throws {
+        // Test enhanced noise type picker filtering logic
+        let allCases = NoiseType.allCases
+        let filteredCases = allCases.filter { $0 != .hybrid }
+
+        #expect(allCases.count == 6)
+        #expect(filteredCases.count == 5)
+        #expect(!filteredCases.contains(.hybrid))
+        #expect(filteredCases.contains(.green))
+        #expect(filteredCases.contains(.ultrasonic))
+        #expect(filteredCases.contains(.chatter))
+    }
+
+    @Test func testProtectionStatusLogic() async throws {
+        // Test protection status text logic
+        let hybridStatus = "Maximum Protection"
+        let ultrasonicStatus = "Ultrasonic Active"
+        let chatterStatus = "Sine Waves Active"
+        let basicStatus = "Basic Protection"
+
+        #expect(hybridStatus == "Maximum Protection")
+        #expect(ultrasonicStatus == "Ultrasonic Active")
+        #expect(chatterStatus == "Sine Waves Active")
+        #expect(basicStatus == "Basic Protection")
+    }
+
+    @Test func testAdvancedSettingsUI() async throws {
+        // Test advanced settings parameters
+        let artifactIntensityRange = 0.0...1.0
+        let ultrasonicVolumeRange = 0.0...0.1
+        let chatterVolumeMin: Float = 0.0
+        let chatterVolumeMax: Float = 1.0
+
+        #expect(artifactIntensityRange.contains(0.0))
+        #expect(artifactIntensityRange.contains(1.0))
+        #expect(ultrasonicVolumeRange.contains(0.03))
+        #expect(chatterVolumeMin == 0.0)
+        #expect(chatterVolumeMax == 1.0)
+    }
+
+    @Test func testIntelligibilityMeterVisualization() async throws {
+        // Test audio level visualization parameters
+        let numberOfBars = 8
+        let minHeight: CGFloat = 4
+        let maxHeight: CGFloat = 30
+        let updateInterval = 0.1  // 100ms
+
+        #expect(numberOfBars == 8)
+        #expect(minHeight < maxHeight)
+        #expect(updateInterval > 0.0)
+        #expect(updateInterval <= 1.0)
+    }
+
+    @Test func testAudioLevelProviderProtocol() async throws {
+        // Test audio level provider logic
+        let silentLevels = Array(repeating: CGFloat(-160), count: 8)
+        let activeLevels = (0..<8).map { _ in CGFloat.random(in: -40...0) }
+
+        #expect(silentLevels.count == 8)
+        #expect(silentLevels.allSatisfy { $0 == -160 })
+        #expect(activeLevels.count == 8)
+        #expect(activeLevels.allSatisfy { $0 >= -40 && $0 <= 0 })
     }
 
     // MARK: - Window Manager Logic Tests

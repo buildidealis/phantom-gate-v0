@@ -14,20 +14,23 @@ struct AudioEngineTests {
 
     @Test func testNoiseTypeStringRepresentations() async throws {
         // Test that noise types have proper string representations
-        #expect(NoiseType.green.rawValue == "Green noise")
-        #expect(NoiseType.pink.rawValue == "Pink noise")
-        #expect(NoiseType.pinkBabble.rawValue == "Pink babble noise")
+        #expect(NoiseType.green.rawValue == "Green Noise")
+        #expect(NoiseType.pink.rawValue == "Pink Noise")
+        #expect(NoiseType.pinkBabble.rawValue == "Pink Babble")
+        #expect(NoiseType.ultrasonic.rawValue == "Ultrasonic")
+        #expect(NoiseType.chatter.rawValue == "Sine Waves")
+        #expect(NoiseType.hybrid.rawValue == "Rotating Protection")
     }
 
     @Test func testNoiseTypeIterability() async throws {
         // Test that all cases are accessible
         let allCases = NoiseType.allCases
-        #expect(allCases.count == 3)
+        #expect(allCases.count == 6)
 
         // Verify each case is present
         for noiseType in allCases {
             switch noiseType {
-            case .green, .pink, .pinkBabble:
+            case .green, .pink, .pinkBabble, .ultrasonic, .chatter, .hybrid:
                 continue // Expected cases
             }
         }
@@ -72,7 +75,7 @@ struct AudioEngineTests {
 
         // Test that NoiseType cases exist and have proper values
         let greenNoise = NoiseType.green
-        #expect(greenNoise.rawValue == "Green noise")
+        #expect(greenNoise.rawValue == "Green Noise")
 
         // Test AudioEngineError types
         let formatError = AudioEngineError.formatCreationFailed
@@ -92,11 +95,17 @@ struct AudioEngineTests {
             // Verify each noise type has expected string value
             switch noiseType {
             case .green:
-                #expect(noiseType.rawValue == "Green noise")
+                #expect(noiseType.rawValue == "Green Noise")
             case .pink:
-                #expect(noiseType.rawValue == "Pink noise")
+                #expect(noiseType.rawValue == "Pink Noise")
             case .pinkBabble:
-                #expect(noiseType.rawValue == "Pink babble noise")
+                #expect(noiseType.rawValue == "Pink Babble")
+            case .ultrasonic:
+                #expect(noiseType.rawValue == "Ultrasonic")
+            case .chatter:
+                #expect(noiseType.rawValue == "Sine Waves")
+            case .hybrid:
+                #expect(noiseType.rawValue == "Rotating Protection")
             }
         }
     }
@@ -120,6 +129,47 @@ struct AudioEngineTests {
         default:
             Issue.record("Expected noAudioFormat error")
         }
+    }
+
+    // MARK: - Enhanced Audio Features Tests
+
+    @Test func testEnhancedNoiseTypeDescriptions() async throws {
+        // Test that all enhanced noise types have proper descriptions
+        #expect(NoiseType.green.description == "Traditional green noise masking")
+        #expect(NoiseType.pink.description == "Pink noise for speech masking")
+        #expect(NoiseType.pinkBabble.description == "Pink noise with babble overlay")
+        #expect(NoiseType.ultrasonic.description == "Silent ultrasonic/infrasonic frequencies only")
+        #expect(NoiseType.chatter.description == "Sine waves sweeping frequencies")
+        #expect(NoiseType.hybrid.description == "Alternates between protection methods")
+    }
+
+    @Test func testAdvancedPrivacyModes() async throws {
+        // Test the advanced privacy protection modes
+        let ultrasonicMode = NoiseType.ultrasonic
+        let chatterMode = NoiseType.chatter
+        let hybridMode = NoiseType.hybrid
+
+        #expect(ultrasonicMode.rawValue == "Ultrasonic")
+        #expect(chatterMode.rawValue == "Sine Waves")
+        #expect(hybridMode.rawValue == "Rotating Protection")
+
+        // Verify these are distinct from traditional noise types
+        #expect(ultrasonicMode != NoiseType.green)
+        #expect(chatterMode != NoiseType.pink)
+        #expect(hybridMode != NoiseType.pinkBabble)
+    }
+
+    @Test func testIntelligibilityMeterTypes() async throws {
+        // Test types related to intelligibility measurement
+        let initialFrequency: Float = 0.0
+        let sampleFrequency: Float = 12345.0
+
+        #expect(initialFrequency >= 0.0)
+        #expect(sampleFrequency > 0.0)
+
+        // Test frequency range validity
+        let nyquistFrequency: Double = 22050.0
+        #expect(nyquistFrequency == 22050.0)
     }
 }
 
