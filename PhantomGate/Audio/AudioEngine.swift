@@ -15,11 +15,11 @@ class AudioEngine: ObservableObject {
 
     // Enhanced noise configuration
     @Published var enhancedNoiseType: NoiseType = .green
-    @Published var enableArtifacts: Bool = false
+    @Published var enableArtifacts: Bool = true
     @Published var artifactIntensity: Float = 0.5
     @Published var chatterVolume: Float = 0.08
     @Published var ultrasonicVolume: Float = 0.03
-    
+
     // Volume controls for mixing
     @Published var micGain: Float = 0.3  // Default increased from typical low levels
     @Published var noiseVolume: Float = 0.1  // Default noise volume
@@ -179,7 +179,7 @@ class AudioEngine: ObservableObject {
             return Array(repeating: -160, count: 8)
         }
     }
-    
+
     func updateMicGain(_ gain: Float) {
         micGain = gain
         // Apply immediately if mic is connected
@@ -187,7 +187,7 @@ class AudioEngine: ObservableObject {
             inputNode.volume = gain
         }
     }
-    
+
     func updateNoiseVolume(_ volume: Float) {
         noiseVolume = volume
         // Apply immediately if noise generator is active

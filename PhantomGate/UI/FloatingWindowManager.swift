@@ -256,7 +256,7 @@ struct FloatingControlView: View {
     var menuBarManager: MenuBarManager?
     @State private var selectedNoiseType: NoiseType = .green
     @State private var showAdvancedSettings = false
-    @State private var enableArtifacts = false
+    @State private var enableArtifacts = true
     @State private var artifactIntensity: Float = 0.5
     @State private var chatterVolume: Float = 0.08
     @State private var ultrasonicVolume: Float = 0.03
@@ -333,50 +333,6 @@ struct FloatingControlView: View {
                             .padding(.horizontal, 4)
                     }
                 }
-                
-                // Volume Controls Section
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Audio Mix Controls:")
-                        .font(FontManager.shared.font(weight: .medium, size: 14))
-                        .foregroundColor(.white)
-                        .padding(.top, 8)
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        // Microphone Gain Control
-                        HStack {
-                            Text("Mic Gain:")
-                                .font(FontManager.shared.font(weight: .regular, size: 12))
-                                .foregroundColor(Color.white.opacity(0.8))
-                                .frame(width: 80, alignment: .leading)
-                            Slider(value: $micGain, in: 0...1.0)
-                                .frame(width: 120)
-                                .onChange(of: micGain) { _, newValue in
-                                    manager.audioEngine?.updateMicGain(newValue)
-                                }
-                            Text("\(Int(micGain * 100))%")
-                                .font(FontManager.shared.font(weight: .regular, size: 10))
-                                .foregroundColor(Color.white.opacity(0.7))
-                                .frame(width: 35)
-                        }
-                        
-                        // Noise Volume Control
-                        HStack {
-                            Text("Noise Vol:")
-                                .font(FontManager.shared.font(weight: .regular, size: 12))
-                                .foregroundColor(Color.white.opacity(0.8))
-                                .frame(width: 80, alignment: .leading)
-                            Slider(value: $noiseVolume, in: 0...0.5)
-                                .frame(width: 120)
-                                .onChange(of: noiseVolume) { _, newValue in
-                                    manager.audioEngine?.updateNoiseVolume(newValue)
-                                }
-                            Text("\(Int(noiseVolume * 200))%")
-                                .font(FontManager.shared.font(weight: .regular, size: 10))
-                                .foregroundColor(Color.white.opacity(0.7))
-                                .frame(width: 35)
-                        }
-                    }
-                }
 
                 // Stoplight close button
                 StoplightCloseButton(
@@ -385,35 +341,74 @@ struct FloatingControlView: View {
                 )
                 .offset(x: -12, y: -12)
             }
-/*
+
             // Advanced Settings Section
             VStack(alignment: .leading, spacing: 12) {
                 // Toggle for advanced settings
-                Button(action: { withAnimation { showAdvancedSettings.toggle() } }) {
-                    HStack {
+                Button {
+                    withAnimation(.easeInOut) {
+                        showAdvancedSettings.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 4) {
                         Image(systemName: showAdvancedSettings ? "chevron.down" : "chevron.right")
                             .font(.system(size: 10))
                         Text("Advanced Settings")
                             .font(FontManager.shared.font(weight: .medium, size: 12))
                     }
-                    .foregroundColor(Color.white.opacity(0.8))
+                    .foregroundColor(.white.opacity(0.8))
+                    .contentShape(Rectangle())               // improves tap target
+                    .accessibilityLabel("Advanced Settings")
+                    .accessibilityValue(showAdvancedSettings ? "Shown" : "Hidden")
                 }
                 .buttonStyle(PlainButtonStyle())
                 .disabled(isPlaying)
 
                 if showAdvancedSettings {
-                    VStack(alignment: .leading, spacing: 10) {
-                        // Voice Artifacts Toggle
-                        Toggle(isOn: $enableArtifacts) {
-                            Text("Voice Artifacts")
-                                .font(FontManager.shared.font(weight: .regular, size: 11))
-                        }
-                        .toggleStyle(SwitchToggleStyle(tint: Color.phantomGreen))
-                        .disabled(isPlaying)
-                        .onChange(of: enableArtifacts) { _, newValue in
-                            manager.audioEngine?.enableArtifacts = newValue
-                        }
+                    // Volume Controls Section
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Audio Mix Controls:")
+                            .font(FontManager.shared.font(weight: .medium, size: 14))
+                            .foregroundColor(.white)
+                            .padding(.top, 8)
 
+                        VStack(alignment: .leading, spacing: 8) {
+                            // Microphone Gain Control
+                            HStack {
+                                Text("Mic Gain:")
+                                    .font(FontManager.shared.font(weight: .regular, size: 12))
+                                    .foregroundColor(Color.white.opacity(0.8))
+                                    .frame(width: 80, alignment: .leading)
+                                Slider(value: $micGain, in: 0...1.0)
+                                    .frame(width: 120)
+                                    .onChange(of: micGain) { _, newValue in
+                                        manager.audioEngine?.updateMicGain(newValue)
+                                    }
+                                Text("\(Int(micGain * 100))%")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                    .frame(width: 35)
+                            }
+
+                            // Noise Volume Control
+                            HStack {
+                                Text("Noise Vol:")
+                                    .font(FontManager.shared.font(weight: .regular, size: 12))
+                                    .foregroundColor(Color.white.opacity(0.8))
+                                    .frame(width: 80, alignment: .leading)
+                                Slider(value: $noiseVolume, in: 0...0.5)
+                                    .frame(width: 120)
+                                    .onChange(of: noiseVolume) { _, newValue in
+                                        manager.audioEngine?.updateNoiseVolume(newValue)
+                                    }
+                                Text("\(Int(noiseVolume * 200))%")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                    .frame(width: 35)
+                            }
+                        }
+                    }
+                    VStack(alignment: .leading, spacing: 10) {
                         if enableArtifacts {
                             HStack {
                                 Text("Intensity:")
@@ -473,7 +468,7 @@ struct FloatingControlView: View {
                     .padding(.vertical, 4)
                 }
             }
-*/
+
             // Playback controls
             VStack(alignment: .leading, spacing: 20) {
                 HStack(spacing: 12) {
