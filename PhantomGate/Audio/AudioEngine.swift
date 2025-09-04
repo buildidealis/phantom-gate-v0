@@ -32,8 +32,22 @@ class AudioEngine: ObservableObject {
     private var micInputNode: AVAudioInputNode?
     private var micFormat: AVAudioFormat?
 
+    private enum ConnectionState {
+        case disconnected
+        case connecting
+        case connected
+    }
+    
     @Published private(set) var isPlaying = false
     @Published private(set) var currentFrequency: Float = 0
+    
+    private enum ConnectionState {
+        case disconnected
+        case connecting
+        case connected
+    }
+    
+    private var connectionState: ConnectionState = .disconnected
 
     private var currentNoiseType: NoiseType = .green
     private let sampleRate: Double = 44100
@@ -98,8 +112,9 @@ class AudioEngine: ObservableObject {
         let format = outputNode.inputFormat(forBus: 0)
 
         engine.mainMixerNode.outputVolume = 1.0
+        // Use smaller buffer size for lower latency
         engine.mainMixerNode.installTap(
-            onBus: 0, bufferSize: 1024, format: format
+            onBus: 0, bufferSize: 512, format: format  // Reduced from 1024
         ) { [weak self] buffer, _ in
             guard let self else { return }
             let frequency = self.calculateApproximateFrequency(buffer)
@@ -294,41 +309,53 @@ private extension AudioEngine {
 
     func connectNoiseGenerator() {
         guard let combinedMixer = combinedMixer else { return }
+        guard connectionState != .connecting else { return } // Prevent concurrent connections
 
-        // Clean up any existing noise generators and players
+        connectionState = .connecting
+        
+        // Clean up any existing connections first
         cleanupAudioNodes()
+        
+        // Small delay to ensure cleanup is complete
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            // Connect ONLY the selected protection type
+            switch self.enhancedNoiseType {
+            case .green, .pink, .pinkBabble:
+                // Traditional noise types use the noise generator
+                self.connectTraditionalNoise()
 
-        // Connect ONLY the selected protection type
-        switch enhancedNoiseType {
-        case .green, .pink, .pinkBabble:
-            // Traditional noise types use the noise generator
-            connectTraditionalNoise()
+            case .ultrasonic:
+                // ONLY ultrasonic protection
+                self.connectUltrasonicProtection()
 
-        case .ultrasonic:
-            // ONLY ultrasonic protection
-            connectUltrasonicProtection()
+            case .chatter:
+                // ONLY sine wave chatter protection  
+                self.connectChatterProtection()
 
-        case .chatter:
-            // ONLY sine wave chatter protection  
-            connectChatterProtection()
-
-        case .hybrid:
-            // Hybrid cycles between methods
-            connectHybridProtection()
+            case .hybrid:
+                // Hybrid cycles between methods
+                self.connectHybridProtection()
+            }
+            
+            self.connectionState = .connected
         }
     }
 
     private func cleanupAudioNodes() {
-        // Stop and disconnect existing nodes
+        connectionState = .disconnected
+        
+        // Stop players first
         ultrasonicPlayer?.stop()
         chatterPlayer?.stop()
 
+        // Disconnect and cleanup noise generator
         if let generator = noiseGenerator {
             engine.disconnectNodeOutput(generator)
             engine.detach(generator)
             noiseGenerator = nil
         }
 
+        // Disconnect player nodes but keep them attached for reuse
         if let player = ultrasonicPlayer {
             engine.disconnectNodeOutput(player)
         }
@@ -365,28 +392,76 @@ private extension AudioEngine {
 
     private func connectUltrasonicProtection() {
         guard let combinedMixer = combinedMixer,
-              let buffer = audioEnhancer.generateInaudibleTones(duration: 10.0),
               let player = ultrasonicPlayer else { return }
+              
+        // Ensure player is stopped before reconfiguring
+        player.stop()
+        
+        // Generate ultrasonic buffer
+        guard let buffer = audioEnhancer.generateInaudibleTones(duration: 10.0) else { return }
 
         let format = buffer.format
+        
+        // Connect player to mixer
         engine.connect(player, to: combinedMixer, format: format)
-
+        
+        // Schedule buffer
         player.scheduleBuffer(buffer, at: nil, options: .loops)
+        
+        // Set volume
         player.volume = ultrasonicVolume
+        
+        // Ensure engine is running before starting player
+        startEngineIfNeeded()
+        
+        // Start player
         player.play()
     }
 
     private func connectChatterProtection() {
         guard let combinedMixer = combinedMixer,
-              let buffer = audioEnhancer.generateBackgroundChatter(duration: 30.0),
-              let player = chatterPlayer else { return }
-
+              let player = chatterPlayer else { 
+            print("AudioEngine: Failed to get combinedMixer or chatterPlayer")
+            return 
+        }
+              
+        print("AudioEngine: Connecting chatter protection")
+        
+        // Ensure player is stopped before reconfiguring
+        player.stop()
+        
+        // Generate chatter buffer with higher volume for visibility in recordings
+        guard let buffer = audioEnhancer.generateBackgroundChatter(duration: 30.0) else { 
+            print("AudioEngine: Failed to generate chatter buffer")
+            return 
+        }
+        
         let format = buffer.format
-        engine.connect(player, to: combinedMixer, format: format)
-
-        player.scheduleBuffer(buffer, at: nil, options: .loops)
-        player.volume = chatterVolume
-        player.play()
+        print("AudioEngine: Generated chatter buffer with format: \(format)")
+        
+        do {
+            // Connect player to mixer
+            engine.connect(player, to: combinedMixer, format: format)
+            print("AudioEngine: Connected chatter player to mixer")
+            
+            // Schedule buffer
+            player.scheduleBuffer(buffer, at: nil, options: .loops)
+            print("AudioEngine: Scheduled chatter buffer")
+            
+            // Set volume (increased for better detection in recordings)
+            player.volume = chatterVolume * 3.0  // Boost volume for recordings
+            print("AudioEngine: Set chatter volume to \(player.volume)")
+            
+            // Ensure engine is running before starting player
+            startEngineIfNeeded()
+            
+            // Start player
+            player.play()
+            print("AudioEngine: Started chatter player")
+            
+        } catch {
+            print("AudioEngine: Error connecting chatter protection: \(error)")
+        }
     }
 
     private func connectHybridProtection() {
@@ -434,9 +509,10 @@ private extension AudioEngine {
         do {
             try injector?.start(deviceName: "BlackHole 2ch")
             if !virtualMicTapInstalled {
+                // Use smaller buffer size for lower latency
                 combinedMixer.installTap(
                     onBus: 0,
-                    bufferSize: 1024,
+                    bufferSize: 512,  // Reduced from 1024 for lower latency
                     format: combinedMixer.outputFormat(forBus: 0)
                 ) { [weak self] buf, _ in
                     self?.injector?.push(buf)

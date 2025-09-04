@@ -457,7 +457,7 @@ struct FloatingControlView: View {
                                     .onChange(of: chatterVolume) { _, newValue in
                                         manager.audioEngine?.chatterVolume = newValue
                                     }
-                                Text("\(Int(chatterVolume * 500))%")
+                                Text("\(Int(chatterVolume * 1500))%")
                                     .font(FontManager.shared.font(weight: .regular, size: 10))
                                     .foregroundColor(Color.white.opacity(0.7))
                                     .frame(width: 35)
