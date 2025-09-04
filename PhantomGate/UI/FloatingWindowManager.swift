@@ -309,7 +309,7 @@ struct FloatingControlView: View {
                     // Enhanced protection mode picker
                     VStack(alignment: .leading, spacing: 8) {
                         Picker("", selection: $selectedNoiseType) {
-                            ForEach(NoiseType.allCases.filter { $0 != .hybrid }, id: \.self) { type in
+                            ForEach(NoiseType.allCases, id: \.self) { type in
                                 VStack(alignment: .leading) {
                                     Text(type.rawValue)
                                         .font(FontManager.shared.font(weight: .medium, size: 13))
@@ -515,38 +515,53 @@ struct FloatingControlView: View {
                     .environment(\.colorScheme, .dark)
                 }
 
-                // Protection indicators
+                // Protection indicators - show only what's actually active
                 if isPlaying {
                     HStack(spacing: 16) {
-                        ProtectionIndicator(
-                            icon: "waveform",
-                            label: "Noise",
-                            isActive: true
-                        )
-
-                        if [.ultrasonic, .hybrid].contains(selectedNoiseType) {
+                        // Show the active protection method based on selected noise type
+                        switch selectedNoiseType {
+                        case .green, .pink, .pinkBabble:
+                            ProtectionIndicator(
+                                icon: "waveform",
+                                label: "Noise",
+                                isActive: true
+                            )
+                            if enableArtifacts {
+                                ProtectionIndicator(
+                                    icon: "waveform.path.ecg",
+                                    label: "Artifacts",
+                                    isActive: true
+                                )
+                            }
+                            
+                        case .ultrasonic:
                             ProtectionIndicator(
                                 icon: "antenna.radiowaves.left.and.right",
                                 label: "Ultrasonic",
                                 isActive: true
                             )
-                        }
-
-                        if enableArtifacts {
-                            ProtectionIndicator(
-                                icon: "waveform.path.ecg",
-                                label: "Artifacts",
-                                isActive: true
-                            )
-                        }
-
-                        if [.chatter, .hybrid].contains(selectedNoiseType) {
+                            
+                        case .chatter:
                             ProtectionIndicator(
                                 icon: "water.waves",
                                 label: "Sine Waves",
                                 isActive: true
                             )
+                            
+                        case .hybrid:
+                            ProtectionIndicator(
+                                icon: "shuffle",
+                                label: "Rotating",
+                                isActive: true
+                            )
                         }
+                        
+                        // Always show BlackHole indicator when protection is active
+                        ProtectionIndicator(
+                            icon: "personalhotspot",
+                            label: "BlackHole",
+                            isActive: true
+                        )
                     }
                     .padding(.top, 8)
                 }
@@ -614,6 +629,16 @@ struct FloatingControlView: View {
 
     private func togglePlayback() {
         guard let engine = manager.audioEngine else { return }
+        
+        // Check BlackHole availability before starting
+        if !isPlaying {
+            engine.checkVirtualMicPresence()
+            guard case .ready = engine.virtualMicState else {
+                // Handle BlackHole not available - this should open the install link
+                menuBarManager?.installVirtualMic()
+                return
+            }
+        }
 
         Task {
             do {
@@ -624,6 +649,7 @@ struct FloatingControlView: View {
                 }
             } catch {
                 print("Audio playback error: \(error)")
+                // TODO: Could add user-facing error notification here
             }
         }
     }

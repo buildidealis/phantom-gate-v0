@@ -67,7 +67,7 @@ class MenuBarManager: ObservableObject {
         switch engine.virtualMicState {
         case .driverMissing:
             title = "Install BlackHole for Protection…"
-            action = #selector(installVirtualMic)
+            action = #selector(installVirtualMicFromMenu)
             enabled = true
         case .ready, .streaming:
             title = engine.isPlaying ? "Stop Protection" : "Start Protection"
@@ -169,10 +169,14 @@ class MenuBarManager: ObservableObject {
         self.floatingManager = manager
     }
 
-    @objc private func installVirtualMic() {
+    func installVirtualMic() {
         if let url = URL(string: "https://existential.audio/blackhole/") {
             NSWorkspace.shared.open(url)
         }
+    }
+    
+    @objc private func installVirtualMicFromMenu() {
+        installVirtualMic()
     }
 
     private func updateMenu() {
