@@ -100,35 +100,52 @@ class AudioEnhancer {
                 let time = Double(frame) / sampleRate
                 var sample: Float = 0.0
 
-                // Simulate multiple voices
-                for voice in 0..<3 {
-                    let voiceOffset = Double(voice) * 40.0
+                // Generate more prominent sine waves for better recording visibility
+                // Multiple frequencies for robust protection
+                let frequencies = [200.0, 400.0, 800.0, 1600.0, 3200.0]
+
+                for (index, baseFreq) in frequencies.enumerated() {
+                    // Add slight frequency modulation for variation
+                    let modulation = sin(time * (0.5 + Double(index) * 0.3)) * 50.0
+                    let frequency = baseFreq + modulation
+
+                    // Generate sine wave with higher amplitude
+                    let amplitude = 0.15 / Double(frequencies.count)  // Increased amplitude
+                    sample += Float(sin(2.0 * .pi * frequency * time) * amplitude)
+                }
+
+                // Add harmonic content for richer spectrum
+                for harmonic in 2...4 {
+                    let harmFreq = 440.0 * Double(harmonic) + sin(time * 0.7) * 100.0
+                    sample += Float(sin(2.0 * .pi * harmFreq * time)) * 0.08
+                }
+
+                // Simulate multiple voices with envelope
+                for voice in 0..<2 {
+                    let voiceOffset = Double(voice) * 60.0
 
                     // Voice fundamental frequency
-                    let float0 = 100.0 + voiceOffset + sin(time * (0.3 + Double(voice) * 0.2)) * 150.0
-                    sample += Float(sin(2.0 * .pi * float0 * time)) * 0.03
+                    let voiceFreq = 150.0 + voiceOffset + sin(time * (0.4 + Double(voice) * 0.3)) * 100.0
+                    let voiceAmplitude = 0.12
+                    sample += Float(sin(2.0 * .pi * voiceFreq * time) * voiceAmplitude)
 
-                    // Formants
-                    let float1 = 400.0 + voiceOffset * 2 + sin(time * (0.8 + Double(voice) * 0.3)) * 500.0
-                    sample += Float(sin(2.0 * .pi * float1 * time)) * 0.02
+                    // Formant-like frequencies
+                    let formant1 = 500.0 + voiceOffset * 1.5 + sin(time * 0.6) * 200.0
+                    sample += Float(sin(2.0 * .pi * formant1 * time)) * 0.08
 
-                    let float2 = 1200.0 + voiceOffset * 3 + sin(time * (0.5 + Double(voice) * 0.4)) * 1000.0
-                    sample += Float(sin(2.0 * .pi * float2 * time)) * 0.01
+                    let formant2 = 1400.0 + voiceOffset * 2 + sin(time * 0.8) * 300.0
+                    sample += Float(sin(2.0 * .pi * formant2 * time)) * 0.06
                 }
 
-                // Word-like envelope
-                let envelope = Float(sin(time * Double.random(in: 3...8)) * 0.5 + 0.5)
+                // Envelope modulation for speech-like patterns
+                let envelope = Float(abs(sin(time * Double.random(in: 2...6))) * 0.7 + 0.3)
                 sample *= envelope
 
-                // Add noise
-                sample += Float.random(in: -0.005...0.005)
+                // Add some controlled noise for texture
+                sample += Float.random(in: -0.02...0.02)
 
-                // Distance variation
-                if Float.random(in: 0...1) < 0.008 {
-                    sample *= Float.random(in: 0.4...1.0)
-                }
-
-                channelData[channel][frame] = sample * (0.08 + channelOffset)
+                // Apply to channel with slight stereo variation
+                channelData[channel][frame] = sample * (0.8 + channelOffset)
             }
         }
 

@@ -4,6 +4,12 @@ PhantomGate is a native macOS menu bar application built with Swift/SwiftUI that
 
 **CRITICAL: Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
+**IMPORTANT: Make sure code adhears to swiftlint default best practices. Reference `.swiftlint.yml` for any changes to the default best practices.**
+For example, make sure to never have:
+- Trailing Whitespace Violation: Lines should not have trailing whitespace (trailing_whitespace)
+- multiple_closures_with_trailing_closure
+
+
 ## System Requirements & Prerequisites
 
 - **macOS 15.5 or later** - This application ONLY runs on macOS due to native API dependencies
