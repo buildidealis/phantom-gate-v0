@@ -37,8 +37,7 @@ class MenuBarManager: ObservableObject {
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
         addToggleItem(to: menu)
-        addVirtualMicItemIfNeeded(to: menu)
-        addNoiseToggleItem(to: menu)
+        addProtectionToggleItem(to: menu)
         menu.addItem(NSMenuItem.separator())
         addFeedbackAndHelpItems(to: menu)
         menu.addItem(NSMenuItem.separator())
@@ -56,44 +55,39 @@ class MenuBarManager: ObservableObject {
         menu.addItem(toggleItem)
     }
 
-    private func addVirtualMicItemIfNeeded(to menu: NSMenu) {
+    private func addProtectionToggleItem(to menu: NSMenu) {
+        // Check if BlackHole is available
         guard let engine = audioEngine else { return }
-        let micState = engine.virtualMicState
-        var title = ""
-        var enabled = true
-        var action: Selector?
-
-        switch micState {
+        engine.checkVirtualMicPresence()
+        
+        let title: String
+        let action: Selector?
+        let enabled: Bool
+        
+        switch engine.virtualMicState {
         case .driverMissing:
-            title = "Install Virtual Mic…"
+            title = "Install BlackHole for Protection…"
             action = #selector(installVirtualMic)
-        case .ready:
-            title = "Start Virtual Mic"
-            action = #selector(startVirtualMic)
-        case .streaming:
-            title = "Stop Virtual Mic"
-            action = #selector(stopVirtualMic)
+            enabled = true
+        case .ready, .streaming:
+            title = engine.isPlaying ? "Stop Protection" : "Start Protection"
+            action = #selector(toggleProtection)
+            enabled = isEnabled
         case .error(let msg):
-            title = "Virtual Mic Error (\(msg))"
+            title = "Protection Error (\(msg))"
+            action = nil
             enabled = false
         }
-
-        let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
-        item.target = self
-        item.isEnabled = enabled
-        menu.addItem(item)
-    }
-
-    private func addNoiseToggleItem(to menu: NSMenu) {
-        let noiseToggleItem = NSMenuItem(
-            title: (audioEngine?.isPlaying ?? false) ? "Stop Noise" : "Start Noise",
-            action: #selector(toggleNoise),
+        
+        let protectionToggleItem = NSMenuItem(
+            title: title,
+            action: action,
             keyEquivalent: "b"
         )
-        noiseToggleItem.target = self
-        noiseToggleItem.keyEquivalentModifierMask = .command
-        noiseToggleItem.isEnabled = isEnabled
-        menu.addItem(noiseToggleItem)
+        protectionToggleItem.target = self
+        protectionToggleItem.keyEquivalentModifierMask = .command
+        protectionToggleItem.isEnabled = enabled
+        menu.addItem(protectionToggleItem)
     }
 
     private func addFeedbackAndHelpItems(to menu: NSMenu) {
@@ -137,7 +131,7 @@ class MenuBarManager: ObservableObject {
         floatingManager?.toggleVisibility()
     }
 
-    @objc private func toggleNoise() {
+    @objc private func toggleProtection() {
         guard let engine = audioEngine else {
             print("Audio engine not initialized")
             return
@@ -185,13 +179,5 @@ class MenuBarManager: ObservableObject {
         statusItem?.menu = buildMenu()
     }
 
-    @objc private func startVirtualMic() {
-        audioEngine?.startVirtualMic()
-        updateMenu()
-    }
 
-    @objc private func stopVirtualMic() {
-        audioEngine?.stopVirtualMic()
-        updateMenu()
-    }
 }
