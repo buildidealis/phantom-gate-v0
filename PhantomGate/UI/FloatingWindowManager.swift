@@ -649,7 +649,6 @@ struct FloatingControlView: View {
                 }
             } catch {
                 print("Audio playback error: \(error)")
-                // TODO: Could add user-facing error notification here
             }
         }
     }

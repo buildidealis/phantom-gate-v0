@@ -37,16 +37,10 @@ class AudioEngine: ObservableObject {
         case connecting
         case connected
     }
-    
+
     @Published private(set) var isPlaying = false
     @Published private(set) var currentFrequency: Float = 0
-    
-    private enum ConnectionState {
-        case disconnected
-        case connecting
-        case connected
-    }
-    
+
     private var connectionState: ConnectionState = .disconnected
 
     private var currentNoiseType: NoiseType = .green
@@ -308,14 +302,14 @@ private extension AudioEngine {
     }
 
     func connectNoiseGenerator() {
-        guard let combinedMixer = combinedMixer else { return }
+        guard combinedMixer != nil else { return }
         guard connectionState != .connecting else { return } // Prevent concurrent connections
 
         connectionState = .connecting
-        
+
         // Clean up any existing connections first
         cleanupAudioNodes()
-        
+
         // Small delay to ensure cleanup is complete
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             // Connect ONLY the selected protection type
@@ -336,14 +330,14 @@ private extension AudioEngine {
                 // Hybrid cycles between methods
                 self.connectHybridProtection()
             }
-            
+
             self.connectionState = .connected
         }
     }
 
     private func cleanupAudioNodes() {
         connectionState = .disconnected
-        
+
         // Stop players first
         ultrasonicPlayer?.stop()
         chatterPlayer?.stop()
@@ -393,74 +387,72 @@ private extension AudioEngine {
     private func connectUltrasonicProtection() {
         guard let combinedMixer = combinedMixer,
               let player = ultrasonicPlayer else { return }
-              
+
         // Ensure player is stopped before reconfiguring
         player.stop()
-        
+
         // Generate ultrasonic buffer
         guard let buffer = audioEnhancer.generateInaudibleTones(duration: 10.0) else { return }
 
         let format = buffer.format
-        
+
         // Connect player to mixer
         engine.connect(player, to: combinedMixer, format: format)
-        
+
         // Schedule buffer
         player.scheduleBuffer(buffer, at: nil, options: .loops)
-        
+
         // Set volume
         player.volume = ultrasonicVolume
-        
+
         // Ensure engine is running before starting player
         startEngineIfNeeded()
-        
+
         // Start player
         player.play()
     }
 
     private func connectChatterProtection() {
         guard let combinedMixer = combinedMixer,
-              let player = chatterPlayer else { 
+              let player = chatterPlayer else {
             print("AudioEngine: Failed to get combinedMixer or chatterPlayer")
-            return 
+            return
         }
-              
+
         print("AudioEngine: Connecting chatter protection")
-        
+
         // Ensure player is stopped before reconfiguring
         player.stop()
-        
+
         // Generate chatter buffer with higher volume for visibility in recordings
-        guard let buffer = audioEnhancer.generateBackgroundChatter(duration: 30.0) else { 
+        guard let buffer = audioEnhancer.generateBackgroundChatter(duration: 30.0) else {
             print("AudioEngine: Failed to generate chatter buffer")
-            return 
+            return
         }
-        
+
         let format = buffer.format
         print("AudioEngine: Generated chatter buffer with format: \(format)")
-        
+
         do {
             // Connect player to mixer
             engine.connect(player, to: combinedMixer, format: format)
             print("AudioEngine: Connected chatter player to mixer")
-            
+
             // Schedule buffer
             player.scheduleBuffer(buffer, at: nil, options: .loops)
             print("AudioEngine: Scheduled chatter buffer")
-            
+
             // Set volume (increased for better detection in recordings)
             player.volume = chatterVolume * 3.0  // Boost volume for recordings
             print("AudioEngine: Set chatter volume to \(player.volume)")
-            
+
             // Ensure engine is running before starting player
             startEngineIfNeeded()
-            
+
             // Start player
             player.play()
             print("AudioEngine: Started chatter player")
-            
-        } catch {
-            print("AudioEngine: Error connecting chatter protection: \(error)")
+
         }
     }
 
