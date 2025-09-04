@@ -19,6 +19,10 @@ class AudioEngine: ObservableObject {
     @Published var artifactIntensity: Float = 0.5
     @Published var chatterVolume: Float = 0.08
     @Published var ultrasonicVolume: Float = 0.03
+    
+    // Volume controls for mixing
+    @Published var micGain: Float = 0.3  // Default increased from typical low levels
+    @Published var noiseVolume: Float = 0.1  // Default noise volume
 
     @Published var virtualMicState: VirtualMicState = .driverMissing
     private var injector: VirtualMicInjector?
@@ -173,6 +177,22 @@ class AudioEngine: ObservableObject {
             return (0..<8).map { _ in CGFloat.random(in: -40...0) }
         } else {
             return Array(repeating: -160, count: 8)
+        }
+    }
+    
+    func updateMicGain(_ gain: Float) {
+        micGain = gain
+        // Apply immediately if mic is connected
+        if let inputNode = micInputNode {
+            inputNode.volume = gain
+        }
+    }
+    
+    func updateNoiseVolume(_ volume: Float) {
+        noiseVolume = volume
+        // Apply immediately if noise generator is active
+        if let noiseNode = noiseGenerator {
+            noiseNode.volume = volume
         }
     }
 
@@ -434,7 +454,7 @@ private extension AudioEngine {
             engine.attach(node)
         }
         if let noiseNode = noiseGenerator, let combinedMixer = combinedMixer {
-            noiseNode.volume = 0.1
+            noiseNode.volume = noiseVolume
             engine.disconnectNodeOutput(noiseNode)
             engine.connect(
                 noiseNode,
@@ -453,6 +473,8 @@ private extension AudioEngine {
             self.micFormat = micFormat
             engine.disconnectNodeOutput(inputNode)
             engine.connect(inputNode, to: combinedMixer, format: micFormat)
+            // Apply microphone gain
+            inputNode.volume = micGain
         } else if let inputNode = micInputNode {
             engine.disconnectNodeOutput(inputNode)
         }

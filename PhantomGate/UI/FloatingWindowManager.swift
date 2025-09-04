@@ -260,6 +260,8 @@ struct FloatingControlView: View {
     @State private var artifactIntensity: Float = 0.5
     @State private var chatterVolume: Float = 0.08
     @State private var ultrasonicVolume: Float = 0.03
+    @State private var micGain: Float = 0.3
+    @State private var noiseVolume: Float = 0.1
     @State private var currentFrequency: Float = 0
     @State private var frequencyStreamError: Error?
     @State private var frequencyTask: Task<Void, Never>?
@@ -329,6 +331,50 @@ struct FloatingControlView: View {
                             .font(FontManager.shared.font(weight: .regular, size: 11))
                             .foregroundColor(Color.white.opacity(0.6))
                             .padding(.horizontal, 4)
+                    }
+                }
+                
+                // Volume Controls Section
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Audio Mix Controls:")
+                        .font(FontManager.shared.font(weight: .medium, size: 14))
+                        .foregroundColor(.white)
+                        .padding(.top, 8)
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        // Microphone Gain Control
+                        HStack {
+                            Text("Mic Gain:")
+                                .font(FontManager.shared.font(weight: .regular, size: 12))
+                                .foregroundColor(Color.white.opacity(0.8))
+                                .frame(width: 80, alignment: .leading)
+                            Slider(value: $micGain, in: 0...1.0)
+                                .frame(width: 120)
+                                .onChange(of: micGain) { _, newValue in
+                                    manager.audioEngine?.updateMicGain(newValue)
+                                }
+                            Text("\(Int(micGain * 100))%")
+                                .font(FontManager.shared.font(weight: .regular, size: 10))
+                                .foregroundColor(Color.white.opacity(0.7))
+                                .frame(width: 35)
+                        }
+                        
+                        // Noise Volume Control
+                        HStack {
+                            Text("Noise Vol:")
+                                .font(FontManager.shared.font(weight: .regular, size: 12))
+                                .foregroundColor(Color.white.opacity(0.8))
+                                .frame(width: 80, alignment: .leading)
+                            Slider(value: $noiseVolume, in: 0...0.5)
+                                .frame(width: 120)
+                                .onChange(of: noiseVolume) { _, newValue in
+                                    manager.audioEngine?.updateNoiseVolume(newValue)
+                                }
+                            Text("\(Int(noiseVolume * 200))%")
+                                .font(FontManager.shared.font(weight: .regular, size: 10))
+                                .foregroundColor(Color.white.opacity(0.7))
+                                .frame(width: 35)
+                        }
                     }
                 }
 
@@ -544,6 +590,8 @@ struct FloatingControlView: View {
             artifactIntensity = engine.artifactIntensity
             chatterVolume = engine.chatterVolume
             ultrasonicVolume = engine.ultrasonicVolume
+            micGain = engine.micGain
+            noiseVolume = engine.noiseVolume
         }
     }
 
