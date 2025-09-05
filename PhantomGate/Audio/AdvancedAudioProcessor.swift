@@ -87,7 +87,7 @@ class AdvancedAudioProcessor {
     
     private func applyDynamicBandstop(to samples: inout [Float], intensity: Float) {
         let frameCount = samples.count
-        let notchWidth: Double = 200.0 * Double(intensity)
+        let _ = 200.0 * Double(intensity) // notchWidth for future use
         let updateRate = Int(sampleRate * 0.1) // Update every 100ms
         
         for frame in 0..<frameCount {
@@ -100,7 +100,7 @@ class AdvancedAudioProcessor {
             let notchCenter = dynamicNotchFrequency
             
             // Create notch effect by subtracting filtered content
-            let notchSignal = sin(2.0 * .pi * notchCenter * time)
+            let _ = sin(2.0 * .pi * notchCenter * time) // notchSignal for future use
             let attenuationFactor = 1.0 - Double(intensity) * 0.6
             
             samples[frame] *= Float(attenuationFactor + 0.4 * sin(2.0 * .pi * notchCenter * time / sampleRate))
@@ -179,12 +179,12 @@ class AdvancedAudioProcessor {
     
     private func applyTimeJitter(to samples: inout [Float], intensity: Float) {
         let frameCount = samples.count
-        let maxJitter = Int(intensity * 6.0 * sampleRate / 1000.0) // Up to 6ms jitter
+        let maxJitter = Int(Double(intensity) * 6.0 * sampleRate / 1000.0) // Up to 6ms jitter
         
         var tempBuffer = samples
         
         for frame in 0..<frameCount {
-            if Int.random(in: 0...100) < Int(intensity * 10) {
+            if Int.random(in: 0...100) < Int(Double(intensity) * 10) {
                 let jitter = Int.random(in: -maxJitter...maxJitter)
                 let sourceFrame = frame + jitter
                 
@@ -342,7 +342,8 @@ class AdvancedAudioProcessor {
                 for band in 0..<6 {
                     let frequency = 200.0 + Double(band) * 200.0
                     let noise = Float.random(in: -1...1)
-                    let bandpass = sin(2.0 * .pi * frequency * time) * noise
+                    let sinValue = Float(sin(2.0 * .pi * frequency * time))
+                    let bandpass = sinValue * noise
                     sample += bandpass * 0.15
                 }
                 
