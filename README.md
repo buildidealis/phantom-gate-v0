@@ -50,7 +50,7 @@ PhantomGate requires BlackHole, a modern macOS virtual audio driver, for its aud
 1. **Download BlackHole**:
    - Visit [https://existential.audio/blackhole/](https://existential.audio/blackhole/)
    - Download the latest BlackHole installer (free and open source)
-   - Alternatively, use the "Install BlackHole for Protection..." option from PhantomGate's menu bar
+   - Alternatively, use the "Install BlackHole for Protection…" option from PhantomGate's menu bar
 
 2. **Install BlackHole**:
    - Open the downloaded `.pkg` file
@@ -68,7 +68,7 @@ PhantomGate requires BlackHole, a modern macOS virtual audio driver, for its aud
 1. **Set up Audio Protection**:
    - Launch PhantomGate (appears as "PG" in menu bar)  
    - Click the PG icon and look for protection options:
-     - "Install BlackHole for Protection..." (if BlackHole not detected)
+     - "Install BlackHole for Protection…" (if BlackHole not detected)
      - "Start Protection" (if BlackHole is ready and protection is off)
      - "Stop Protection" (when protection is active)
 
@@ -104,7 +104,7 @@ PhantomGate requires BlackHole, a modern macOS virtual audio driver, for its aud
 
 ### Troubleshooting Audio Protection
 
-- **"Install BlackHole for Protection..." appears**: BlackHole is not detected. Install it and restart your Mac
+- **"Install BlackHole for Protection…" appears**: BlackHole is not detected. Install it and restart your Mac
 - **"Protection Error" in menu**: BlackHole installation may be corrupted. Reinstall BlackHole
 - **No audio in target app**: Check that "BlackHole 2ch" is selected as microphone input device
 - **Can't hear your own voice**: Use an Aggregate Device to combine built-in mic + BlackHole
@@ -125,7 +125,7 @@ PhantomGate requires BlackHole, a modern macOS virtual audio driver, for its aud
 
 - **Show/Hide Main Window**: Shows or hides the floating control window
 - **Audio Protection** (requires BlackHole):
-  - **Install BlackHole for Protection...**: Opens BlackHole download page (shown when BlackHole not detected)
+  - **Install BlackHole for Protection…**: Opens BlackHole download page (shown when BlackHole not detected)
   - **Start Protection**: Begins audio protection with automatic BlackHole routing (⌘+B)
   - **Stop Protection**: Stops audio protection (⌘+B)
 - **Submit Feedback**: Opens email client to send feedback
