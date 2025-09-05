@@ -13,21 +13,34 @@ struct AudioEngineTests {
     // MARK: - NoiseType Tests
 
     @Test func testNoiseTypeStringRepresentations() async throws {
-        // Test that noise types have proper string representations
-        #expect(NoiseType.green.rawValue == "Green noise")
-        #expect(NoiseType.pink.rawValue == "Pink noise")
-        #expect(NoiseType.pinkBabble.rawValue == "Pink babble noise")
+        // Test that basic noise types have proper string representations
+        #expect(NoiseType.green.rawValue == "Green Noise")
+        #expect(NoiseType.pink.rawValue == "Pink Noise")
+        #expect(NoiseType.pinkBabble.rawValue == "Pink Babble")
+
+        // Test advanced noise types
+        #expect(NoiseType.spectralSweep.rawValue == "Spectral Sweep")
+        #expect(NoiseType.temporalJitter.rawValue == "Temporal Jitter")
+        #expect(NoiseType.whisperMask.rawValue == "Whisper Mask")
+        #expect(NoiseType.pitchFormantDrift.rawValue == "Pitch/Formant Drift")
+        #expect(NoiseType.phaseScramble.rawValue == "Phase Scramble")
+        #expect(NoiseType.quantizePulse.rawValue == "Quantize Pulse")
+        #expect(NoiseType.rotationCycle.rawValue == "Rotation Cycle")
     }
 
     @Test func testNoiseTypeIterability() async throws {
         // Test that all cases are accessible
         let allCases = NoiseType.allCases
-        #expect(allCases.count == 3)
+        #expect(allCases.count == 13) // Updated for new modes
 
-        // Verify each case is present
+        // Verify each case is present and has a description
         for noiseType in allCases {
+            #expect(!noiseType.description.isEmpty, "Noise type \(noiseType) should have a description")
+
             switch noiseType {
-            case .green, .pink, .pinkBabble:
+            case .green, .pink, .pinkBabble, .ultrasonic, .chatter, .hybrid,
+                 .spectralSweep, .temporalJitter, .whisperMask, .pitchFormantDrift,
+                 .phaseScramble, .quantizePulse, .rotationCycle:
                 continue // Expected cases
             }
         }

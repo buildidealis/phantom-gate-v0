@@ -11,6 +11,7 @@ import Accelerate
 /// Audio enhancement features for privacy protection against AI transcription
 class AudioEnhancer {
     private let sampleRate: Double = 44100.0
+    private let advancedProcessor = AdvancedAudioProcessor()
 
     /// Generate buffer with ultrasonic and infrasonic tones
     func generateInaudibleTones(duration: TimeInterval = 1.0) -> AVAudioPCMBuffer? {
@@ -150,5 +151,34 @@ class AudioEnhancer {
         }
 
         return buffer
+    }
+
+    // MARK: - Advanced Disruptive Techniques
+
+    /// Generate advanced disruptive audio based on noise type
+    func generateAdvancedDisruption(
+        type: NoiseType,
+        duration: TimeInterval = 10.0,
+        intensity: Float = 0.5
+    ) -> AVAudioPCMBuffer? {
+        switch type {
+        case .spectralSweep:
+            return advancedProcessor.generateSpectralSweep(duration: duration, intensity: intensity)
+        case .temporalJitter:
+            return advancedProcessor.generateTemporalJitter(duration: duration, intensity: intensity)
+        case .whisperMask:
+            return advancedProcessor.generateWhisperMask(duration: duration, intensity: intensity)
+        case .pitchFormantDrift:
+            return advancedProcessor.generatePitchFormantDrift(duration: duration, intensity: intensity)
+        case .phaseScramble:
+            return advancedProcessor.generatePhaseScramble(duration: duration, intensity: intensity)
+        case .quantizePulse:
+            return advancedProcessor.generateQuantizePulse(duration: duration, intensity: intensity)
+        case .rotationCycle:
+            return advancedProcessor.generateRotationCycle(duration: duration, intensity: intensity)
+        default:
+            // Not an advanced disruption type
+            return nil
+        }
     }
 }

@@ -248,7 +248,8 @@ class AudioEngine: ObservableObject {
                     let babble = Float.random(in: -0.3...0.3)
                     samples[frame] = (pink + babble) * 0.7
                 }
-            case .ultrasonic, .chatter, .hybrid:
+            case .ultrasonic, .chatter, .hybrid, .spectralSweep, .temporalJitter, .whisperMask,
+                    .pitchFormantDrift, .phaseScramble, .quantizePulse, .rotationCycle:
                 // These types don't use the noise generator - they have dedicated implementations
                 // Return silence since they're handled separately
                 break
@@ -329,6 +330,11 @@ private extension AudioEngine {
             case .hybrid:
                 // Hybrid cycles between methods
                 self.connectHybridProtection()
+
+            case .spectralSweep, .temporalJitter, .whisperMask, .pitchFormantDrift,
+                    .phaseScramble, .quantizePulse, .rotationCycle:
+                // Advanced disruptive modes
+                self.connectAdvancedDisruption()
             }
 
             self.connectionState = .connected
@@ -465,6 +471,46 @@ private extension AudioEngine {
             guard let self = self, self.isPlaying else { return }
             self.switchToChatterInHybrid()
         }
+    }
+
+    private func connectAdvancedDisruption() {
+        guard let combinedMixer = combinedMixer else { return }
+
+        // Create a new audio player for advanced disruption
+        let advancedPlayer = AVAudioPlayerNode()
+        engine.attach(advancedPlayer)
+
+        // Generate buffer for the selected advanced mode
+        guard let buffer = audioEnhancer.generateAdvancedDisruption(
+            type: enhancedNoiseType,
+            duration: 30.0,  // Longer duration for sustained effect
+            intensity: artifactIntensity
+        ) else {
+            print("AudioEngine: Failed to generate advanced disruption buffer")
+            return
+        }
+
+        let format = buffer.format
+
+        // Connect player to mixer
+        engine.connect(advancedPlayer, to: combinedMixer, format: format)
+
+        // Schedule buffer with looping
+        advancedPlayer.scheduleBuffer(buffer, at: nil, options: .loops)
+
+        // Set volume based on noise type
+        advancedPlayer.volume = noiseVolume * 2.0  // Boost for effectiveness
+
+        // Store reference for cleanup (reuse ultrasonicPlayer slot for simplicity)
+        ultrasonicPlayer = advancedPlayer
+
+        // Ensure engine is running before starting player
+        startEngineIfNeeded()
+
+        // Start player
+        advancedPlayer.play()
+
+        print("AudioEngine: Started advanced disruption mode: \(enhancedNoiseType.rawValue)")
     }
 
     func connectMicInputIfNeeded(includeUserMic: Bool) {

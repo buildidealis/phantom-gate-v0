@@ -463,6 +463,49 @@ struct FloatingControlView: View {
                                     .frame(width: 35)
                             }
                         }
+
+                        // Advanced mode controls
+                        if [.spectralSweep, .temporalJitter, .whisperMask, .pitchFormantDrift,
+                            .phaseScramble, .quantizePulse, .rotationCycle].contains(selectedNoiseType) {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Advanced Mode Settings:")
+                                    .font(FontManager.shared.font(weight: .medium, size: 12))
+                                    .foregroundColor(.white.opacity(0.9))
+
+                                HStack {
+                                    Text("Disruption Strength:")
+                                        .font(FontManager.shared.font(weight: .regular, size: 10))
+                                        .foregroundColor(Color.white.opacity(0.7))
+                                    Slider(value: $artifactIntensity, in: 0...1)
+                                        .frame(width: 100)
+                                        .disabled(isPlaying)
+                                        .onChange(of: artifactIntensity) { _, newValue in
+                                            manager.audioEngine?.artifactIntensity = newValue
+                                        }
+                                    Text("\(Int(artifactIntensity * 100))%")
+                                        .font(FontManager.shared.font(weight: .regular, size: 10))
+                                        .foregroundColor(Color.white.opacity(0.7))
+                                        .frame(width: 35)
+                                }
+
+                                HStack {
+                                    Text("Output Volume:")
+                                        .font(FontManager.shared.font(weight: .regular, size: 10))
+                                        .foregroundColor(Color.white.opacity(0.7))
+                                    Slider(value: $noiseVolume, in: 0...0.5)
+                                        .frame(width: 100)
+                                        .disabled(isPlaying)
+                                        .onChange(of: noiseVolume) { _, newValue in
+                                            manager.audioEngine?.noiseVolume = newValue
+                                        }
+                                    Text("\(Int(noiseVolume * 200))%")
+                                        .font(FontManager.shared.font(weight: .regular, size: 10))
+                                        .foregroundColor(Color.white.opacity(0.7))
+                                        .frame(width: 35)
+                                }
+                            }
+                            .padding(.top, 4)
+                        }
                     }
                     .padding(.leading, 16)
                     .padding(.vertical, 4)
@@ -552,6 +595,55 @@ struct FloatingControlView: View {
                             ProtectionIndicator(
                                 icon: "shuffle",
                                 label: "Rotating",
+                                isActive: true
+                            )
+
+                        case .spectralSweep:
+                            ProtectionIndicator(
+                                icon: "waveform.path.badge.minus",
+                                label: "Spectral Sweep",
+                                isActive: true
+                            )
+
+                        case .temporalJitter:
+                            ProtectionIndicator(
+                                icon: "timer",
+                                label: "Temporal Jitter",
+                                isActive: true
+                            )
+
+                        case .whisperMask:
+                            ProtectionIndicator(
+                                icon: "waveform.path.ecg.rectangle",
+                                label: "Whisper Mask",
+                                isActive: true
+                            )
+
+                        case .pitchFormantDrift:
+                            ProtectionIndicator(
+                                icon: "tuningfork",
+                                label: "Pitch/Formant Drift",
+                                isActive: true
+                            )
+
+                        case .phaseScramble:
+                            ProtectionIndicator(
+                                icon: "waveform.circle",
+                                label: "Phase Scramble",
+                                isActive: true
+                            )
+
+                        case .quantizePulse:
+                            ProtectionIndicator(
+                                icon: "square.stack.3d.up",
+                                label: "Quantize Pulse",
+                                isActive: true
+                            )
+
+                        case .rotationCycle:
+                            ProtectionIndicator(
+                                icon: "arrow.triangle.2.circlepath",
+                                label: "Rotation Cycle",
                                 isActive: true
                             )
                         }
