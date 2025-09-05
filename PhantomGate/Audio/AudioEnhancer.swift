@@ -152,11 +152,15 @@ class AudioEnhancer {
 
         return buffer
     }
-    
+
     // MARK: - Advanced Disruptive Techniques
-    
+
     /// Generate advanced disruptive audio based on noise type
-    func generateAdvancedDisruption(type: NoiseType, duration: TimeInterval = 10.0, intensity: Float = 0.5) -> AVAudioPCMBuffer? {
+    func generateAdvancedDisruption(
+        type: NoiseType,
+        duration: TimeInterval = 10.0,
+        intensity: Float = 0.5
+    ) -> AVAudioPCMBuffer? {
         switch type {
         case .spectralSweep:
             return advancedProcessor.generateSpectralSweep(duration: duration, intensity: intensity)

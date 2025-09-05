@@ -463,14 +463,15 @@ struct FloatingControlView: View {
                                     .frame(width: 35)
                             }
                         }
-                        
+
                         // Advanced mode controls
-                        if [.spectralSweep, .temporalJitter, .whisperMask, .pitchFormantDrift, .phaseScramble, .quantizePulse, .rotationCycle].contains(selectedNoiseType) {
+                        if [.spectralSweep, .temporalJitter, .whisperMask, .pitchFormantDrift,
+                            .phaseScramble, .quantizePulse, .rotationCycle].contains(selectedNoiseType) {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Advanced Mode Settings:")
                                     .font(FontManager.shared.font(weight: .medium, size: 12))
                                     .foregroundColor(.white.opacity(0.9))
-                                
+
                                 HStack {
                                     Text("Disruption Strength:")
                                         .font(FontManager.shared.font(weight: .regular, size: 10))
@@ -486,7 +487,7 @@ struct FloatingControlView: View {
                                         .foregroundColor(Color.white.opacity(0.7))
                                         .frame(width: 35)
                                 }
-                                
+
                                 HStack {
                                     Text("Output Volume:")
                                         .font(FontManager.shared.font(weight: .regular, size: 10))

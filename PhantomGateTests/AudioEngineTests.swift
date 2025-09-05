@@ -17,7 +17,7 @@ struct AudioEngineTests {
         #expect(NoiseType.green.rawValue == "Green Noise")
         #expect(NoiseType.pink.rawValue == "Pink Noise")
         #expect(NoiseType.pinkBabble.rawValue == "Pink Babble")
-        
+
         // Test advanced noise types
         #expect(NoiseType.spectralSweep.rawValue == "Spectral Sweep")
         #expect(NoiseType.temporalJitter.rawValue == "Temporal Jitter")
@@ -36,10 +36,10 @@ struct AudioEngineTests {
         // Verify each case is present and has a description
         for noiseType in allCases {
             #expect(!noiseType.description.isEmpty, "Noise type \(noiseType) should have a description")
-            
+
             switch noiseType {
             case .green, .pink, .pinkBabble, .ultrasonic, .chatter, .hybrid,
-                 .spectralSweep, .temporalJitter, .whisperMask, .pitchFormantDrift, 
+                 .spectralSweep, .temporalJitter, .whisperMask, .pitchFormantDrift,
                  .phaseScramble, .quantizePulse, .rotationCycle:
                 continue // Expected cases
             }

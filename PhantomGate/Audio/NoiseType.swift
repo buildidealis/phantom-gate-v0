@@ -12,7 +12,7 @@ enum NoiseType: String, CaseIterable {
     case ultrasonic = "Ultrasonic"
     case chatter = "Sine Waves"
     case hybrid = "Rotating Protection"
-    
+
     // Advanced Disruptive Modes
     case spectralSweep = "Spectral Sweep"
     case temporalJitter = "Temporal Jitter"
