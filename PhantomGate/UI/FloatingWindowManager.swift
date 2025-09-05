@@ -596,6 +596,55 @@ struct FloatingControlView: View {
                                 label: "Rotating",
                                 isActive: true
                             )
+
+                        case .spectralSweep:
+                            ProtectionIndicator(
+                                icon: "waveform.path.badge.minus",
+                                label: "Spectral Sweep",
+                                isActive: true
+                            )
+
+                        case .temporalJitter:
+                            ProtectionIndicator(
+                                icon: "timer",
+                                label: "Temporal Jitter",
+                                isActive: true
+                            )
+
+                        case .whisperMask:
+                            ProtectionIndicator(
+                                icon: "waveform.path.ecg.rectangle",
+                                label: "Whisper Mask",
+                                isActive: true
+                            )
+
+                        case .pitchFormantDrift:
+                            ProtectionIndicator(
+                                icon: "tuningfork",
+                                label: "Pitch/Formant Drift",
+                                isActive: true
+                            )
+
+                        case .phaseScramble:
+                            ProtectionIndicator(
+                                icon: "waveform.circle",
+                                label: "Phase Scramble",
+                                isActive: true
+                            )
+
+                        case .quantizePulse:
+                            ProtectionIndicator(
+                                icon: "square.stack.3d.up",
+                                label: "Quantize Pulse",
+                                isActive: true
+                            )
+
+                        case .rotationCycle:
+                            ProtectionIndicator(
+                                icon: "arrow.triangle.2.circlepath",
+                                label: "Rotation Cycle",
+                                isActive: true
+                            )
                         }
 
                         // Always show BlackHole indicator when protection is active
