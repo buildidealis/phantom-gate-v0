@@ -13,7 +13,7 @@ This document provides comprehensive testing procedures for PhantomGate, a macOS
 
 ### Required Software Setup
 
-1. **PhantomGate Application**: Built and installed locally
+1. **PhantomGate Application**: [Download from release page](https://github.com/buildidealis/phantom-gate-v0/releases)
 2. **BlackHole Virtual Audio Driver**: Required for audio protection functionality
 3. **QuickTime Player**: For audio recording tests
 4. **Video Conferencing Applications**: Zoom, Microsoft Teams, Discord, Google Meet, etc.
