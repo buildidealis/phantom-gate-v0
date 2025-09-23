@@ -181,17 +181,16 @@ class AdvancedAudioProcessor {
         let frameCount = samples.count
         let maxJitter = Int(Double(intensity) * 6.0 * sampleRate / 1000.0) // Up to 6ms jitter
 
+        // Copy to temp buffer to avoid overwriting as we iterate
         let tempBuffer = samples
 
-        for _ in 0..<frameCount {
-            for frame in 0..<frameCount where Int.random(in: 0...100) < Int(Double(intensity) * 10) {
+        for frame in 0..<frameCount where Int.random(in: 0...100) < Int(Double(intensity) * 10) {
                 let jitter = Int.random(in: -maxJitter...maxJitter)
                 let sourceFrame = frame + jitter
 
                 if sourceFrame >= 0 && sourceFrame < frameCount {
                     samples[frame] = tempBuffer[sourceFrame]
                 }
-            }
         }
     }
 
