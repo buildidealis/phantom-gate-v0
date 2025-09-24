@@ -17,8 +17,9 @@ class FloatingWindowManager: ObservableObject {
     private var eventMonitor: Any?
     private var audioEngineObserver: AnyCancellable?
 
-    // Track last size to avoid jitter
+    // Track last size to avoid jitter - but we'll disable resizing
     private var lastSize: CGSize = .zero
+    private var fixedSize: CGSize?
 
     init(menuBarManager: MenuBarManager?) {
         self.menuBarManager = menuBarManager
@@ -98,7 +99,7 @@ class FloatingWindowManager: ObservableObject {
     private func setupContentView() {
         guard let window else { return }
         let root = FloatingControlView(manager: self, menuBarManager: menuBarManager)
-        let hosting = NSHostingView(rootView: root.fixedSize()) // fixedSize to hug content
+        let hosting = NSHostingView(rootView: root)
 
         // Wrap in tracking view
         let trackingView = MouseTrackingView { [weak self] isInside in
@@ -112,18 +113,22 @@ class FloatingWindowManager: ObservableObject {
     }
 
     func resize(to newContentSize: CGSize) {
+        // Only allow initial sizing, then lock the size
+        guard fixedSize == nil else { return }
+        
         // Filter out zero / trivial changes
         if newContentSize.width < 5 || newContentSize.height < 5 { return }
-        if abs(newContentSize.width - lastSize.width) < 1 &&
-            abs(newContentSize.height - lastSize.height) < 1 { return }
-        applySize(newContentSize, anchorTopRight: true, animated: true)
+        
+        // Set the fixed size on first meaningful resize
+        fixedSize = newContentSize
+        applySize(newContentSize, anchorTopRight: true, animated: false)
     }
 
     private func applySize(_ size: CGSize, anchorTopRight: Bool, animated: Bool) {
         guard let window else { return }
 
         // Clamp to sensible minimums
-        let minWidth: CGFloat = 220
+        let minWidth: CGFloat = 320
         let minHeight: CGFloat = 120
         var target = size
         target.width = max(target.width, minWidth)
@@ -282,7 +287,7 @@ struct FloatingControlView: View {
                             .stroke(Color.white.opacity(0.15), lineWidth: 1)
                     )
             )
-            .fixedSize(horizontal: true, vertical: true)
+            .frame(width: 490, height: 600) // Fixed size for the entire view
             .overlay(SizeReader { manager.resize(to: $0) })
     }
 
@@ -512,32 +517,35 @@ struct FloatingControlView: View {
                 }
             }
 
-            // Playback controls
+            // Playback controls - Reserve space for all states
             VStack(alignment: .leading, spacing: 20) {
                 HStack(spacing: 12) {
-                    if isPlaying {
-                        HStack(spacing: 12) {
-                            if let audioEngine = manager.audioEngine as? AudioLevelProvider {
-                                WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
-                                    .frame(width: 50)
-                                    .accessibilityIdentifier("WaveformView")
-                            } else {
-                                WaveformView(isPlaying: isPlaying)
-                                    .frame(width: 50)
-                                    .accessibilityIdentifier("WaveformView")
-                            }
-
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(String(format: "%.1f kHz", currentFrequency / 1000))
-                                    .font(FontManager.shared.font(weight: .medium, size: 12))
-                                    .foregroundColor(.white)
-
-                                // Show protection status
-                                Text(protectionStatusText)
-                                    .font(FontManager.shared.font(weight: .regular, size: 10))
-                                    .foregroundColor(Color.phantomGreen.opacity(0.8))
-                            }
+                    // Always reserve space for waveform and status
+                    HStack(spacing: 12) {
+                        if let audioEngine = manager.audioEngine as? AudioLevelProvider {
+                            WaveformView(isPlaying: isPlaying, audioLevelProvider: audioEngine)
+                                .frame(width: 50)
+                                .opacity(isPlaying ? 1.0 : 0.0)
+                                .accessibilityIdentifier("WaveformView")
+                        } else {
+                            WaveformView(isPlaying: isPlaying)
+                                .frame(width: 50)
+                                .opacity(isPlaying ? 1.0 : 0.0)
+                                .accessibilityIdentifier("WaveformView")
                         }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(isPlaying ? String(format: "%.1f kHz", currentFrequency / 1000) : "")
+                                .font(FontManager.shared.font(weight: .medium, size: 12))
+                                .foregroundColor(.white)
+                                .frame(minWidth: 60, alignment: .leading)
+
+                            Text(isPlaying ? protectionStatusText : "")
+                                .font(FontManager.shared.font(weight: .regular, size: 10))
+                                .foregroundColor(Color.phantomGreen.opacity(0.8))
+                                .frame(minWidth: 120, alignment: .leading)
+                        }
+                        .opacity(isPlaying ? 1.0 : 0.0)
                     }
 
                     Spacer(minLength: 0)
@@ -552,28 +560,30 @@ struct FloatingControlView: View {
                         .foregroundColor(isPlaying ? .phantomRed : .phantomGreen)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
+                        .frame(minWidth: 200) // Fixed minimum width for button
                     }
                     .accessibilityIdentifier("ToggleProtectionButton")
                     .disabled(manager.audioEngine == nil)
                     .environment(\.colorScheme, .dark)
                 }
+                .frame(minHeight: 50) // Reserve minimum height
 
-                // Protection indicators - show only what's actually active
-                if isPlaying {
-                    HStack(spacing: 16) {
-                        // Show the active protection method based on selected noise type
+                // Protection indicators - Always reserve space
+                HStack(spacing: 16) {
+                    // Show the active protection method based on selected noise type
+                    Group {
                         switch selectedNoiseType {
                         case .green, .pink, .pinkBabble:
                             ProtectionIndicator(
                                 icon: "waveform",
                                 label: "Noise",
-                                isActive: true
+                                isActive: isPlaying
                             )
                             if enableArtifacts {
                                 ProtectionIndicator(
                                     icon: "waveform.path.ecg",
                                     label: "Artifacts",
-                                    isActive: true
+                                    isActive: isPlaying
                                 )
                             }
 
@@ -581,82 +591,83 @@ struct FloatingControlView: View {
                             ProtectionIndicator(
                                 icon: "antenna.radiowaves.left.and.right",
                                 label: "Ultrasonic",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .chatter:
                             ProtectionIndicator(
                                 icon: "water.waves",
                                 label: "Sine Waves",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .hybrid:
                             ProtectionIndicator(
                                 icon: "shuffle",
                                 label: "Rotating",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .spectralSweep:
                             ProtectionIndicator(
                                 icon: "waveform.path.badge.minus",
                                 label: "Spectral Sweep",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .temporalJitter:
                             ProtectionIndicator(
                                 icon: "timer",
                                 label: "Temporal Jitter",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .whisperMask:
                             ProtectionIndicator(
                                 icon: "waveform.path.ecg.rectangle",
                                 label: "Whisper Mask",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .pitchFormantDrift:
                             ProtectionIndicator(
                                 icon: "tuningfork",
                                 label: "Pitch/Formant Drift",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .phaseScramble:
                             ProtectionIndicator(
                                 icon: "waveform.circle",
                                 label: "Phase Scramble",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .quantizePulse:
                             ProtectionIndicator(
                                 icon: "square.stack.3d.up",
                                 label: "Quantize Pulse",
-                                isActive: true
+                                isActive: isPlaying
                             )
 
                         case .rotationCycle:
                             ProtectionIndicator(
                                 icon: "arrow.triangle.2.circlepath",
                                 label: "Rotation Cycle",
-                                isActive: true
+                                isActive: isPlaying
                             )
                         }
 
-                        // Always show BlackHole indicator when protection is active
+                        // Always show BlackHole indicator
                         ProtectionIndicator(
                             icon: "personalhotspot",
                             label: "BlackHole",
-                            isActive: true
+                            isActive: isPlaying
                         )
                     }
-                    .padding(.top, 8)
                 }
+                .padding(.top, 8)
+                .frame(minHeight: 60) // Reserve minimum height for indicators
             }
             .padding(8)
         }
@@ -837,57 +848,4 @@ final class MockAudioEngine: AudioEngine {
     }
 }
 
-// MARK: - Preview Manager (skips real window sizing side-effects)
-/*
-@MainActor
-final class PreviewFloatingWindowManager: FloatingWindowManager {
-    override init() {
-        super.init()
-        // Inject a mock engine if you want interactive pieces enabled
-        let mock = MockAudioEngine()
-        self.setAudioEngine(mock)
-        // For preview, set mouse as inside window
-        self.isMouseInWindow = true
-    }
-}
-
-// Convenience helpers
-@MainActor
-private extension PreviewFloatingWindowManager {
-    static func idle() -> PreviewFloatingWindowManager {
-        PreviewFloatingWindowManager()
-    }
-
-    static func playing() -> PreviewFloatingWindowManager {
-        let mgr = PreviewFloatingWindowManager()
-        if let engine = mgr.audioEngine as? MockAudioEngine {
-            engine.isPlaying = true
-        }
-        return mgr
-    }
-}
-
-// MARK: - Previews
-
-#Preview("Idle (Dark)") {
-    FloatingControlView(manager: PreviewFloatingWindowManager.idle())
-        .padding()
-        .background(Color.black)
-        .preferredColorScheme(.dark)
-}
-
-#Preview("Playing (Dark)") {
-    FloatingControlView(manager: PreviewFloatingWindowManager.playing())
-        .padding()
-        .background(Color.black)
-        .preferredColorScheme(.dark)
-}
-
-#Preview("Idle (Light)") {
-    FloatingControlView(manager: PreviewFloatingWindowManager.idle())
-        .padding()
-        .background(Color.gray.opacity(0.15))
-        .preferredColorScheme(.light)
-}
-*/
 #endif
