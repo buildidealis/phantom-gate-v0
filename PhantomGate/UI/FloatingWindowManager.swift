@@ -315,21 +315,26 @@ struct FloatingControlView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Picker("", selection: $selectedNoiseType) {
                             ForEach(NoiseType.allCases, id: \.self) { type in
-                                VStack(alignment: .leading) {
-                                    Text(type.rawValue)
-                                        .font(FontManager.shared.font(weight: .medium, size: 13))
-                                }
-                                .tag(type)
+                                Text(type.rawValue)
+                                    .font(FontManager.shared.font(weight: .medium, size: 13))
+                                    .tag(type)
                             }
                         }
                         .labelsHidden()
                         .pickerStyle(.menu)
                         .disabled(isPlaying)
                         .accessibilityIdentifier("EnhancedNoiseTypePicker")
+                        .colorScheme(.dark) // Ensure dark color scheme
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.white.opacity(0.1))
+                                .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                        )
                         .onChange(of: selectedNoiseType) { _, newValue in
                             guard let engine = manager.audioEngine else { return }
                             engine.selectEnhancedNoiseType(newValue)
                         }
+
 
                         // Show description of selected mode
                         Text(selectedNoiseType.description)
