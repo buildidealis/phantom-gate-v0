@@ -10,7 +10,6 @@ import AppKit
 
 struct TermsOfServiceView: View {
     let onAccept: () -> Void
-    @State private var isAccepted = false
     
     var body: some View {
         content
@@ -78,15 +77,15 @@ struct TermsOfServiceView: View {
                 Button("I Accept") {
                     acceptTerms()
                 }
-                .buttonStyle(.bordered)
-                .controlSize(.large)
+                .buttonStyle(PlainButtonStyle())
                 .font(FontManager.shared.font(weight: .medium, size: 14))
                 .foregroundColor(.white)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
                         .fill(Color.phantomGreen)
                 )
-                .disabled(false)
                 .accessibilityIdentifier("AcceptTermsButton")
             }
         }

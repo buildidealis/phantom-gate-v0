@@ -21,6 +21,10 @@ class PhantomGateUITests: XCTestCase {
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        
+        // Clean up UserDefaults after each test
+        UserDefaults.standard.removeObject(forKey: "TermsOfServiceAccepted")
+        UserDefaults.standard.removeObject(forKey: "TermsOfServiceAcceptedDate")
     }
 
     @MainActor
@@ -127,6 +131,7 @@ class PhantomGateUITests: XCTestCase {
         
         let app = XCUIApplication()
         app.launchArguments.append("--ui-testing")
+        app.launchArguments.append("--test-terms") // Enable ToS testing
         app.launch()
         
         // Wait for Terms of Service modal to appear
@@ -160,6 +165,7 @@ class PhantomGateUITests: XCTestCase {
         
         let app = XCUIApplication()
         app.launchArguments.append("--ui-testing")
+        app.launchArguments.append("--test-terms") // Enable ToS testing
         app.launch()
         
         // Terms modal should not appear

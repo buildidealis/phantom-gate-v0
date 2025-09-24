@@ -25,7 +25,15 @@ class AppState: ObservableObject {
         termsOfServiceManager = TermsOfServiceManager()
 
         // Check if Terms of Service have been accepted
-        termsAccepted = TermsOfServiceManager.hasAcceptedTerms()
+        let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
+                         ProcessInfo.processInfo.environment["UI_TESTING"] == "1"
+        
+        // Skip ToS for UI testing unless specifically testing ToS functionality
+        if isUITesting && !ProcessInfo.processInfo.arguments.contains("--test-terms") {
+            termsAccepted = true
+        } else {
+            termsAccepted = TermsOfServiceManager.hasAcceptedTerms()
+        }
 
         // Set up environment
         let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
@@ -47,11 +55,13 @@ class AppState: ObservableObject {
         if termsAccepted {
             setupDependencies()
         } else {
-            // Show Terms of Service modal
-            termsOfServiceManager.showTermsModal { [weak self] in
-                DispatchQueue.main.async {
-                    self?.termsAccepted = true
-                    self?.setupDependencies()
+            // Defer showing Terms of Service modal until app is fully loaded
+            DispatchQueue.main.async { [weak self] in
+                self?.termsOfServiceManager.showTermsModal {
+                    DispatchQueue.main.async {
+                        self?.termsAccepted = true
+                        self?.setupDependencies()
+                    }
                 }
             }
         }
