@@ -13,13 +13,19 @@ class AppState: ObservableObject {
     let audioEngine: AudioEngine
     let menuBarManager: MenuBarManager
     let floatingManager: FloatingWindowManager
+    let termsOfServiceManager: TermsOfServiceManager
     @Published var isInitialized = false
+    @Published var termsAccepted = false
 
     init() {
         // Create instances
         audioEngine = AudioEngine()
         menuBarManager = MenuBarManager()
         floatingManager = FloatingWindowManager(menuBarManager: menuBarManager)
+        termsOfServiceManager = TermsOfServiceManager()
+
+        // Check if Terms of Service have been accepted
+        termsAccepted = TermsOfServiceManager.hasAcceptedTerms()
 
         // Set up environment
         let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
@@ -33,6 +39,25 @@ class AppState: ObservableObject {
 
         FontManager.shared.registerFonts()
 
+        // Initialize the app after Terms of Service are handled
+        initializeApp()
+    }
+    
+    private func initializeApp() {
+        if termsAccepted {
+            setupDependencies()
+        } else {
+            // Show Terms of Service modal
+            termsOfServiceManager.showTermsModal { [weak self] in
+                DispatchQueue.main.async {
+                    self?.termsAccepted = true
+                    self?.setupDependencies()
+                }
+            }
+        }
+    }
+    
+    private func setupDependencies() {
         // Set up dependencies
         menuBarManager.setAudioEngine(audioEngine)
         menuBarManager.setFloatingManager(floatingManager)
@@ -65,7 +90,7 @@ struct PhantomGateApp: App {
                     }
                 }
                 .keyboardShortcut("b", modifiers: .command)
-                .disabled(!appState.isInitialized)
+                .disabled(!appState.isInitialized || !appState.termsAccepted)
             }
         }
     }
