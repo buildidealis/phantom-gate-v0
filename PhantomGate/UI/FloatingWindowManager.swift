@@ -115,10 +115,10 @@ class FloatingWindowManager: ObservableObject {
     func resize(to newContentSize: CGSize) {
         // Only allow initial sizing, then lock the size
         guard fixedSize == nil else { return }
-        
+
         // Filter out zero / trivial changes
         if newContentSize.width < 5 || newContentSize.height < 5 { return }
-        
+
         // Set the fixed size on first meaningful resize
         fixedSize = newContentSize
         applySize(newContentSize, anchorTopRight: true, animated: false)
@@ -334,7 +334,6 @@ struct FloatingControlView: View {
                             guard let engine = manager.audioEngine else { return }
                             engine.selectEnhancedNoiseType(newValue)
                         }
-
 
                         // Show description of selected mode
                         Text(selectedNoiseType.description)
