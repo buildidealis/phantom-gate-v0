@@ -21,7 +21,7 @@ class PhantomGateUITests: XCTestCase {
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-        
+
         // Clean up UserDefaults after each test
         UserDefaults.standard.removeObject(forKey: "TermsOfServiceAccepted")
         UserDefaults.standard.removeObject(forKey: "TermsOfServiceAcceptedDate")
@@ -128,28 +128,28 @@ class PhantomGateUITests: XCTestCase {
         // Clear Terms of Service acceptance to trigger modal
         UserDefaults.standard.removeObject(forKey: "TermsOfServiceAccepted")
         UserDefaults.standard.removeObject(forKey: "TermsOfServiceAcceptedDate")
-        
+
         let app = XCUIApplication()
         app.launchArguments.append("--ui-testing")
         app.launchArguments.append("--test-terms") // Enable ToS testing
         app.launch()
-        
+
         // Wait for Terms of Service modal to appear
         let termsWindow = app.windows["PhantomGate Terms of Service"]
         let exists = termsWindow.waitForExistence(timeout: 5.0)
-        
+
         if exists {
             // Test that the Terms of Service modal is displayed
             XCTAssert(termsWindow.exists, "Terms of Service modal should appear on first launch")
-            
+
             // Test that the Accept button exists
             let acceptButton = termsWindow.buttons["AcceptTermsButton"]
             if acceptButton.exists {
                 XCTAssert(acceptButton.exists, "Accept Terms button should exist")
-                
+
                 // Accept the terms
                 acceptButton.tap()
-                
+
                 // Modal should disappear after acceptance
                 let modalGone = !termsWindow.waitForExistence(timeout: 2.0)
                 XCTAssert(modalGone, "Terms modal should disappear after acceptance")
@@ -162,17 +162,17 @@ class PhantomGateUITests: XCTestCase {
         // Pre-accept Terms of Service
         UserDefaults.standard.set(true, forKey: "TermsOfServiceAccepted")
         UserDefaults.standard.set(Date(), forKey: "TermsOfServiceAcceptedDate")
-        
+
         let app = XCUIApplication()
         app.launchArguments.append("--ui-testing")
         app.launchArguments.append("--test-terms") // Enable ToS testing
         app.launch()
-        
+
         // Terms modal should not appear
         let termsWindow = app.windows["PhantomGate Terms of Service"]
         let modalNotShown = !termsWindow.waitForExistence(timeout: 2.0)
         XCTAssert(modalNotShown, "Terms of Service modal should not appear when already accepted")
-        
+
         // App should be running normally
         XCTAssert(app.state == .runningForeground)
     }

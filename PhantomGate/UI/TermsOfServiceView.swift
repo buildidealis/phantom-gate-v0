@@ -10,7 +10,7 @@ import AppKit
 
 struct TermsOfServiceView: View {
     let onAccept: () -> Void
-    
+
     var body: some View {
         content
             .padding(32)
@@ -24,7 +24,7 @@ struct TermsOfServiceView: View {
             )
             .frame(width: 520, height: 400)
     }
-    
+
     private var content: some View {
         VStack(alignment: .leading, spacing: 24) {
             // Header
@@ -32,25 +32,25 @@ struct TermsOfServiceView: View {
                 Text("Welcome to PhantomGate")
                     .font(FontManager.shared.font(weight: .bold, size: 32))
                     .foregroundColor(Color.phantomGreen)
-                
+
                 Text("Privacy Protection System")
                     .font(FontManager.shared.font(weight: .medium, size: 16))
                     .foregroundColor(Color.white.opacity(0.7))
             }
-            
+
             // Terms content
             VStack(alignment: .leading, spacing: 16) {
                 Text("Before using PhantomGate, please review and accept our Terms of Service.")
                     .font(FontManager.shared.font(weight: .medium, size: 14))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.leading)
-                
+
                 // Terms link
                 HStack {
                     Text("Read the full Terms of Service:")
                         .font(FontManager.shared.font(weight: .regular, size: 13))
                         .foregroundColor(Color.white.opacity(0.8))
-                    
+
                     Button("View Terms") {
                         openTermsURL()
                     }
@@ -59,21 +59,22 @@ struct TermsOfServiceView: View {
                     .font(FontManager.shared.font(weight: .medium, size: 13))
                     .underline()
                 }
-                
+
                 // Agreement notice
-                Text("By clicking \"I Accept\", you agree to our Terms of Service and understand that PhantomGate is an audio privacy protection tool.")
+                Text("By clicking \"I Accept\", you agree to our Terms of Service and " +
+                     "understand that PhantomGate is an audio privacy protection tool.")
                     .font(FontManager.shared.font(weight: .regular, size: 12))
                     .foregroundColor(Color.white.opacity(0.7))
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            
+
             Spacer()
-            
+
             // Accept button
             HStack {
                 Spacer()
-                
+
                 Button("I Accept") {
                     acceptTerms()
                 }
@@ -90,18 +91,18 @@ struct TermsOfServiceView: View {
             }
         }
     }
-    
+
     private func openTermsURL() {
         if let url = URL(string: "https://mkdale.github.io/PGmarketingsite/terms.html") {
             NSWorkspace.shared.open(url)
         }
     }
-    
+
     private func acceptTerms() {
         // Store acceptance in UserDefaults
         UserDefaults.standard.set(true, forKey: "TermsOfServiceAccepted")
         UserDefaults.standard.set(Date(), forKey: "TermsOfServiceAcceptedDate")
-        
+
         // Call the acceptance handler
         onAccept()
     }
@@ -113,36 +114,36 @@ struct TermsOfServiceView: View {
 class TermsOfServiceManager: ObservableObject {
     @Published var shouldShowTerms = false
     private var window: NSWindow?
-    
+
     init() {
         checkIfShouldShowTerms()
     }
-    
+
     func checkIfShouldShowTerms() {
         let hasAccepted = UserDefaults.standard.bool(forKey: "TermsOfServiceAccepted")
         shouldShowTerms = !hasAccepted
     }
-    
+
     func showTermsModal(onAccept: @escaping () -> Void) {
         guard shouldShowTerms else {
             onAccept()
             return
         }
-        
+
         let termsView = TermsOfServiceView {
             self.hideTermsModal()
             onAccept()
         }
-        
+
         let hostingView = NSHostingView(rootView: termsView)
-        
+
         let window = NSWindow(
             contentRect: NSRect(origin: .zero, size: NSSize(width: 520, height: 400)),
             styleMask: [.titled, .fullSizeContentView],
             backing: .buffered,
             defer: false
         )
-        
+
         window.titleVisibility = .hidden
         window.titlebarAppearsTransparent = true
         window.isMovableByWindowBackground = true
@@ -153,7 +154,7 @@ class TermsOfServiceManager: ObservableObject {
         window.isReleasedWhenClosed = false
         window.title = "PhantomGate Terms of Service"
         window.setAccessibilityIdentifier("TermsOfServiceWindow")
-        
+
         // Center the window on screen
         if let screen = NSScreen.main?.visibleFrame {
             let origin = NSPoint(
@@ -162,19 +163,19 @@ class TermsOfServiceManager: ObservableObject {
             )
             window.setFrameOrigin(origin)
         }
-        
+
         window.contentView = hostingView
         window.makeKeyAndOrderFront(nil)
-        
+
         self.window = window
     }
-    
+
     private func hideTermsModal() {
         window?.close()
         window = nil
         shouldShowTerms = false
     }
-    
+
     static func hasAcceptedTerms() -> Bool {
         return UserDefaults.standard.bool(forKey: "TermsOfServiceAccepted")
     }

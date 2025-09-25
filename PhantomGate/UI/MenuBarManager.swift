@@ -40,6 +40,7 @@ class MenuBarManager: ObservableObject {
         addProtectionToggleItem(to: menu)
         menu.addItem(NSMenuItem.separator())
         addFeedbackAndHelpItems(to: menu)
+        addTerms(to: menu)
         menu.addItem(NSMenuItem.separator())
         addQuitItem(to: menu)
         return menu
@@ -108,6 +109,26 @@ class MenuBarManager: ObservableObject {
         menu.addItem(helpItem)
     }
 
+    private func addTerms(to menu: NSMenu) {
+        let termsItem = NSMenuItem(
+            title: "View of Service",
+            action: #selector(viewTerms),
+            keyEquivalent: ""
+        )
+        termsItem.target = self
+        menu.addItem(termsItem)
+
+        menu.addItem(.separator())
+        let resetTerms = NSMenuItem(
+            title: "Reset Terms Popup",
+            action: #selector(resetTerms),
+            keyEquivalent: ""
+        )
+        resetTerms.target = self
+        menu.addItem(resetTerms)
+        menu.addItem(.separator())
+    }
+
     private func addQuitItem(to menu: NSMenu) {
         let quitItem = NSMenuItem(
             title: "Quit",
@@ -159,6 +180,17 @@ class MenuBarManager: ObservableObject {
         if let url = URL(string: "mailto:lenzmariesa@gmail.com") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    @objc private func viewTerms() {
+        if let url = URL(string: "https://mkdale.github.io/PGmarketingsite/terms.html") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+
+    @objc private func resetTerms() {
+        UserDefaults.standard.set(false, forKey: "TermsOfServiceAccepted")
+        UserDefaults.standard.set(Date(), forKey: "TermsOfServiceAcceptedDate")
     }
 
     func setAudioEngine(_ engine: AudioEngine) {

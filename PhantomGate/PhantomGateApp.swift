@@ -27,17 +27,13 @@ class AppState: ObservableObject {
         // Check if Terms of Service have been accepted
         let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
                          ProcessInfo.processInfo.environment["UI_TESTING"] == "1"
-        
+
         // Skip ToS for UI testing unless specifically testing ToS functionality
         if isUITesting && !ProcessInfo.processInfo.arguments.contains("--test-terms") {
             termsAccepted = true
         } else {
             termsAccepted = TermsOfServiceManager.hasAcceptedTerms()
         }
-
-        // Set up environment
-        let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
-                         ProcessInfo.processInfo.environment["UI_TESTING"] == "1"
 
         if isUITesting {
             NSApp.setActivationPolicy(.regular)
@@ -50,7 +46,7 @@ class AppState: ObservableObject {
         // Initialize the app after Terms of Service are handled
         initializeApp()
     }
-    
+
     private func initializeApp() {
         if termsAccepted {
             setupDependencies()
@@ -66,7 +62,7 @@ class AppState: ObservableObject {
             }
         }
     }
-    
+
     private func setupDependencies() {
         // Set up dependencies
         menuBarManager.setAudioEngine(audioEngine)
