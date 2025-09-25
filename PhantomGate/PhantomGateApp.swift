@@ -13,17 +13,27 @@ class AppState: ObservableObject {
     let audioEngine: AudioEngine
     let menuBarManager: MenuBarManager
     let floatingManager: FloatingWindowManager
+    let termsOfServiceManager: TermsOfServiceManager
     @Published var isInitialized = false
+    @Published var termsAccepted = false
 
     init() {
         // Create instances
         audioEngine = AudioEngine()
         menuBarManager = MenuBarManager()
         floatingManager = FloatingWindowManager(menuBarManager: menuBarManager)
+        termsOfServiceManager = TermsOfServiceManager()
 
-        // Set up environment
+        // Check if Terms of Service have been accepted
         let isUITesting = ProcessInfo.processInfo.arguments.contains("--ui-testing") ||
                          ProcessInfo.processInfo.environment["UI_TESTING"] == "1"
+
+        // Skip ToS for UI testing unless specifically testing ToS functionality
+        if isUITesting && !ProcessInfo.processInfo.arguments.contains("--test-terms") {
+            termsAccepted = true
+        } else {
+            termsAccepted = TermsOfServiceManager.hasAcceptedTerms()
+        }
 
         if isUITesting {
             NSApp.setActivationPolicy(.regular)
@@ -33,6 +43,27 @@ class AppState: ObservableObject {
 
         FontManager.shared.registerFonts()
 
+        // Initialize the app after Terms of Service are handled
+        initializeApp()
+    }
+
+    private func initializeApp() {
+        if termsAccepted {
+            setupDependencies()
+        } else {
+            // Defer showing Terms of Service modal until app is fully loaded
+            DispatchQueue.main.async { [weak self] in
+                self?.termsOfServiceManager.showTermsModal {
+                    DispatchQueue.main.async {
+                        self?.termsAccepted = true
+                        self?.setupDependencies()
+                    }
+                }
+            }
+        }
+    }
+
+    private func setupDependencies() {
         // Set up dependencies
         menuBarManager.setAudioEngine(audioEngine)
         menuBarManager.setFloatingManager(floatingManager)
@@ -65,7 +96,7 @@ struct PhantomGateApp: App {
                     }
                 }
                 .keyboardShortcut("b", modifiers: .command)
-                .disabled(!appState.isInitialized)
+                .disabled(!appState.isInitialized || !appState.termsAccepted)
             }
         }
     }
