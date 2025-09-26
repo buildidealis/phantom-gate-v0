@@ -296,11 +296,19 @@ struct FloatingControlView: View {
             // Header with close button
             ZStack(alignment: .topLeading) {
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("PhantomGate")
-                        .font(FontManager.shared.font(weight: .bold, size: 48))
-                        .foregroundColor(Color.phantomGreen)
-                        .padding(.top, 0)
-
+                    HStack {
+                        Text("PhantomGate")
+                            .font(FontManager.shared.font(weight: .bold, size: 48))
+                            .foregroundColor(Color.phantomGreen)
+                            .padding(.top, 0)
+                        Text("BETA")
+                            .font(.caption)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color(red: 92/255, green: 201/255, blue: 250/255))
+                            .clipShape(Capsule())
+                    }
                     Text("Privacy Protection System")
                         .font(FontManager.shared.font(weight: .medium, size: 12))
                         .foregroundColor(Color.white.opacity(0.7))
