@@ -11,6 +11,14 @@ import CoreAudio
 /// Manages audio input device selection and validation
 class AudioInputManager {
 
+    // Known virtual audio driver names to exclude from hardware detection
+    private static let virtualDriverNames = [
+        "blackhole",
+        "loopback",
+        "soundflower",
+        "virtual"
+    ]
+
     /// Get all available audio input devices
     static func getInputDevices() -> [(id: AudioDeviceID, name: String)] {
         var devices: [(id: AudioDeviceID, name: String)] = []
@@ -157,14 +165,6 @@ class AudioInputManager {
     static func findHardwareMicrophone() -> (id: AudioDeviceID, name: String)? {
         let devices = getInputDevices()
 
-        // Filter out known virtual audio drivers
-        let virtualDriverNames = [
-            "blackhole",
-            "loopback",
-            "soundflower",
-            "virtual"
-        ]
-
         for device in devices {
             let lowercaseName = device.name.lowercased()
             let isVirtual = virtualDriverNames.contains { lowercaseName.contains($0) }
@@ -185,8 +185,6 @@ class AudioInputManager {
         }
 
         let lowercaseName = name.lowercased()
-        let virtualDriverNames = ["blackhole", "loopback", "soundflower", "virtual"]
-
         return virtualDriverNames.contains { lowercaseName.contains($0) }
     }
 
