@@ -212,6 +212,17 @@ PhantomGate automatically:
 - Routes ONLY the combined audio to BlackHole 2ch
 - Keeps your system speakers silent (no protection noise in your ears)
 
+### Input Source Validation (v0.2+)
+
+PhantomGate now includes automatic detection and validation of your audio input source:
+
+- **Detects virtual audio devices**: Identifies when system input is set to BlackHole, Loopback, or other virtual drivers
+- **Warns about misconfigurations**: Prints diagnostic messages to help debug setup issues
+- **Suggests hardware microphones**: Identifies available hardware microphones when virtual input is detected
+- **Continues operation**: Even with misconfigured input, attempts to proceed (may result in silence)
+
+Check the console logs (via Console.app) for diagnostic messages when starting protection.
+
 ## Support
 
 If you continue to experience issues after following this guide:
