@@ -24,6 +24,14 @@ class AudioEngine: ObservableObject {
     @Published var micGain: Float = 0.3  // Default increased from typical low levels
     @Published var noiseVolume: Float = 0.1  // Default noise volume
 
+    // Automatic Gain Control (AGC) settings
+    @Published var autoAdjustMic: Bool = true  // Enable AGC by default
+    private var micLevelTapInstalled: Bool = false
+    private let targetMicLevel: Float = 0.3  // Target RMS level (-10 dB)
+    private let minMicGain: Float = 0.1      // Minimum gain (prevent too quiet)
+    private let maxMicGain: Float = 2.0      // Maximum gain (prevent distortion)
+    private let agcSmoothingFactor: Float = 0.1  // How quickly AGC adjusts (0.0-1.0)
+
     @Published var virtualMicState: VirtualMicState = .driverMissing
     private var injector: VirtualMicInjector?
     private var virtualMicTapInstalled: Bool = false
@@ -207,6 +215,11 @@ class AudioEngine: ObservableObject {
         if virtualMicTapInstalled, let combinedMixer = combinedMixer {
             combinedMixer.removeTap(onBus: 0)
             virtualMicTapInstalled = false
+        }
+        // Remove microphone level tap if installed
+        if micLevelTapInstalled, let inputNode = micInputNode {
+            inputNode.removeTap(onBus: 0)
+            micLevelTapInstalled = false
         }
         injector?.stop()
         injector = nil
@@ -524,8 +537,20 @@ private extension AudioEngine {
             engine.connect(inputNode, to: combinedMixer, format: micFormat)
             // Apply microphone gain
             inputNode.volume = micGain
-        } else if let inputNode = micInputNode {
-            engine.disconnectNodeOutput(inputNode)
+            
+            // Install AGC tap if auto-adjust is enabled
+            if autoAdjustMic && !micLevelTapInstalled {
+                installMicLevelTap(on: inputNode, format: micFormat)
+            }
+        } else {
+            if let inputNode = micInputNode {
+                engine.disconnectNodeOutput(inputNode)
+                // Remove tap if installed
+                if micLevelTapInstalled {
+                    inputNode.removeTap(onBus: 0)
+                    micLevelTapInstalled = false
+                }
+            }
         }
     }
 
@@ -609,6 +634,81 @@ private extension AudioEngine {
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
             guard let self = self, self.isPlaying else { return }
             self.switchToChatterInHybrid()
+        }
+    }
+
+    // MARK: - Automatic Gain Control (AGC)
+
+    private func installMicLevelTap(on inputNode: AVAudioInputNode, format: AVAudioFormat) {
+        inputNode.installTap(
+            onBus: 0,
+            bufferSize: 1024,
+            format: format
+        ) { [weak self] buffer, _ in
+            guard let self = self, self.autoAdjustMic else { return }
+            
+            let rmsLevel = self.calculateRMS(from: buffer)
+            self.adjustMicGainBasedOnLevel(rmsLevel)
+        }
+        micLevelTapInstalled = true
+    }
+
+    private func calculateRMS(from buffer: AVAudioPCMBuffer) -> Float {
+        guard let channelData = buffer.floatChannelData else { return 0.0 }
+        
+        let channelDataPointer = channelData[0]
+        let frameLength = Int(buffer.frameLength)
+        
+        var sum: Float = 0.0
+        for frame in 0..<frameLength {
+            let sample = channelDataPointer[frame]
+            sum += sample * sample
+        }
+        
+        let meanSquare = sum / Float(frameLength)
+        return sqrt(meanSquare)
+    }
+
+    private func adjustMicGainBasedOnLevel(_ rmsLevel: Float) {
+        // Avoid division by zero and very small levels
+        guard rmsLevel > 0.001 else { return }
+        
+        // Calculate the gain adjustment needed to reach target level
+        let gainAdjustment = targetMicLevel / rmsLevel
+        
+        // Apply smoothing to prevent abrupt changes
+        let newGain = micGain + (gainAdjustment - 1.0) * agcSmoothingFactor
+        
+        // Clamp to min/max bounds
+        let clampedGain = max(minMicGain, min(maxMicGain, newGain))
+        
+        // Only update if change is significant (prevents micro-adjustments)
+        if abs(clampedGain - micGain) > 0.01 {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                self.micGain = clampedGain
+                if let inputNode = self.micInputNode {
+                    inputNode.volume = clampedGain
+                }
+            }
+        }
+    }
+
+    func toggleAutoAdjustMic(_ enabled: Bool) {
+        autoAdjustMic = enabled
+        
+        // If disabling, remove the tap
+        if !enabled && micLevelTapInstalled {
+            if let inputNode = micInputNode {
+                inputNode.removeTap(onBus: 0)
+                micLevelTapInstalled = false
+            }
+        }
+        // If enabling and mic is connected, install tap
+        else if enabled && !micLevelTapInstalled && micInputNode != nil {
+            if let inputNode = micInputNode, let format = micFormat {
+                installMicLevelTap(on: inputNode, format: format)
+            }
         }
     }
 
