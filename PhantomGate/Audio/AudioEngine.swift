@@ -196,7 +196,7 @@ class AudioEngine: ObservableObject {
             print("⚠️ IMPORTANT: Your system microphone is set to '\(currentInput)'")
             print("   For PhantomGate to work correctly, set your system input to your hardware microphone.")
             print("   System Settings → Sound → Input → Select 'MacBook Pro Microphone' or similar")
-            
+
             // Continue anyway, but user may experience issues
         }
 
@@ -334,7 +334,7 @@ private extension AudioEngine {
                 self.connectUltrasonicProtection()
 
             case .chatter:
-                // ONLY sine wave chatter protection  
+                // ONLY sine wave chatter protection
                 self.connectChatterProtection()
 
             case .hybrid:
@@ -532,14 +532,14 @@ private extension AudioEngine {
                 print("⚠️ WARNING: System input is set to virtual device '\(currentInput)'")
                 print("   This may cause audio routing issues. Please set system input to your hardware microphone.")
                 print("   Go to: System Settings → Sound → Input → Select your MacBook microphone")
-                
+
                 // Try to find and use hardware microphone instead
                 if let hardwareMic = AudioInputManager.findHardwareMicrophone() {
                     print("   Found hardware microphone: '\(hardwareMic.name)'")
                     print("   NOTE: PhantomGate will use system default. Please update system settings.")
                 }
             }
-            
+
             let inputNode = engine.inputNode
             let micFormat = inputNode.outputFormat(forBus: 0)
             self.micInputNode = inputNode
@@ -548,7 +548,7 @@ private extension AudioEngine {
             engine.connect(inputNode, to: combinedMixer, format: micFormat)
             // Apply microphone gain
             inputNode.volume = micGain
-            
+
             print("✓ Microphone connected: \(AudioInputManager.getCurrentInputDescription())")
         } else if let inputNode = micInputNode {
             engine.disconnectNodeOutput(inputNode)
