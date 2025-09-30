@@ -6,6 +6,7 @@ A minimalist macOS menu bar application designed for audio privacy and focus enh
 
 - **Menu Bar Integration**: Unobtrusive menu bar presence with quick access controls
 - **Audio Protection System**: Requires BlackHole virtual audio driver for secure routing
+- **Automatic Microphone Gain Control**: Auto-adjusts microphone levels for optimal audio (like Zoom)
 - **Multiple Protection Types**: 
   - Green Noise: Even frequency distribution for general audio masking
   - Pink Noise: Balanced frequency response for ambient coverage
@@ -137,6 +138,11 @@ PhantomGate requires BlackHole, a modern macOS virtual audio driver, for its aud
 When the main window is shown, PhantomGate displays a floating control window that allows you to:
 - Select different audio protection types from a dropdown menu
 - Start/stop audio protection with a dedicated button
+- **Auto-Adjust Microphone**: Toggle automatic microphone level adjustment (enabled by default)
+  - Automatically adjusts microphone gain to maintain optimal audio levels
+  - Similar to Zoom's auto-adjust feature for consistent audio input
+  - Disable to manually control microphone gain with the slider
+- Manually adjust microphone gain and noise volume levels
 - Monitor real-time frequency information
 - View animated waveform visualization
 - Close the window while keeping protection running in the background
