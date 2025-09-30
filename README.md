@@ -141,6 +141,7 @@ When the main window is shown, PhantomGate displays a floating control window th
 - **Auto-Adjust Microphone**: Toggle automatic microphone level adjustment (enabled by default)
   - Automatically adjusts microphone gain to maintain optimal audio levels
   - Similar to Zoom's auto-adjust feature for consistent audio input
+  - Requires microphone permissions to be granted to PhantomGate
   - Disable to manually control microphone gain with the slider
 - Manually adjust microphone gain and noise volume levels
 - Monitor real-time frequency information
