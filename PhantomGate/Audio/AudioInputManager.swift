@@ -12,6 +12,9 @@ import CoreAudio
 class AudioInputManager {
 
     // Known virtual audio driver names to exclude from hardware detection
+    // Note: This list includes common virtual audio drivers as of 2024.
+    // If new virtual audio drivers become popular, they should be added here.
+    // Common patterns: "blackhole", "loopback", "soundflower", "virtual"
     private static let virtualDriverNames = [
         "blackhole",
         "loopback",
