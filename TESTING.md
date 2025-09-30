@@ -37,28 +37,35 @@ This document provides comprehensive testing procedures for PhantomGate, a macOS
    - Confirm "BlackHole 2ch" appears in both Input and Output device lists
    - If not visible, restart macOS and check again
 
-3. **Create Aggregate Device** (Recommended for comprehensive testing):
+3. **Create Aggregate Device** (NOT RECOMMENDED - Only for advanced testing):
+   - **Note**: This is typically NOT needed. PhantomGate handles audio routing automatically.
    - Open **Audio MIDI Setup** (`/Applications/Utilities/Audio MIDI Setup.app`)
    - Click "+" → "Create Aggregate Device"
    - Name it "Testing Aggregate"
    - Check both your built-in microphone and "BlackHole 2ch"
-   - Set as default input in System Settings if needed
+   - **Warning**: Using aggregate devices can complicate setup and is not the recommended approach
 
 ### Critical Audio Routing Configuration
 
-**IMPORTANT**: For all tests, ensure proper audio routing to prevent feedback:
+**IMPORTANT**: For all tests, ensure proper audio routing to prevent feedback and ensure voice capture:
 
-1. **Set Audio Output to Headphones**:
+1. **Set System Audio Input to Hardware Microphone** (CRITICAL):
+   - System Settings → Sound → Input
+   - Select your hardware microphone: "MacBook Pro Microphone" or external mic
+   - ⚠️ **NEVER select "BlackHole 2ch" as system input** - this prevents voice capture
+
+2. **Set System Audio Output to Headphones/Speakers**:
    - System Settings → Sound → Output
-   - Select your headphones (never BlackHole for output during testing)
-
-2. **Configure Audio Input**:
-   - For basic tests: Use built-in microphone
-   - For AI transcription tests: Use "BlackHole 2ch" or "Testing Aggregate"
+   - Select your headphones or speakers (NOT BlackHole)
 
 3. **Application-Specific Setup**:
    - Target applications (Zoom, Teams, etc.) should use "BlackHole 2ch" as microphone input
    - PhantomGate will route protection audio through BlackHole automatically
+   - PhantomGate captures YOUR VOICE from the system's default input (hardware mic)
+
+**Common Mistake**: Setting system input to BlackHole before starting PhantomGate. This creates a feedback loop and prevents your voice from being captured. Always keep system input on your hardware microphone.
+
+For detailed setup instructions, see [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
 ## Stress Testing Scenarios
 

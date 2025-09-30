@@ -65,39 +65,45 @@ PhantomGate requires BlackHole, a modern macOS virtual audio driver, for its aud
 
 ### Configuring macOS Audio Settings
 
-1. **Set up Audio Protection**:
-   - Launch PhantomGate (appears as "PG" in menu bar)  
-   - Click the PG icon and look for protection options:
-     - "Install BlackHole for Protection…" (if BlackHole not detected)
-     - "Start Protection" (if BlackHole is ready and protection is off)
-     - "Stop Protection" (when protection is active)
+**CRITICAL**: Proper audio configuration is essential for PhantomGate to work correctly.
 
-2. **Configure Target Applications**:
-   - In video conferencing apps (Zoom, Teams, Discord, etc.)
-   - Go to audio settings
-   - Select "BlackHole 2ch" as your microphone input
-   - This routes PhantomGate's protection audio directly to the application
+#### System Audio Settings (Required)
 
-3. **Optional: Create Aggregate Device** (Advanced):
-   - Open **Audio MIDI Setup** (`/Applications/Utilities/`)
-   - Click the "+" button → "Create Aggregate Device"
-   - Check both your built-in microphone and "BlackHole 2ch"
-   - This allows mixing your voice with PhantomGate's protection audio
+1. **System Input (Microphone)**:
+   - Open **System Settings** → **Sound** → **Input**
+   - Select your **hardware microphone**:
+     - "MacBook Pro Microphone" (built-in)
+     - Or your external microphone
+   - ⚠️ **DO NOT select "BlackHole 2ch"** - this will prevent your voice from being captured
+
+2. **System Output (Speakers)**:
+   - Open **System Settings** → **Sound** → **Output**
+   - Select your headphones or speakers
+   - ⚠️ **DO NOT select "BlackHole 2ch"** - you won't hear anything
+
+For detailed setup instructions, see [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
 ### Using Audio Protection Features
 
-1. **Enable Audio Protection**:
+**Quick Start** (see [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed instructions):
+
+1. **Configure System Audio** (FIRST TIME ONLY):
+   - System Settings → Sound → Input → Select your hardware microphone
+   - System Settings → Sound → Output → Select your speakers/headphones
+   - ⚠️ Never select BlackHole for system input or output
+
+2. **Enable Audio Protection**:
    - With BlackHole installed, launch PhantomGate
    - Click "Start Protection" from the menu bar (⌘+B)
    - The app automatically routes all protection audio through BlackHole
    - Your system speakers remain silent for privacy
 
-2. **Configure Target Applications**:
+3. **Configure Target Applications**:
    - Open your video conferencing or recording software
    - Set microphone input to "BlackHole 2ch"
    - You should now hear PhantomGate's protection audio in the application
 
-3. **Monitor and Control**:
+4. **Monitor and Control**:
    - Use PhantomGate's floating window to adjust protection types
    - Toggle protection on/off with ⌘+B shortcut
    - Protection automatically stops when you quit the application
@@ -107,9 +113,15 @@ PhantomGate requires BlackHole, a modern macOS virtual audio driver, for its aud
 - **"Install BlackHole for Protection…" appears**: BlackHole is not detected. Install it and restart your Mac
 - **"Protection Error" in menu**: BlackHole installation may be corrupted. Reinstall BlackHole
 - **No audio in target app**: Check that "BlackHole 2ch" is selected as microphone input device
-- **Can't hear your own voice**: Use an Aggregate Device to combine built-in mic + BlackHole
+- **Others can't hear me in Zoom/Teams**: 
+  - Verify your **system input is set to hardware microphone** (NOT BlackHole)
+  - Check application microphone is set to "BlackHole 2ch"
+  - Restart protection with ⌘+B
+  - See [SETUP_GUIDE.md](SETUP_GUIDE.md) for detailed troubleshooting
 - **Audio quality issues**: Ensure sample rates match between PhantomGate (44.1kHz) and your applications
 - **Protection won't start**: Ensure BlackHole is installed and PhantomGate has microphone permissions
+
+For comprehensive troubleshooting, see [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
 ## Usage
 
