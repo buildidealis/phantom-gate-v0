@@ -266,6 +266,7 @@ struct FloatingControlView: View {
     @State private var chatterVolume: Float = 0.08
     @State private var ultrasonicVolume: Float = 0.03
     @State private var micGain: Float = 0.3
+    @State private var autoAdjustMic: Bool = true
     @State private var noiseVolume: Float = 0.1
     @State private var currentFrequency: Float = 0
     @State private var frequencyStreamError: Error?
@@ -390,6 +391,25 @@ struct FloatingControlView: View {
                             .padding(.top, 8)
 
                         VStack(alignment: .leading, spacing: 8) {
+                            // Auto-adjust Microphone Toggle
+                            HStack {
+                                Text("Auto-Adjust:")
+                                    .font(FontManager.shared.font(weight: .regular, size: 12))
+                                    .foregroundColor(Color.white.opacity(0.8))
+                                    .frame(width: 80, alignment: .leading)
+                                Toggle("", isOn: $autoAdjustMic)
+                                    .toggleStyle(.switch)
+                                    .onChange(of: autoAdjustMic) { _, newValue in
+                                        manager.audioEngine?.toggleAutoAdjustMic(newValue)
+                                    }
+                                    .frame(width: 50)
+                                Text(autoAdjustMic ? "On" : "Off")
+                                    .font(FontManager.shared.font(weight: .regular, size: 10))
+                                    .foregroundColor(Color.white.opacity(0.7))
+                                    .frame(width: 35)
+                                Spacer()
+                            }
+
                             // Microphone Gain Control
                             HStack {
                                 Text("Mic Gain:")
@@ -398,12 +418,13 @@ struct FloatingControlView: View {
                                     .frame(width: 80, alignment: .leading)
                                 Slider(value: $micGain, in: 0...1.0)
                                     .frame(width: 120)
+                                    .disabled(autoAdjustMic)  // Disable manual control when auto-adjust is on
                                     .onChange(of: micGain) { _, newValue in
                                         manager.audioEngine?.updateMicGain(newValue)
                                     }
                                 Text("\(Int(micGain * 100))%")
                                     .font(FontManager.shared.font(weight: .regular, size: 10))
-                                    .foregroundColor(Color.white.opacity(0.7))
+                                    .foregroundColor(Color.white.opacity(autoAdjustMic ? 0.4 : 0.7))
                                     .frame(width: 35)
                             }
 
@@ -716,6 +737,7 @@ struct FloatingControlView: View {
             chatterVolume = engine.chatterVolume
             ultrasonicVolume = engine.ultrasonicVolume
             micGain = engine.micGain
+            autoAdjustMic = engine.autoAdjustMic
             noiseVolume = engine.noiseVolume
         }
     }
@@ -738,6 +760,10 @@ struct FloatingControlView: View {
             for await frequency in stream {
                 guard !Task.isCancelled else { break }
                 currentFrequency = frequency
+                // Update mic gain display when auto-adjust is enabled
+                if autoAdjustMic {
+                    micGain = engine.micGain
+                }
             }
         }
     }

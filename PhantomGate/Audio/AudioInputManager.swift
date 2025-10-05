@@ -57,12 +57,9 @@ class AudioInputManager {
 
         guard status == noErr else { return devices }
 
-        for deviceID in deviceIDs {
-            // Check if device has input streams
-            if hasInputStreams(deviceID) {
-                if let name = getDeviceName(deviceID) {
-                    devices.append((id: deviceID, name: name))
-                }
+        for deviceID in deviceIDs where hasInputStreams(deviceID) {
+            if let name = getDeviceName(deviceID) {
+                devices.append((id: deviceID, name: name))
             }
         }
 
