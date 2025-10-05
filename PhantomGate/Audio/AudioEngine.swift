@@ -183,7 +183,7 @@ class AudioEngine: ObservableObject {
 
     func toggleAutoAdjustMic(_ enabled: Bool) {
         autoAdjustMic = enabled
-        
+
         // If disabling, remove the tap
         if !enabled && micLevelTapInstalled {
             if let inputNode = micInputNode {
@@ -216,7 +216,7 @@ class AudioEngine: ObservableObject {
             format: format
         ) { [weak self] buffer, _ in
             guard let self = self, self.autoAdjustMic else { return }
-            
+
             let rmsLevel = self.calculateRMS(from: buffer)
             self.adjustMicGainBasedOnLevel(rmsLevel)
         }
@@ -225,16 +225,16 @@ class AudioEngine: ObservableObject {
 
     private func calculateRMS(from buffer: AVAudioPCMBuffer) -> Float {
         guard let channelData = buffer.floatChannelData else { return 0.0 }
-        
+
         let channelDataPointer = channelData[0]
         let frameLength = Int(buffer.frameLength)
-        
+
         var sum: Float = 0.0
         for frame in 0..<frameLength {
             let sample = channelDataPointer[frame]
             sum += sample * sample
         }
-        
+
         let meanSquare = sum / Float(frameLength)
         return sqrt(meanSquare)
     }
@@ -242,16 +242,16 @@ class AudioEngine: ObservableObject {
     private func adjustMicGainBasedOnLevel(_ rmsLevel: Float) {
         // Avoid division by zero and very small levels
         guard rmsLevel > 0.001 else { return }
-        
+
         // Calculate the gain adjustment needed to reach target level
         let gainAdjustment = targetMicLevel / rmsLevel
-        
+
         // Apply smoothing to prevent abrupt changes
         let newGain = micGain + (gainAdjustment - 1.0) * agcSmoothingFactor
-        
+
         // Clamp to min/max bounds
         let clampedGain = max(minMicGain, min(maxMicGain, newGain))
-        
+
         // Only update if change is significant (prevents micro-adjustments)
         if abs(clampedGain - micGain) > 0.01 {
             DispatchQueue.main.async { [weak self] in
@@ -635,7 +635,7 @@ private extension AudioEngine {
             engine.disconnectNodeOutput(inputNode)
             engine.connect(inputNode, to: combinedMixer, format: micFormat)
             // Apply microphone gain
-            inputNode.volume = micGain            
+            inputNode.volume = micGain
             // Install AGC tap if auto-adjust is enabled
             if autoAdjustMic && !micLevelTapInstalled {
                 installMicLevelTap(on: inputNode, format: micFormat)
